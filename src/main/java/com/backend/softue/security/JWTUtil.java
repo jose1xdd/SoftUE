@@ -1,9 +1,6 @@
 package com.backend.softue.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,4 +92,26 @@ public class JWTUtil {
 
         return claims.getId();
     }
+
+    public boolean isTokenExpired(String jwt) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(key))
+                    .parseClaimsJws(jwt)
+                    .getBody();
+
+            Date expirationDate = claims.getExpiration();
+            Date currentDate = new Date();
+
+            // Compara la fecha actual con la fecha de expiración del token
+            return expirationDate.before(currentDate);
+        } catch (ExpiredJwtException e) {
+            // Si se lanza una excepción de token expirado, devuelve true
+            return true;
+        } catch (Exception e) {
+            // Manejar cualquier otra excepción como token inválido o firma incorrecta
+            return false;
+        }
+    }
+
 }
