@@ -1,21 +1,24 @@
 package com.backend.softue.security;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
+import jakarta.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 
 /**
  * @author Mahesh
  */
+@NoArgsConstructor
 @Component
 public class JWTUtil {
     @Value("${security.jwt.secret}")
@@ -93,4 +96,3 @@ public class JWTUtil {
         return claims.getId();
     }
 }
-
