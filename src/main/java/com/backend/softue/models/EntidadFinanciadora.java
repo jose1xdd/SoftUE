@@ -32,7 +32,7 @@ public class EntidadFinanciadora {
     @NotBlank
     @NotNull
     @Column(nullable = false)
-    private String sitio_web;
+    private String sitioWeb;
 
     @Email
     @NotBlank
@@ -44,8 +44,9 @@ public class EntidadFinanciadora {
     @Column(nullable = false)
     private String descripcion;
 
-    @Column(name = "foto_entidad_financiadora_id")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "foto_entidad_financiadora_id")
     //private FotoEntidadFinanciadora foto_entidad_financiadora_id;
     //@Transient
-    private Integer foto_entidad_financiadora_id;
+    private FotoEntidadFinanciadora fotoEntidadFinanciadoraId;
 }
