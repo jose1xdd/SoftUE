@@ -20,7 +20,7 @@ public class Login {
     @CheckSession(permitedRol = {"user"})
     @GetMapping(path = "/{token}")
     public String  login(@PathVariable("token")String token) {
-       return jwt.getValue(token);
+       return jwt.getKey(token);
 
 
     }

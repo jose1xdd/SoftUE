@@ -80,7 +80,7 @@ public class JWTUtil {
 
     /**
      * Method to validate and read the JWT
-     *SE TRAE EL EMAIL
+     *SE TRAE EL codigo
      * @param jwt
      * @return
      */
