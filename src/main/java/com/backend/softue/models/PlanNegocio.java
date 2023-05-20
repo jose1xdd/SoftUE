@@ -37,10 +37,11 @@ public class PlanNegocio {
     private String areaEnfoque;
 
     @NotNull
-    @Column(nullable = false, name = "Docente_codigo")
-    //private Docente docente;
-    //@Transient
-    private Integer codigoDocente;
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "tutor_codigo")
+    private Docente tutor;
+    @Transient
+    private Integer codigoTutor;
 
     @NotNull
     @Column(nullable = false)
