@@ -45,8 +45,6 @@ public class EntidadFinanciadora {
     private String descripcion;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "foto_entidad_financiadora_id")
-    //private FotoEntidadFinanciadora foto_entidad_financiadora_id;
-    //@Transient
+    @JoinColumn(name = "foto_entidad_financiadora_id", referencedColumnName = "id")
     private FotoEntidadFinanciadora fotoEntidadFinanciadoraId;
 }

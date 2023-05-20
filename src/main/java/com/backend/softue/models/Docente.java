@@ -49,4 +49,7 @@ public class Docente extends User {
     @OneToMany(mappedBy = "docenteId", fetch = FetchType.LAZY)
     private Set<ObservacionPlan> observacionesPlan;
 
+    @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
+    private Set<CalificacionPlan> planesCalificados;
+
 }
