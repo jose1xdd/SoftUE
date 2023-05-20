@@ -21,6 +21,7 @@ public class ObservacionPlan {
     @JoinColumn(name = "plan_negocioId")
     private PlanNegocio planNegocioId;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("docenteId")
     @JoinColumn(name = "docente_id")
