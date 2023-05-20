@@ -32,7 +32,7 @@ public class UserServices {
         if (result != null) return "User al ready exist";
         user.setContrasenia(encrypt.hash(user.getContrasenia()));
         User userData = this.userRepository.save(user);
-        String jwt = this.encrypt.generarJWT(user.getCorreo(), user.getTipo_usuario());
+        String jwt = this.encrypt.generarJWT(""+userData.getCodigo(), user.getTipo_usuario());
         LocalDateTime newDateTime = LocalDateTime.now().plus(Duration.ofHours(1));
         this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userData));
         return jwt;
