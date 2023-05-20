@@ -17,10 +17,11 @@ import java.sql.Blob;
 public class FotoEntidadFinanciadora {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer foto_entidad_financiadora_id;
+    private Integer id;
 
     private Blob foto;
 
-    private Integer entidad_financiadora_id;
+    @OneToOne(fetch = FetchType.LAZY,mappedBy = "fotoEntidadFinanciadoraId")
+    private EntidadFinanciadora entidadFinanciadoraId;
 
 }
