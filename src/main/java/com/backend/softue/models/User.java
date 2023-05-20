@@ -1,5 +1,6 @@
 package com.backend.softue.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,44 +20,44 @@ import java.time.LocalDate;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int codigo;
+    private Integer codigo;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     @Column(nullable = false)
     private String nombre;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     @Column(nullable = false)
     private String apellido;
 
-    @NotNull
+    @NotNull(message = "")
     @Column(nullable = false)
     private LocalDate fecha_nacimiento;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     @Column(nullable = false)
     private String sexo;
 
-    @Email
-    @NotBlank
+    @Email(message = "Email no valido")
+    @NotBlank(message = "")
     @Column(nullable = false, unique = true)
     private String correo;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     @Column(nullable = false, unique = true)
     private String telefono;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     @Column(nullable = false)
     private String contrasenia;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "")
+    @NotNull(message = "")
     @Column(nullable = false)
     private String tipo_usuario;
 

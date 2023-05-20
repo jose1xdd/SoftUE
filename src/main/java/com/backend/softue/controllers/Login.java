@@ -1,5 +1,7 @@
 package com.backend.softue.controllers;
 
+import com.backend.softue.models.SingInToken;
+import com.backend.softue.models.User;
 import com.backend.softue.security.JWTUtil;
 import com.backend.softue.services.UserServices;
 import com.backend.softue.utils.checkSession.CheckSession;
@@ -15,14 +17,13 @@ public class Login {
     @Autowired
     UserServices userServices;
     @Autowired
-    JWTUtil jwt;
-
-    @CheckSession(permitedRol = {"user"})
-    @GetMapping(path = "/{token}")
-    public String  login(@PathVariable("token")String token) {
-       return jwt.getKey(token);
-
+    JWTUtil jwtUtil;
+//    @CheckSession(permitedRol = {"user"})
+    @GetMapping("/{token}")
+    public String login(@PathVariable("token") String token) {
+        return this.jwtUtil.getKey(token);
 
     }
+
 
 }
