@@ -21,7 +21,7 @@ public class FotoEntidadFinanciadora {
 
     private Blob foto;
 
-    @OneToOne(fetch = FetchType.LAZY,mappedBy = "fotoEntidadFinanciadoraId")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "fotoEntidadFinanciadoraId")
     private EntidadFinanciadora entidadFinanciadoraId;
 
 }
