@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResponseGeneric<T> {
-private T data;
+public class ResponseToken {
+
 private String token;
 
 }
