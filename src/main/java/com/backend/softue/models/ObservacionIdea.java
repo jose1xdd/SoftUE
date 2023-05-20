@@ -3,24 +3,28 @@ package com.backend.softue.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@Embeddable
 @Entity
-public class ObservacionPlan {
+public class ObservacionIdea  implements Serializable {
     @EmbeddedId
-    ObservacionPlanKey id;
+    ObservacionIdeaKey id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("planNegocioId")
-    @JoinColumn(name = "plan_negocioId")
-    private PlanNegocio planNegocioId;
-
+    @MapsId("ideaNegocioId")
+    @JoinColumn(name = "idea_negocio_Id")
+    private IdeaNegocio ideaNegocioId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("docenteId")
