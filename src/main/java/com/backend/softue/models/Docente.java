@@ -1,11 +1,11 @@
 package com.backend.softue.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -30,4 +30,8 @@ public class Docente extends User{
     @NotNull
     @Column(nullable = false)
     private String area;
+
+    @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
+    Set<DocenteApoyoPlan> docentesApoyo;
+
 }
