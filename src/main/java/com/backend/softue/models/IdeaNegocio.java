@@ -56,4 +56,7 @@ public class IdeaNegocio {
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<EvaluacionIdea> evaluaciones;
+
+    @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
+    private Set<DocenteApoyoIdea> docentesApoyo;
 }
