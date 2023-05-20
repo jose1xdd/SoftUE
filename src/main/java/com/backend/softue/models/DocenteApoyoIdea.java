@@ -9,11 +9,11 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@Table(name = "DocenteApoyoPlan")
-public class DocenteApoyoPlan {
+@Table(name = "DocenteApoyoIdea")
+public class DocenteApoyoIdea {
 
     @EmbeddedId
-    private DocentePlanKey id;
+    private DocenteIdeaKey id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("codigoDocente")
@@ -21,7 +21,7 @@ public class DocenteApoyoPlan {
     private Docente docente;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("planNegocio")
-    @JoinColumn(name = "planNegocio_id")
-    private PlanNegocio planNegocio;
+    @MapsId("ideaNegocio")
+    @JoinColumn(name = "ideaNegocio_id")
+    private IdeaNegocio ideaNegocio;
 }
