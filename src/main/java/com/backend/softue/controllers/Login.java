@@ -2,6 +2,7 @@ package com.backend.softue.controllers;
 
 import com.backend.softue.security.JWTUtil;
 import com.backend.softue.services.UserServices;
+import com.backend.softue.utils.checkSession.CheckSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +17,10 @@ public class Login {
     @Autowired
     JWTUtil jwt;
 
+    @CheckSession(permitedRol = {"user"})
     @GetMapping(path = "/{token}")
-    public Boolean login(@PathVariable("token")String token) {
-       return jwt.isTokenExpired(token);
+    public String  login(@PathVariable("token")String token) {
+       return jwt.getValue(token);
 
 
     }

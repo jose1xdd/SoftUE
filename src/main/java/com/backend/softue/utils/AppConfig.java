@@ -16,7 +16,7 @@ public class AppConfig {
     private SingInTokenRepository singInTokenRepository;
     @Scheduled(fixedRate = 86400000) // Se ejecuta cada día (en milisegundos)
     public void autodestruccion() {
-        LocalDateTime nowMinusOneDay = LocalDateTime.now().minusDays(1);
+        LocalDateTime nowMinusOneDay = LocalDateTime.now();
         List<SingInToken> tokensToDelete = singInTokenRepository.searchTokensByDate(nowMinusOneDay);
         singInTokenRepository.deleteAll(tokensToDelete);
         System.out.println("delete tokens");
