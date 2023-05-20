@@ -14,7 +14,7 @@ import java.sql.Blob;
 public class FotoUsuario {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
     private Blob foto;
     @OneToOne(fetch = FetchType.LAZY,mappedBy = "foto_usuario")
     private User usuario_codigo;

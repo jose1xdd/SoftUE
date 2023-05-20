@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Component
 public class CheckSessionInterceptor implements HandlerInterceptor {
     @Autowired
@@ -26,11 +29,11 @@ public class CheckSessionInterceptor implements HandlerInterceptor {
             if (roles != null) {
                 String headerName = "X-Softue-JWT";
                 String headerActualName = request.getHeader(headerName);
+                System.out.println(headerActualName);
                 if (headerActualName == null) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Header name invalido");
                     return false;
                 }
-                System.out.println(headerActualName);
                 SingInToken token = query.findByToken(headerActualName);
                 if (token == null) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Token Invalido");
@@ -40,11 +43,27 @@ public class CheckSessionInterceptor implements HandlerInterceptor {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Permisos Insuficientes");
                     return false;
                 }
+                System.out.println(sessionExpired(headerActualName));
+                if (!sessionExpired(headerActualName)) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Logout");
+                    return false;
+                }
                 return true;
             }
         }
         return true;
     }
+
+    private boolean sessionExpired(String token) {
+        if (jwt.isTokenExpired(token)) return false;
+        List<SingInToken> tokensToDelete = this.query.findAll();
+        if(tokensToDelete.isEmpty()) return false;
+        for (SingInToken tokens : tokensToDelete) {
+            if (tokens.getToken().equals(token)) return false;
+        }
+        return true;
+    }
+
 
     private boolean exist(String roles[], String token) {
         String data = jwt.getValue(token);

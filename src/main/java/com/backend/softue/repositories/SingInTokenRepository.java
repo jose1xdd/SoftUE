@@ -11,6 +11,7 @@ import java.util.List;
 public interface SingInTokenRepository extends JpaRepository<SingInToken,String> {
     @Query("SELECT t FROM SingInToken t WHERE t.fecha_caducidad <= :dateMinusOneDay")
     List<SingInToken> searchTokensByDate(@Param("dateMinusOneDay") LocalDateTime dateMinusOneDay);
-    SingInToken findByToken(String token);
+    @Query("SELECT s FROM SingInToken s WHERE s.token = :token")
+    SingInToken findByToken(@Param("token") String token);
 
 }
