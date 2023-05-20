@@ -42,13 +42,12 @@ public class User {
 
     @Email
     @NotBlank
-    @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String correo;
 
     @NotBlank
     @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String telefono;
 
     @NotBlank

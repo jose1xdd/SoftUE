@@ -30,6 +30,7 @@ public class CheckSessionInterceptor implements HandlerInterceptor {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Header name invalido");
                     return false;
                 }
+                System.out.println(headerActualName);
                 SingInToken token = query.findByToken(headerActualName);
                 if (token == null) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Token Invalido");
