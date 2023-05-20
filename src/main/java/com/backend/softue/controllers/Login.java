@@ -18,7 +18,7 @@ public class Login {
     UserServices userServices;
     @Autowired
     JWTUtil jwtUtil;
-//    @CheckSession(permitedRol = {"user"})
+    @CheckSession(permitedRol = {"user"})
     @GetMapping("/{token}")
     public String login(@PathVariable("token") String token) {
         return this.jwtUtil.getKey(token);
