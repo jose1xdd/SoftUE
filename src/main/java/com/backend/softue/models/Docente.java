@@ -14,7 +14,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "Docente")
-public class Docente extends User{
+public class Docente extends User {
 
     @NotBlank
     @NotNull
