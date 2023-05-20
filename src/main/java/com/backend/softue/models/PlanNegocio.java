@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -54,4 +55,7 @@ public class PlanNegocio {
     @NotNull
     @Column(nullable = false)
     private Integer IdDocumentoPlan;
+
+    @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
+    private Set<EvaluacionPlan> evaluaciones;
 }
