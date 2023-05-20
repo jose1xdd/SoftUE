@@ -13,5 +13,8 @@ public interface SingInTokenRepository extends JpaRepository<SingInToken,String>
     List<SingInToken> searchTokensByDate(@Param("dateMinusOneDay") LocalDateTime dateMinusOneDay);
     @Query("SELECT s FROM SingInToken s WHERE s.token = :token")
     SingInToken findByToken(@Param("token") String token);
+    @Query("SELECT t FROM SingInToken t JOIN t.usuario_codigo u WHERE u.correo = :email")
+    SingInToken findTokenByEmail(@Param("email") String email);
+
 
 }

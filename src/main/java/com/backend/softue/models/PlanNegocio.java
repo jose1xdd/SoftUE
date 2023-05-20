@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -36,10 +37,11 @@ public class PlanNegocio {
     private String areaEnfoque;
 
     @NotNull
-    @Column(nullable = false, name = "Docente_codigo")
-    //private Docente docente;
-    //@Transient
-    private Integer codigoDocente;
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "tutor_codigo")
+    private Docente tutor;
+    @Transient
+    private Integer codigoTutor;
 
     @NotNull
     @Column(nullable = false)
@@ -52,6 +54,12 @@ public class PlanNegocio {
     private Integer codigoEsdiante;
 
     @NotNull
-    @Column(nullable = false)
+    @Column(nullable = false, name = "documento_plan_id")
     private Integer IdDocumentoPlan;
+
+    @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
+    private Set<EvaluacionPlan> evaluaciones;
+
+    @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
+    private Set<DocenteApoyoPlan> docentesApoyo;
 }
