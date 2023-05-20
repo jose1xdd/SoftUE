@@ -66,4 +66,7 @@ public class PlanNegocio {
 
     @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
     private Set<PlanPresentado> estudiantesIntegrantes;
+
+    @OneToMany(mappedBy = "planNegocioId", fetch = FetchType.LAZY)
+    private Set<ObservacionPlan> observaciones;
 }

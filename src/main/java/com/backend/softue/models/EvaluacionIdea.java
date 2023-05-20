@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -34,4 +35,7 @@ public class EvaluacionIdea {
 
     @Transient
     private Integer ideaNegocioID;
+
+    @OneToMany(mappedBy = "evaluacionIdeaId", fetch = FetchType.LAZY)
+    private Set<CalificacionIdea> calificaciones;
 }
