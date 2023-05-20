@@ -65,7 +65,7 @@ public class JWTUtil {
 
     /**
      * Method to validate and read the JWT
-     *
+     * SE TRAE EL ROL
      * @param jwt
      * @return
      */
@@ -80,7 +80,7 @@ public class JWTUtil {
 
     /**
      * Method to validate and read the JWT
-     *
+     *SE TRAE EL EMAIL
      * @param jwt
      * @return
      */
@@ -113,5 +113,32 @@ public class JWTUtil {
             return false;
         }
     }
+
+    public String refresh(String jwt) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(DatatypeConverter.parseBase64Binary(key))
+                    .parseClaimsJws(jwt)
+                    .getBody();
+
+            Date now = new Date();
+            Date expirationDate = claims.getExpiration();
+
+            // Comprueba si el token ya ha expirado
+            if (expirationDate.before(now)) {
+                // Genera un nuevo JWT con la misma información, pero con una nueva fecha de expiración
+                String id = claims.getId();
+                String subject = claims.getSubject();
+                return create(id, subject);
+            }
+
+            // Si el token no ha expirado, devuelve el mismo token sin cambios
+            return jwt;
+        } catch (Exception e) {
+            // Maneja cualquier excepción como token inválido o firma incorrecta
+            return null;
+        }
+    }
+
 
 }
