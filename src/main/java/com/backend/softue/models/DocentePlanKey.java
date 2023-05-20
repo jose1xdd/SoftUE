@@ -14,9 +14,9 @@ import java.io.Serializable;
 @Embeddable
 public class DocentePlanKey implements Serializable {
 
-    @Column(name = "docente_codigo")
+    @Column(nullable = false, name = "docente_codigo")
     private Integer codigoDocente;
 
-    @Column(name = "planNegocio_id")
+    @Column(nullable = false, name = "planNegocio_id")
     private Integer planNegocio;
 }

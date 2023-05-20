@@ -4,17 +4,19 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
 @Embeddable
-public class DocenteIdeaKey {
+public class DocenteIdeaKey implements Serializable {
 
-    @Column(name = "docente_codigo")
+    @Column(nullable = false, name = "docente_codigo")
     private Integer codigoDocente;
 
-    @Column(name = "ideaNegocio_id")
+    @Column(nullable = false, name = "ideaNegocio_id")
     private Integer ideaNegocio;
 }
