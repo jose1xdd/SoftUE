@@ -7,6 +7,7 @@ import com.backend.softue.repositories.FotoRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UserRepository;
 import com.backend.softue.security.Hashing;
+import com.backend.softue.security.Roles;
 import com.backend.softue.utils.auxiliarClases.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,8 @@ import java.util.Optional;
 @Service
 public class UserServices {
 
-    private final String[] validRol = {"estudiante", "coordinador", "administrativo", "docente"};
+    @Autowired
+    private Roles roles;
     @Autowired
     private SingInTokenRepository singInTokenRepository;
     @Autowired
@@ -56,12 +58,22 @@ public class UserServices {
         User userData = this.userRepository.save(user);
     }
 
-    private Boolean validateUserRol(String rol) {
-        rol = rol.toLowerCase();
-        for (String data : this.validRol) {
-            if (data.equals(rol)) return true;
+    public void actualizarUsuario(User user, String JWT) {
+        User result = this.userRepository.findByCorreo(user.getCorreo());
+        if (result == null) throw new RuntimeException("El usuario no existe");
+        if (this.encrypt.getJwt().getKey(JWT).equals(user.getCorreo())) {
+            this.userRepository.save(user);
         }
-        return false;
+        else {
+            if(this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipo_usuario())) {
+                this.userRepository.save(user);
+            }
+            else throw new RuntimeException("Las credenciales de rol no permiten modifcar este usuario");
+        }
+    }
+
+    private Boolean validateUserRol(String rol) {
+        return this.roles.getNombreRoles().contains(rol.toLowerCase());
     }
 
     public String savePicture(MultipartFile file, Integer id) throws IOException, SQLException {
@@ -83,5 +95,8 @@ public class UserServices {
         userRepository.save(user);
         return "Saved";
     }
-
+    public void logout(String jwt){
+        SingInToken token = this.singInTokenRepository.findByToken(jwt);
+        this.singInTokenRepository.delete(token);
+    }
 }
