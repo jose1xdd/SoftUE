@@ -33,9 +33,6 @@ public class EvaluacionIdea {
     @JoinColumn(name = "idea_negocio", nullable = false)
     private IdeaNegocio ideaNegocio;
 
-    @Transient
-    private Integer ideaNegocioID;
-
     @OneToMany(mappedBy = "evaluacionIdeaId", fetch = FetchType.LAZY)
     private Set<CalificacionIdea> calificaciones;
 }

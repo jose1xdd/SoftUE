@@ -19,6 +19,8 @@ public class FotoEntidadFinanciadora {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Lob
+    @Column(nullable = false,columnDefinition = "LONGBLOB")
     private Blob foto;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "fotoEntidadFinanciadoraId")
