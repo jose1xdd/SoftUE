@@ -18,32 +18,32 @@ public class CalificacionPlan {
     @EmbeddedId
     private CalificacionIdeaKey id;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'codigoDocente' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el codigoDocente de la calificacion del plan.")
     @ManyToOne
     @MapsId("codigoDocente")
     @JoinColumn(nullable = false, name = "docente_codigo")
     private Docente docente;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'evaluacionPlanId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la evaluacionPlanId de la calificacion del plan.")
     @ManyToOne
     @MapsId("evaluacionPlanId")
     @JoinColumn(nullable = false, name = "evaluacion_plan_id")
     private EvaluacionPlan evaluacionPlanId;
 
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "Error: El campo 'estado' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el estado de la calificacion del plan.")
+    @NotNull(message = "Error: El campo 'estado' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estado de la calificacion del plan.")
     @Column(nullable = false)
     private String estado;
 
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "Error: El campo 'observacion' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la observacion de la calificacion del plan.")
+    @NotNull(message = "Error: El campo 'observacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la observacion de la calificacion del plan.")
     private String observacion;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'fecha_inicio' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha_inicio de la calificacion del plan.")
     @Column(nullable = false, name = "fecha_inicio")
     private LocalDate fechaInicio;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'fecha_corte' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha_corte de la calificacion del plan.")
     @Column(nullable = false, name = "fecha_corte")
     private LocalDate fechaCorte;
 }

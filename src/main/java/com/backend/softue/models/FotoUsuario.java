@@ -20,7 +20,7 @@ public class FotoUsuario {
     private Integer id;
 
     @Lob
-    @Column(nullable = false,columnDefinition = "LONGBLOB")
+    @Column(nullable = false, columnDefinition = "LONGBLOB")
     private Blob foto;
 
     @OneToOne(fetch = FetchType.LAZY)
