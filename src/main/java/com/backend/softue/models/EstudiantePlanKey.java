@@ -12,6 +12,7 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Embeddable
+
 public class EstudiantePlanKey implements Serializable {
 
     @Column(nullable = false, name = "estudiante_codigo")
