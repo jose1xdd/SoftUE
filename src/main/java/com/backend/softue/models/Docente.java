@@ -16,18 +16,18 @@ import java.util.Set;
 @Table(name = "Docente")
 public class Docente extends User {
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'cedula' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la cedula del Docente.")
+    @NotNull(message = "Error: El campo 'cedula' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la cedula del Docente.")
     @Column(nullable = false)
     private String cedula;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'titulo' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el titulo del Docente.")
+    @NotNull(message = "Error: El campo 'titulo' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el titulo del Docente.")
     @Column(nullable = false)
     private String titulo;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'area' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el area especializada del Docente.")
+    @NotNull(message = "Error: El campo 'area' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el area especializada del Docente.")
     @Column(nullable = false)
     private String area;
 
@@ -54,5 +54,6 @@ public class Docente extends User {
 
     @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
     private Set<CalificacionPlan> planesCalificados;
+
 
 }

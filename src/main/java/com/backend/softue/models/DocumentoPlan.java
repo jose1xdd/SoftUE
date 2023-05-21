@@ -22,7 +22,7 @@ public class DocumentoPlan {
     private Integer documentoPlanId;
 
     @Lob
-    @Column(nullable = false,columnDefinition = "LONGBLOB")
+    @Column(nullable = false, columnDefinition = "LONGBLOB")
     private Blob documento;
 
     @OneToOne(mappedBy = "documentoPlan")

@@ -20,7 +20,7 @@ public class DocumentoIdea {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "documento_idea_id")
     private Integer documentoIdeaId;
-
+    
     @Lob
     @Column(nullable = false, columnDefinition = "LONGBLOB")
     private Blob documento;

@@ -15,11 +15,11 @@ import java.io.Serializable;
 @Embeddable
 public class DocentePlanKey implements Serializable {
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'codigoDocente' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el codigoDocente de la llave compuesta de los docentes de apoyo del plan de negocio (DocentePlanKey).")
     @Column(nullable = false, name = "docente_codigo")
     private Integer codigoDocente;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'planNegocio' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el planNegocio de la llave compuesta de los docentes de apoyo del plan de negocio (DocentePlanKey).")
     @Column(nullable = false, name = "planNegocio_id")
     private Integer planNegocio;
 }

@@ -19,15 +19,15 @@ public class EvaluacionPlan {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'fechaPresentacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de presentacion de la Evaluacion Plan.")
     @Column(nullable = false, name = "fecha_presentacion")
     private LocalDate fechaPresentacion;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'fechaCorte' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de corte de la Evaluacion Plan.")
     @Column(nullable = false, name="fecha_corte")
     private LocalDate fechaCorte;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'planNegocio' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el plan de negocio de la Evaluacion Plan.")
     @ManyToOne
     @JoinColumn(name = "plan_negocio", nullable = false)
     private PlanNegocio planNegocio;

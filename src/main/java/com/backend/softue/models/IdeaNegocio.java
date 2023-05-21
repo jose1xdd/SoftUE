@@ -20,30 +20,29 @@ public class IdeaNegocio {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'titulo' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el titulo de la Idea de Negocio.")
+    @NotNull(message = "Error: El campo 'titulo' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el titulo de la Idea de Negocio.")
     @Column(nullable = false)
     private String titulo;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'estado' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estado de la Idea de Negocio.")
     @Column(nullable = false)
     private Character estado;
 
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "Error: El campo 'areaEnfoque' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el area de enfoque de la Idea de Negocio.")
+    @NotNull(message = "Error: El campo 'areaEnfoque' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el area de enfoque de la Idea de Negocio.")
     @Column(nullable = false)
     private String areaEnfoque;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false, name = "tutor_codigo")
     private Docente tutor;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion de la Idea de Negocio.")
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider de la Idea de Negocio.")
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
@@ -60,8 +59,10 @@ public class IdeaNegocio {
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<DocenteApoyoIdea> docentesApoyo;
 
+
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<IdeaPlanteada> estudiantesIntegrantes;
+
 
     @OneToMany(mappedBy = "ideaNegocioId", fetch = FetchType.LAZY)
     private Set<ObservacionIdea> observaciones;

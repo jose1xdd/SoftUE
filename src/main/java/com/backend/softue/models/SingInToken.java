@@ -22,12 +22,13 @@ public class SingInToken {
     @Id
     @Column(nullable = false)
     @ColumnDefault(value="CURRENT_TIMESTAMP")
-    @NotBlank(message = "")
-    @NotNull(message = "")
+
+    @NotBlank(message = "Error: El campo 'token' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el token del SingInToken.")
+    @NotNull(message = "Error: El campo 'token' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el token del SingInToken.")
     private String token;
 
     @Column(nullable = false)
-    @NotNull(message = "")
+    @NotNull(message = "Error: El campo 'fecha_caducidad' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de caducidad del SingInToken.")
     private LocalDateTime fecha_caducidad;
 
     @OneToOne()
