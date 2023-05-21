@@ -83,5 +83,8 @@ public class UserServices {
         userRepository.save(user);
         return "Saved";
     }
-
+    public void logout(String jwt){
+        SingInToken token = this.singInTokenRepository.findByToken(jwt);
+        this.singInTokenRepository.delete(token);
+    }
 }

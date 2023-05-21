@@ -11,6 +11,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @Embeddable
 public class ObservacionPlanKey implements Serializable {
 
