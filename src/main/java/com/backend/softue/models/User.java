@@ -41,6 +41,7 @@ public class User {
     @Column(nullable = false)
     private String sexo;
 
+
     @Email(message = "Error: El campo 'email' no es valido. Asegúrese de proporcionar una direccion de correo electronico valida para el usuario.")
     @NotBlank(message = "Error: El campo 'email' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el email del usuario.")
     @NotNull(message = "Error: El campo 'email' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el email del usuario.")
