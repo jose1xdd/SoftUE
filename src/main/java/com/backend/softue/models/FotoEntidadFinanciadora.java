@@ -1,10 +1,11 @@
 package com.backend.softue.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.sql.Blob;
-
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,21 +13,17 @@ import java.sql.Blob;
 @Setter
 @ToString
 @Entity
-@Table(name="Foto_usuario")
-public class FotoUsuario {
+@Table(name = "Foto_entidad_financiadora")
+public class FotoEntidadFinanciadora {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
     private Integer id;
 
     @Lob
     @Column(nullable = false, columnDefinition = "LONGBLOB")
     private Blob foto;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "foto_usuario")
-    private User usuarioCodigo;
-    @Transient
-    private Integer fotoUsuarioId;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "fotoEntidadFinanciadoraId")
+    private EntidadFinanciadora entidadFinanciadoraId;
+
 }
