@@ -25,29 +25,29 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/register")
 public class RegisterController {
     @Autowired
-    UserServices userServices;
+    private UserServices userServices;
 
     @Autowired
-    EstudianteServices estudianteServices;
+    private EstudianteServices estudianteServices;
 
     @Autowired
-    DocenteServices docenteServices;
+    private DocenteServices docenteServices;
 
     @Autowired
-    ErrorFactory errorFactory;
+    private ErrorFactory errorFactory;
 
     @PostMapping()
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult bindingResult) {
-       try {
-           if (bindingResult.hasErrors()) {
-               String errorMessages = errorFactory.errorGenerator(bindingResult);
-               return new ResponseEntity<ResponseError>(new ResponseError(errorMessages), HttpStatus.BAD_REQUEST);
-           }
-           return new ResponseEntity<ResponseToken>(new ResponseToken(this.userServices.registerUser(user)), HttpStatus.OK);
-       }
-       catch (Exception e ){
+        try {
+            if (bindingResult.hasErrors()) {
+                String errorMessages = errorFactory.errorGenerator(bindingResult);
+                return new ResponseEntity<ResponseError>(new ResponseError(errorMessages), HttpStatus.BAD_REQUEST);
+            }
+            this.userServices.registerUser(user);
+            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("Usuario Registrado Correctamente"), HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
-       }
+        }
     }
 
     @PostMapping("/estudiante")
@@ -59,8 +59,7 @@ public class RegisterController {
             }
             this.estudianteServices.registrarEstudiante(estudiante);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El estudiante se registro correctamente"), HttpStatus.OK);
-        }
-        catch (Exception e ){
+        } catch (Exception e) {
             return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
@@ -74,8 +73,7 @@ public class RegisterController {
             }
             this.docenteServices.registrarDocente(docente);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El docente se registro correctamente"), HttpStatus.OK);
-        }
-        catch (Exception e ){
+        } catch (Exception e) {
             return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
