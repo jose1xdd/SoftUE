@@ -36,6 +36,7 @@ public class RegisterController {
     @Autowired
     private ErrorFactory errorFactory;
 
+
     @PostMapping()
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult bindingResult) {
         try {

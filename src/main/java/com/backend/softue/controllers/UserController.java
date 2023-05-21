@@ -54,7 +54,6 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
-
     @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping("/{email}")
     public ResponseEntity<?> visualizar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {

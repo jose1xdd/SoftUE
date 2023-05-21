@@ -8,7 +8,7 @@ import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UserRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
-import com.backend.softue.utils.auxiliarClases.LoginResponse;
+import com.backend.softue.utils.response.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
