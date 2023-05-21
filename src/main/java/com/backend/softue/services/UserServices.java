@@ -62,10 +62,12 @@ public class UserServices {
         User result = this.userRepository.findByCorreo(user.getCorreo());
         if (result == null) throw new RuntimeException("El usuario no existe");
         if (this.encrypt.getJwt().getKey(JWT).equals(user.getCorreo())) {
+            user.setCodigo(result.getCodigo());
             this.userRepository.save(user);
         }
         else {
             if(this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipo_usuario())) {
+                user.setCodigo(result.getCodigo());
                 this.userRepository.save(user);
             }
             else throw new RuntimeException("Las credenciales de rol no permiten modifcar este usuario");
