@@ -26,6 +26,7 @@ public class EstudianteServices {
         usuarioServices.actualizarUsuario((User) estudiante, jwt);
         Estudiante result = this.estudianteRepository.findByCorreo(estudiante.getCorreo());
         estudiante.setCodigo(result.getCodigo());
+        estudiante.setContrasenia(result.getContrasenia());
         this.estudianteRepository.save(estudiante);
     }
 }

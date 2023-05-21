@@ -31,17 +31,11 @@ public class RegisterController {
     private EstudianteServices estudianteServices;
 
     @Autowired
-<<<<<<< HEAD
-    DocenteServices docenteServices;
-
-    @Autowired
-    ErrorFactory errorFactory;
-=======
     private DocenteServices docenteServices;
 
     @Autowired
     private ErrorFactory errorFactory;
->>>>>>> main
+
 
     @PostMapping()
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult bindingResult) {
@@ -81,21 +75,6 @@ public class RegisterController {
             this.docenteServices.registrarDocente(docente);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El docente se registro correctamente"), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PostMapping("/docente")
-    public ResponseEntity<?> registrarDocente(@Valid @RequestBody Docente docente, BindingResult bindingResult) {
-        try {
-            if (bindingResult.hasErrors()) {
-                String errorMessages = errorFactory.errorGenerator(bindingResult);
-                return new ResponseEntity<ResponseError>(new ResponseError(errorMessages), HttpStatus.BAD_REQUEST);
-            }
-            this.docenteServices.registrarDocente(docente);
-            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El docente se registro correctamente"), HttpStatus.OK);
-        }
-        catch (Exception e ){
             return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }

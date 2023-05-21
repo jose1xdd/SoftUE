@@ -20,4 +20,12 @@ public class DocenteServices {
         docenteRepository.save(docente);
     }
 
+    public void actualizarDocente(Docente docente, String jwt) {
+        usuarioServices.actualizarUsuario((User) docente, jwt);
+        Docente result = this.docenteRepository.findByCorreo(docente.getCorreo());
+        docente.setCodigo(result.getCodigo());
+        docente.setContrasenia(result.getContrasenia());
+        this.docenteRepository.save(docente);
+    }
+
 }

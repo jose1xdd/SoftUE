@@ -1,7 +1,8 @@
 package com.backend.softue.controllers;
 
+import com.backend.softue.models.Docente;
 import com.backend.softue.models.Estudiante;
-import com.backend.softue.services.EstudianteServices;
+import com.backend.softue.services.DocenteServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
@@ -12,18 +13,17 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController()
-@RequestMapping("/estudiante")
-public class EstudianteController {
+@RequestMapping("/docente")
+public class DocenteController {
 
     @Autowired
-    private EstudianteServices estudianteServices;
-
-    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo"})
+    private DocenteServices docenteServices;
+    @CheckSession(permitedRol ={"docente", "coordinador", "administrativo"})
     @PatchMapping("/update")
-    public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @Valid @RequestBody Estudiante estudiante, BindingResult bindingResult) {
+    public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @Valid @RequestBody Docente docente, BindingResult bindingResult) {
         try {
-            this.estudianteServices.actualizarEstudiante(estudiante, jwt);
-            return ResponseEntity.ok(new ResponseConfirmation("El estudiante ha sido actualizado correctamente"));
+           this.docenteServices.actualizarDocente(docente, jwt);
+            return ResponseEntity.ok(new ResponseConfirmation("El docente ha sido actualizado correctamente"));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
