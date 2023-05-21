@@ -63,15 +63,27 @@ public class UserServices {
         if (result == null) throw new RuntimeException("El usuario no existe");
         if (this.encrypt.getJwt().getKey(JWT).equals(user.getCorreo())) {
             user.setCodigo(result.getCodigo());
+            user.setContrasenia(result.getContrasenia());
             this.userRepository.save(user);
         }
         else {
             if(this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipo_usuario())) {
                 user.setCodigo(result.getCodigo());
+                user.setContrasenia(result.getContrasenia());
                 this.userRepository.save(user);
             }
             else throw new RuntimeException("Las credenciales de rol no permiten modifcar este usuario");
         }
+    }
+
+    public User obtenerUsuario(String email) {
+        if(email != null) {
+            User result = this.userRepository.findByCorreo(email);
+            if(result == null) throw new RuntimeException("El usuario no existe");
+            result.setFotoUsuarioId(result.getFoto_usuario().getId());
+            return result;
+        }
+        throw new RuntimeException("No se envió información con la que buscar al usuario");
     }
 
     private Boolean validateUserRol(String rol) {
@@ -100,5 +112,14 @@ public class UserServices {
     public void logout(String jwt){
         SingInToken token = this.singInTokenRepository.findByToken(jwt);
         this.singInTokenRepository.delete(token);
+    }
+
+    public byte[] obtenerFoto(String id) throws SQLException, IOException {
+        if(id != null) {
+            FotoUsuario result = this.fotoRepository.getReferenceById(Integer.parseInt(id));
+            if(result == null) throw new RuntimeException("La foto no existe");
+            return result.getFoto().getBytes(1, (int) result.getFoto().length());
+        }
+        throw new RuntimeException("No se envió información con la que buscar la foto");
     }
 }
