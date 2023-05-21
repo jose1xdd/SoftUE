@@ -2,21 +2,24 @@ package com.backend.softue.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.io.Serializable;
 
+@Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-@Embeddable
-public class DocentePlanKey implements Serializable {
+public class CalificacionPlanKey implements Serializable {
 
-    @Column(nullable = false, name = "docente_codigo")
+    @NotNull
+    @Column(name = "docente_codigo")
     private Integer codigoDocente;
 
-    @Column(nullable = false, name = "planNegocio_id")
-    private Integer planNegocio;
+    @NotNull
+    @Column(name = "evaluacion_plan_id")
+    private Integer evaluacionPlanId;
 }

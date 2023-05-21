@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -30,4 +31,7 @@ public class EvaluacionPlan {
     @ManyToOne
     @JoinColumn(name = "plan_negocio", nullable = false)
     private PlanNegocio planNegocio;
+
+    @OneToMany(mappedBy = "evaluacionPlanId", fetch = FetchType.LAZY)
+    private Set<CalificacionPlan> calificaciones;
 }

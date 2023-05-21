@@ -12,10 +12,10 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Embeddable
-public class DocenteIdeaKey implements Serializable {
+public class EstudianteIdeaKey implements Serializable {
 
-    @Column(nullable = false, name = "docente_codigo")
-    private Integer codigoDocente;
+    @Column(nullable = false, name = "estudiante_codigo")
+    private Integer codigoEstudiante;
 
     @Column(nullable = false, name = "ideaNegocio_id")
     private Integer ideaNegocio;

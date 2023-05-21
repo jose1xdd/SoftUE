@@ -32,14 +32,27 @@ public class Docente extends User {
     private String area;
 
     @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
-    private Set<DocenteApoyoPlan> docentesApoyoPlan;
+    private Set<DocenteApoyoPlan> planesApoyados;
 
     @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
-    private Set<DocenteApoyoIdea> docentesApoyoIdea;
+    private Set<DocenteApoyoIdea> ideasApoyadas;
 
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY)
     private Set<IdeaNegocio> ideasTutoradas;
 
     @OneToMany(mappedBy = "tutor", fetch = FetchType.LAZY)
     private Set<PlanNegocio> planesTutoradas;
+
+    @OneToMany(mappedBy = "docenteId", fetch = FetchType.LAZY)
+    private Set<ObservacionPlan> observacionesPlan;
+
+    @OneToMany(mappedBy = "docenteId", fetch = FetchType.LAZY)
+    private Set<ObservacionIdea> observacionesIdea;
+
+    @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
+    private Set<CalificacionIdea> ideasCalificadas;
+
+    @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
+    private Set<CalificacionPlan> planesCalificados;
+
 }

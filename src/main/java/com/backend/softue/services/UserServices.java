@@ -55,7 +55,6 @@ public class UserServices {
         this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userData, userData.getCodigo()));
         return jwt;
     }
-
     public String savePicture(MultipartFile file, Integer id) throws IOException, SQLException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (!optionalUser.isPresent()) {
@@ -75,6 +74,5 @@ public class UserServices {
         userRepository.save(user);
         return "Saved";
     }
-
 
 }
