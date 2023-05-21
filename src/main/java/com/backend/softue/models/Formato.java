@@ -20,11 +20,11 @@ public class Formato {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'modulo' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el modulo del formato.")
     @Column(nullable = false)
     private String modulo;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion del formato.")
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 

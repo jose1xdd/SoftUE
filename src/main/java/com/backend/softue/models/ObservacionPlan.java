@@ -17,24 +17,24 @@ public class ObservacionPlan {
     @EmbeddedId
     ObservacionPlanKey id;
 
+    @NotNull(message = "Error: El campo 'planNegocioId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el planNegocioId de la Observacion Plan.")
     @ManyToOne()
     @MapsId("planNegocioId")
     @JoinColumn(name = "plan_negocioId")
     private PlanNegocio planNegocioId;
 
-
+    @NotNull(message = "Error: El campo 'docenteId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el docenteId de la Observacion Plan.")
     @ManyToOne()
     @MapsId("docenteId")
     @JoinColumn(name = "docente_id")
     private Docente docenteId;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'retroalimentacion' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la retroalimentacion de la Observacion Plan.")
+    @NotNull(message = "Error: El campo 'retroalimentacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la retroalimentacion de la Observacion Plan.")
     @Column(nullable = false)
     private String retroalimentacion;
 
-    @NotBlank
-    @NotNull
+    @NotNull(message = "Error: El campo 'fecha' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de la Observacion Plan.")
     @Column(nullable = false)
     private LocalDateTime fecha;
 }

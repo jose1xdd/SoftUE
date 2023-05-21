@@ -16,18 +16,18 @@ import java.util.Set;
 @Table(name = "Estudiante")
 public class Estudiante extends User{
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'curso' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el curso del Estudiante.")
+    @NotNull(message = "Error: El campo 'curso' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el curso del Estudiante.")
     @Column(nullable = false)
     private String curso;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'nombreAcudiente' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el nombre del acudiente del Estudiante.")
+    @NotNull(message = "Error: El campo 'nombreAcudiente' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el nombre del acudiente del Estudiante.")
     @Column(nullable = false, name = "nombre_acudiente")
     private String nombreAcudiente;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'capacitacionAprobada' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la capacitacion aprobada del Estudiante.")
+    @NotNull(message = "Error: El campo 'capacitacionAprobada' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la capacitacion aprobada del Estudiante.")
     @Column(nullable = false, name = "capacitacion_aprobada")
     private String capacitacionAprobada;
 
