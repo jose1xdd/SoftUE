@@ -22,4 +22,10 @@ public class EstudianteServices {
         estudianteRepository.save(estudiante);
     }
 
+    public void actualizarEstudiante(Estudiante estudiante, String jwt) {
+        usuarioServices.actualizarUsuario((User) estudiante, jwt);
+        Estudiante result = this.estudianteRepository.findByCorreo(estudiante.getCorreo());
+        estudiante.setCodigo(result.getCodigo());
+        this.estudianteRepository.save(estudiante);
+    }
 }
