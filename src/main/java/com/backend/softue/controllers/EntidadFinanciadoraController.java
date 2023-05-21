@@ -56,13 +56,24 @@ public class EntidadFinanciadoraController {
     }
 
     @CheckSession(permitedRol ={"coordinador"})
-    @PostMapping("/saveFoto/{entidadFinanciadoraId}")
-    public ResponseEntity<?> guardarFoto(@RequestParam("photo") MultipartFile file,
-                                      @PathVariable("entidadFinanciadoraId") Integer entidadFinanciadoraId) {
+    @PostMapping("/guardarFoto/{correoEntidadFinanciadora}")
+    public ResponseEntity<?> guardarFoto(@RequestParam("foto") MultipartFile file,
+                                      @PathVariable("correoEntidadFinanciadora") String correoEntidadFinanciadora) {
         try {
-            return ResponseEntity.ok(this.entidadFinanciadoraServices.guardarFoto(file, entidadFinanciadoraId));
+            return ResponseEntity.ok(this.entidadFinanciadoraServices.guardarFoto(file, correoEntidadFinanciadora));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+
+    @CheckSession(permitedRol ={"coordinador"})
+    @DeleteMapping()
+    public ResponseEntity<?> eliminar(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam("idEntidadFinanciadora") Integer idEntidadFinanciadora) {
+        try {
+            this.entidadFinanciadoraServices.eliminar(idEntidadFinanciadora);
+            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("Entidad Financiadora eliminada correctamente"), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
     }
 }
