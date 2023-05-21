@@ -1,7 +1,14 @@
 package com.backend.softue.controllers;
 
+<<<<<<< HEAD
 import com.backend.softue.models.Estudiante;
 import com.backend.softue.models.User;
+=======
+import com.backend.softue.models.Docente;
+import com.backend.softue.models.Estudiante;
+import com.backend.softue.models.User;
+import com.backend.softue.services.DocenteServices;
+>>>>>>> c144854761d6eb3622a59a31cab5b57f8666a30d
 import com.backend.softue.services.EstudianteServices;
 import com.backend.softue.services.UserServices;
 import com.backend.softue.utils.response.ErrorFactory;
@@ -29,6 +36,9 @@ public class RegisterController {
     EstudianteServices estudianteServices;
 
     @Autowired
+    DocenteServices docenteServices;
+
+    @Autowired
     ErrorFactory errorFactory;
 
     @PostMapping()
@@ -54,6 +64,21 @@ public class RegisterController {
             }
             this.estudianteServices.registrarEstudiante(estudiante);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El estudiante se registro correctamente"), HttpStatus.OK);
+        }
+        catch (Exception e ){
+            return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/docente")
+    public ResponseEntity<?> registrarDocente(@Valid @RequestBody Docente docente, BindingResult bindingResult) {
+        try {
+            if (bindingResult.hasErrors()) {
+                String errorMessages = errorFactory.errorGenerator(bindingResult);
+                return new ResponseEntity<ResponseError>(new ResponseError(errorMessages), HttpStatus.BAD_REQUEST);
+            }
+            this.docenteServices.registrarDocente(docente);
+            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El docente se registro correctamente"), HttpStatus.OK);
         }
         catch (Exception e ){
             return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
