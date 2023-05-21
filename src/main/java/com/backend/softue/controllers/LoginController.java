@@ -2,12 +2,11 @@ package com.backend.softue.controllers;
 
 import com.backend.softue.security.JWTUtil;
 import com.backend.softue.services.UserServices;
-import com.backend.softue.utils.auxiliarClases.LoginResponse;
+import com.backend.softue.utils.response.LoginResponse;
 import com.backend.softue.utils.response.ErrorFactory;
 import com.backend.softue.utils.response.ResponseError;
 import com.backend.softue.utils.response.ResponseToken;
 import jakarta.validation.Valid;
-import org.apache.tomcat.Jar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

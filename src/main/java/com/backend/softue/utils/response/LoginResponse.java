@@ -1,4 +1,4 @@
-package com.backend.softue.utils.auxiliarClases;
+package com.backend.softue.utils.response;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
