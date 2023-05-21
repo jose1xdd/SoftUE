@@ -48,10 +48,11 @@ public class PlanNegocio {
     private LocalDate fechaCreacion;
 
     @NotNull
-    @Column(nullable = false, name = "Estudiante_codigo")
-    //private Estudiante estudiante;
-    //@Transient
-    private Integer codigoEsdiante;
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
+    private Estudiante estudianteLider;
+    @Transient
+    private Integer codigoEstudianteLider;
 
     @NotNull
     @Column(nullable = false, name = "documento_plan_id")
@@ -62,6 +63,9 @@ public class PlanNegocio {
 
     @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
     private Set<DocenteApoyoPlan> docentesApoyo;
+
+    @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
+    private Set<PlanPresentado> estudiantesIntegrantes;
 
     @OneToMany(mappedBy = "planNegocioId", fetch = FetchType.LAZY)
     private Set<ObservacionPlan> observaciones;
