@@ -23,4 +23,8 @@ public class Hashing {
     public String generarJWT(String id , String rol){
         return jwt.create(String.valueOf(id), rol);
     }
+
+    public JWTUtil getJwt() {
+        return jwt;
+    }
 }

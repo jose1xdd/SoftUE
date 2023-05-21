@@ -7,6 +7,7 @@ import com.backend.softue.repositories.FotoRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UserRepository;
 import com.backend.softue.security.Hashing;
+import com.backend.softue.security.Roles;
 import com.backend.softue.utils.auxiliarClases.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,18 @@ import java.util.Optional;
 
 @Service
 public class UserServices {
-    @Autowired
-    SingInTokenRepository singInTokenRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    Hashing encrypt;
 
     @Autowired
-    FotoRepository fotoRepository;
+    private Roles roles;
+    @Autowired
+    private SingInTokenRepository singInTokenRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private Hashing encrypt;
+
+    @Autowired
+    private FotoRepository fotoRepository;
 
     public String login(LoginResponse user) {
         SingInToken token = singInTokenRepository.findTokenByEmail(user.getEmail());
@@ -45,16 +49,33 @@ public class UserServices {
         return jwt;
     }
 
-    public String registerUser(User user) {
+    public void registerUser(User user) {
         User result = this.userRepository.findByCorreo(user.getCorreo());
         if (result != null) throw new RuntimeException("User already exists");
+        if (!this.validateUserRol(user.getTipo_usuario())) throw new RuntimeException("Use has Invalid Type");
+        user.setTipo_usuario(user.getTipo_usuario().toLowerCase());
         user.setContrasenia(encrypt.hash(user.getContrasenia()));
         User userData = this.userRepository.save(user);
-        String jwt = this.encrypt.generarJWT(userData.getCorreo(), userData.getTipo_usuario());
-        LocalDateTime newDateTime = LocalDateTime.now().plus(Duration.ofHours(1));
-        this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userData));
-        return jwt;
     }
+
+    public void actualizarUsuario(User user, String JWT) {
+        User result = this.userRepository.findByCorreo(user.getCorreo());
+        if (result == null) throw new RuntimeException("El usuario no existe");
+        if (this.encrypt.getJwt().getKey(JWT).equals(user.getCorreo())) {
+            this.userRepository.save(user);
+        }
+        else {
+            if(this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipo_usuario())) {
+                this.userRepository.save(user);
+            }
+            else throw new RuntimeException("Las credenciales de rol no permiten modifcar este usuario");
+        }
+    }
+
+    private Boolean validateUserRol(String rol) {
+        return this.roles.getNombreRoles().contains(rol.toLowerCase());
+    }
+
     public String savePicture(MultipartFile file, Integer id) throws IOException, SQLException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (!optionalUser.isPresent()) {
@@ -68,11 +89,14 @@ public class UserServices {
             fotoRepository.delete(existingPhoto);
         }
         Blob blob = new SerialBlob(file.getBytes());
-        FotoUsuario newPhoto = new FotoUsuario(null,blob,user, user.getCodigo());
+        FotoUsuario newPhoto = new FotoUsuario(null, blob, user);
         fotoRepository.save(newPhoto);
         user.setFoto_usuario(newPhoto);
         userRepository.save(user);
         return "Saved";
     }
-
+    public void logout(String jwt){
+        SingInToken token = this.singInTokenRepository.findByToken(jwt);
+        this.singInTokenRepository.delete(token);
+    }
 }
