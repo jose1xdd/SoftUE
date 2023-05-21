@@ -1,16 +1,24 @@
 package com.backend.softue.services;
 
+import com.backend.softue.models.FotoUsuario;
 import com.backend.softue.models.SingInToken;
 import com.backend.softue.models.User;
+import com.backend.softue.repositories.FotoRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UserRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.utils.auxiliarClases.LoginResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UserServices {
@@ -21,6 +29,8 @@ public class UserServices {
     @Autowired
     Hashing encrypt;
 
+    @Autowired
+    FotoRepository fotoRepository;
 
     public String login(LoginResponse user) {
         SingInToken token = singInTokenRepository.findTokenByEmail(user.getEmail());
@@ -44,6 +54,27 @@ public class UserServices {
         LocalDateTime newDateTime = LocalDateTime.now().plus(Duration.ofHours(1));
         this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userData, userData.getCodigo()));
         return jwt;
+    }
+
+    public String savePicture(MultipartFile file, Integer id) throws IOException, SQLException {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (!optionalUser.isPresent()) {
+            throw new RuntimeException("User not found");
+        }
+        User user = optionalUser.get();
+        if(user.getFoto_usuario()!=null){
+            System.out.println("albin");
+            System.out.println(fotoRepository.findAll().size());
+            System.out.println(user.getCodigo());
+            this.fotoRepository.deleteFotoById(user.getCodigo());
+            System.out.println(fotoRepository.findAll().size());
+            user.setFoto_usuario(null);
+        }
+        Blob blob = new SerialBlob(file.getBytes());
+        FotoUsuario savedPhoto =fotoRepository.save(new FotoUsuario(null, blob, user));
+        user.setFoto_usuario(savedPhoto);
+        this.userRepository.save(user);
+        return "Saved";
     }
 
 
