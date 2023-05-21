@@ -19,7 +19,7 @@ public class DocenteIdeaKey implements Serializable {
     @Column(nullable = false, name = "docente_codigo")
     private Integer codigoDocente;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'ideaNegocio' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el ideaNegocio de la llave compuesta de los docentes de apoyo de la idea de negocio (DocenteIdeaKey).")
     @Column(nullable = false, name = "ideaNegocio_id")
     private Integer ideaNegocio;
 }
