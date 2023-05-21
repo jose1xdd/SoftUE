@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -12,8 +13,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@Embeddable
+public class ObservacionIdeaKey implements Serializable {
 
-public class ObservacionIdeaKey {
     @Column(name = "idea_id")
     private Integer ideaNegocioId;
 
