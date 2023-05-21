@@ -40,8 +40,6 @@ public class PlanNegocio {
     @ManyToOne
     @JoinColumn(nullable = false, name = "tutor_codigo")
     private Docente tutor;
-    @Transient
-    private Integer codigoTutor;
 
     @NotNull
     @Column(nullable = false)
@@ -51,8 +49,6 @@ public class PlanNegocio {
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
-    @Transient
-    private Integer codigoEstudianteLider;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "documento_plan_id", referencedColumnName = "documento_plan_id")

@@ -30,10 +30,7 @@ public class SingInToken {
     @NotNull(message = "")
     private LocalDateTime fecha_caducidad;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne()
     @JoinColumn(name = "usuario_codigo")
     private User usuario_codigo;
-
-    @Transient
-    private Integer userCod;
 }
