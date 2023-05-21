@@ -12,6 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 @ToString
 public class CalificacionPlanKey implements Serializable {
 
