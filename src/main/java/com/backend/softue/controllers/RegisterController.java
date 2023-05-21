@@ -1,14 +1,9 @@
 package com.backend.softue.controllers;
 
-<<<<<<< HEAD
-import com.backend.softue.models.Estudiante;
-import com.backend.softue.models.User;
-=======
 import com.backend.softue.models.Docente;
 import com.backend.softue.models.Estudiante;
 import com.backend.softue.models.User;
 import com.backend.softue.services.DocenteServices;
->>>>>>> c144854761d6eb3622a59a31cab5b57f8666a30d
 import com.backend.softue.services.EstudianteServices;
 import com.backend.softue.services.UserServices;
 import com.backend.softue.utils.response.ErrorFactory;
