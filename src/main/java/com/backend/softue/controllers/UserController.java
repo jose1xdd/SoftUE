@@ -14,9 +14,9 @@ import java.sql.Blob;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    UserServices userServices;
+    private UserServices userServices;
     @Autowired
-    ErrorFactory errorFactory;
+    private ErrorFactory errorFactory;
 
     @PostMapping("/saveFoto/{userId}")
     public ResponseEntity<?> saveFoto(@RequestParam("photo") MultipartFile file,

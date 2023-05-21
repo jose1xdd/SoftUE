@@ -22,15 +22,17 @@ import java.util.Optional;
 
 @Service
 public class UserServices {
+
+    private final String[] validRol = {"estudiante", "coordinador", "administrativo", "docente"};
     @Autowired
-    SingInTokenRepository singInTokenRepository;
+    private SingInTokenRepository singInTokenRepository;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    Hashing encrypt;
+    private Hashing encrypt;
 
     @Autowired
-    FotoRepository fotoRepository;
+    private FotoRepository fotoRepository;
 
     public String login(LoginResponse user) {
         SingInToken token = singInTokenRepository.findTokenByEmail(user.getEmail());
@@ -45,16 +47,23 @@ public class UserServices {
         return jwt;
     }
 
-    public String registerUser(User user) {
+    public void registerUser(User user) {
         User result = this.userRepository.findByCorreo(user.getCorreo());
         if (result != null) throw new RuntimeException("User already exists");
+        if (!this.validateUserRol(user.getTipo_usuario())) throw new RuntimeException("Use has Invalid Type");
+        user.setTipo_usuario(user.getTipo_usuario().toLowerCase());
         user.setContrasenia(encrypt.hash(user.getContrasenia()));
         User userData = this.userRepository.save(user);
-        String jwt = this.encrypt.generarJWT(userData.getCorreo(), userData.getTipo_usuario());
-        LocalDateTime newDateTime = LocalDateTime.now().plus(Duration.ofHours(1));
-        this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userData));
-        return jwt;
     }
+
+    private Boolean validateUserRol(String rol) {
+        rol = rol.toLowerCase();
+        for (String data : this.validRol) {
+            if (data.equals(rol)) return true;
+        }
+        return false;
+    }
+
     public String savePicture(MultipartFile file, Integer id) throws IOException, SQLException {
         Optional<User> optionalUser = userRepository.findById(id);
         if (!optionalUser.isPresent()) {
@@ -68,7 +77,7 @@ public class UserServices {
             fotoRepository.delete(existingPhoto);
         }
         Blob blob = new SerialBlob(file.getBytes());
-        FotoUsuario newPhoto = new FotoUsuario(null,blob,user, user.getCodigo());
+        FotoUsuario newPhoto = new FotoUsuario(null, blob, user);
         fotoRepository.save(newPhoto);
         user.setFoto_usuario(newPhoto);
         userRepository.save(user);

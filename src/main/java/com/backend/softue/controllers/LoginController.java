@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/login")
 public class LoginController {
     @Autowired
-    UserServices userServices;
+    private UserServices userServices;
     @Autowired
-    ErrorFactory errorFactory;
+    private ErrorFactory errorFactory;
 
     @Autowired
     JWTUtil jwtUtil;

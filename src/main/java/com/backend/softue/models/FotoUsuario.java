@@ -27,6 +27,4 @@ public class FotoUsuario {
     @MapsId
     @JoinColumn(name = "foto_usuario")
     private User usuarioCodigo;
-    @Transient
-    private Integer fotoUsuarioId;
 }
