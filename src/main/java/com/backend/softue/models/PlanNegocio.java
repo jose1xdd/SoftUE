@@ -54,9 +54,11 @@ public class PlanNegocio {
     @Transient
     private Integer codigoEstudianteLider;
 
-    @NotNull
-    @Column(nullable = false, name = "documento_plan_id")
-    private Integer IdDocumentoPlan;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "documento_plan_id", referencedColumnName = "documento_plan_id")
+    private DocumentoPlan documentoPlan;
+    @Transient
+    private Integer idDocumentoPlan;
 
     @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
     private Set<EvaluacionPlan> evaluaciones;

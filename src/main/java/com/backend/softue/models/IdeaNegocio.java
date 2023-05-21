@@ -52,9 +52,11 @@ public class IdeaNegocio {
     @Transient
     private Integer codigoEstudianteLider;
 
-    @NotNull
-    @Column(nullable = false, name = "documento_idea_ID")
-    private Integer IdDocumentoIdea;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "documento_idea_id", referencedColumnName = "documento_idea_id")
+    private DocumentoIdea documentoIdea;
+    @Transient
+    private Integer idDocumentoIdea;
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<EvaluacionIdea> evaluaciones;

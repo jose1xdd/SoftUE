@@ -19,6 +19,6 @@ public class FotoUsuario {
     @Lob
     @Column(nullable = false)
     private Blob foto;
-    @OneToOne(fetch = FetchType.LAZY,mappedBy = "foto_usuario")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "foto_usuario")
     private User usuario_codigo;
 }
