@@ -62,18 +62,17 @@ public class UserServices {
             throw new RuntimeException("User not found");
         }
         User user = optionalUser.get();
-        if(user.getFoto_usuario()!=null){
-            System.out.println("albin");
-            System.out.println(fotoRepository.findAll().size());
-            System.out.println(user.getCodigo());
-            this.fotoRepository.deleteFotoById(user.getCodigo());
-            System.out.println(fotoRepository.findAll().size());
+        FotoUsuario existingPhoto = user.getFoto_usuario();
+        if (existingPhoto != null) {
             user.setFoto_usuario(null);
+            existingPhoto.setUsuarioCodigo(null);
+            fotoRepository.delete(existingPhoto);
         }
         Blob blob = new SerialBlob(file.getBytes());
-        FotoUsuario savedPhoto =fotoRepository.save(new FotoUsuario(null, blob, user));
-        user.setFoto_usuario(savedPhoto);
-        this.userRepository.save(user);
+        FotoUsuario newPhoto = new FotoUsuario(null,blob,user);
+        fotoRepository.save(newPhoto);
+        user.setFoto_usuario(newPhoto);
+        userRepository.save(user);
         return "Saved";
     }
 
