@@ -3,10 +3,7 @@ package com.backend.softue.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,18 +12,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@Embeddable
+@ToString
 @Entity
-public class ObservacionIdea  implements Serializable {
+@Table(name = "Observacion_idea")
+public class ObservacionIdea {
     @EmbeddedId
     ObservacionIdeaKey id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @MapsId("ideaNegocioId")
     @JoinColumn(name = "idea_negocio_Id")
     private IdeaNegocio ideaNegocioId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @MapsId("docenteId")
     @JoinColumn(name = "docente_id")
     private Docente docenteId;

@@ -12,17 +12,18 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Entity
+@Table(name = "Observacion_plan")
 public class ObservacionPlan {
     @EmbeddedId
     ObservacionPlanKey id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @MapsId("planNegocioId")
     @JoinColumn(name = "plan_negocioId")
     private PlanNegocio planNegocioId;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @MapsId("docenteId")
     @JoinColumn(name = "docente_id")
     private Docente docenteId;

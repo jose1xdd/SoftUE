@@ -64,5 +64,7 @@ public class User {
     @OneToOne(mappedBy = "usuarioCodigo",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
     private FotoUsuario foto_usuario;
+    @Transient
+    private Integer fotoUsuarioId;
 }
 

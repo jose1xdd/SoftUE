@@ -22,10 +22,9 @@ public class DocumentoPlan {
     private Integer documentoPlanId;
 
     @Lob
-    @NotNull
-    @NotBlank
+    @Column(nullable = false,columnDefinition = "LONGBLOB")
     private Blob documento;
 
-    @OneToOne(mappedBy = "documentoPlan", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "documentoPlan")
     private PlanNegocio planNegocio;
 }

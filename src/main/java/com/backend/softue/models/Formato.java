@@ -29,5 +29,6 @@ public class Formato {
     private LocalDate fechaCreacion;
 
     @Lob
+    @Column(nullable = false,columnDefinition = "LONGBLOB")
     private Blob documento;
 }
