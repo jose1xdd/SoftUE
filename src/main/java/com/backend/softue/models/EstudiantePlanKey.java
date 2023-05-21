@@ -12,6 +12,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @Embeddable
 public class EstudiantePlanKey implements Serializable {
 
