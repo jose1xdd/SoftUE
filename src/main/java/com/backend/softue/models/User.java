@@ -1,6 +1,5 @@
 package com.backend.softue.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -62,8 +61,8 @@ public class User {
     @Column(nullable = false)
     private String tipo_usuario;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "foto_usuario")
+    @OneToOne(mappedBy = "usuarioCodigo",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
     private FotoUsuario foto_usuario;
 }
 
