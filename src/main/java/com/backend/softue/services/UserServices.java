@@ -68,7 +68,7 @@ public class UserServices {
             fotoRepository.delete(existingPhoto);
         }
         Blob blob = new SerialBlob(file.getBytes());
-        FotoUsuario newPhoto = new FotoUsuario(null,blob,user, user.getCodigo());
+        FotoUsuario newPhoto = new FotoUsuario(null,blob,user);
         fotoRepository.save(newPhoto);
         user.setFoto_usuario(newPhoto);
         userRepository.save(user);
