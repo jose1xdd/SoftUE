@@ -15,12 +15,12 @@ public class DocenteApoyoPlan {
     @EmbeddedId
     private DocentePlanKey id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @MapsId("codigoDocente")
     @JoinColumn(name = "docente_codigo")
     private Docente docente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @MapsId("planNegocio")
     @JoinColumn(name = "planNegocio_id")
     private PlanNegocio planNegocio;

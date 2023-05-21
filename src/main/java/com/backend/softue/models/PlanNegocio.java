@@ -19,44 +19,41 @@ public class PlanNegocio {
     @Id
     private Integer id;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'titulo' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el titulo del Plan de Negocio.")
+    @NotNull(message = "Error: El campo 'titulo' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el titulo del Plan de Negocio.")
     @Column(nullable = false)
     private String titulo;
 
-    @NotBlank
+    @NotBlank(message = "Error: El campo 'resumen' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el resumen del Plan de Negocio.")
     private String resumen;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'estado' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estado del Plan de Negocio.")
     @Column(nullable = false)
     private Character estado;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'areaEnfoque' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el area de enfoque del Plan de Negocio.")
+    @NotNull(message = "Error: El campo 'areaEnfoque' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el area de enfoque del Plan de Negocio.")
     @Column(nullable = false)
     private String areaEnfoque;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false, name = "tutor_codigo")
     private Docente tutor;
-    @Transient
-    private Integer codigoTutor;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion del Plan de Negocio.")
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider del Plan de Negocio.")
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
-    @Transient
-    private Integer codigoEstudianteLider;
 
-    @NotNull
-    @Column(nullable = false, name = "documento_plan_id")
-    private Integer IdDocumentoPlan;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "documento_plan_id", referencedColumnName = "documento_plan_id")
+    private DocumentoPlan documentoPlan;
+    @Transient
+    private Integer idDocumentoPlan;
 
     @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
     private Set<EvaluacionPlan> evaluaciones;

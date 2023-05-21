@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -12,11 +13,14 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@Embeddable
+public class ObservacionIdeaKey implements Serializable {
 
-public class ObservacionIdeaKey {
+    @NotNull(message = "Error: El campo 'ideaNegocioId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el ideaNegocioId de la llave compuesta de ObservacionIdea.")
     @Column(name = "idea_id")
     private Integer ideaNegocioId;
 
+    @NotNull(message = "Error: El campo 'docenteId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el docenteId de la llave compuesta de ObservacionIdea.")
     @Column(name = "docente_id")
     private Integer docenteId;
 }

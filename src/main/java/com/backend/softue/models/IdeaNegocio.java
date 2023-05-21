@@ -20,41 +20,38 @@ public class IdeaNegocio {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotBlank
-    @NotNull
+    @NotBlank(message = "Error: El campo 'titulo' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el titulo de la Idea de Negocio.")
+    @NotNull(message = "Error: El campo 'titulo' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el titulo de la Idea de Negocio.")
     @Column(nullable = false)
     private String titulo;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'estado' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estado de la Idea de Negocio.")
     @Column(nullable = false)
     private Character estado;
 
-    @NotNull
-    @NotBlank
+    @NotBlank(message = "Error: El campo 'areaEnfoque' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el area de enfoque de la Idea de Negocio.")
+    @NotNull(message = "Error: El campo 'areaEnfoque' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el area de enfoque de la Idea de Negocio.")
     @Column(nullable = false)
     private String areaEnfoque;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false, name = "tutor_codigo")
     private Docente tutor;
-    @Transient
-    private Integer codigoTutor;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion de la Idea de Negocio.")
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 
-    @NotNull
+    @NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider de la Idea de Negocio.")
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
-    @Transient
-    private Integer codigoEstudianteLider;
 
-    @NotNull
-    @Column(nullable = false, name = "documento_idea_ID")
-    private Integer IdDocumentoIdea;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "documento_idea_id", referencedColumnName = "documento_idea_id")
+    private DocumentoIdea documentoIdea;
+    @Transient
+    private Integer idDocumentoIdea;
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<EvaluacionIdea> evaluaciones;

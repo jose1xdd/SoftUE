@@ -13,17 +13,18 @@ import java.sql.Blob;
 @Setter
 @ToString
 @Entity
-@Table(name = "Foto_entidad_financiadora")
-public class FotoEntidadFinanciadora {
+@Table(name = "Documento_plan")
+public class DocumentoPlan {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @Column(name = "documento_plan_id")
+    private Integer documentoPlanId;
 
     @Lob
     @Column(nullable = false, columnDefinition = "LONGBLOB")
-    private Blob foto;
+    private Blob documento;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "fotoEntidadFinanciadoraId")
-    private EntidadFinanciadora entidadFinanciadoraId;
-
+    @OneToOne(mappedBy = "documentoPlan")
+    private PlanNegocio planNegocio;
 }

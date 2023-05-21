@@ -41,7 +41,7 @@ public class UserServices {
             throw new RuntimeException("Invalid Password");
         String jwt = this.encrypt.generarJWT(userSaved.getCorreo(), userSaved.getTipo_usuario());
         LocalDateTime newDateTime = LocalDateTime.now().plus(Duration.ofHours(1));
-        this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userSaved, userSaved.getCodigo()));
+        this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userSaved));
         return jwt;
     }
 
@@ -52,7 +52,7 @@ public class UserServices {
         User userData = this.userRepository.save(user);
         String jwt = this.encrypt.generarJWT(userData.getCorreo(), userData.getTipo_usuario());
         LocalDateTime newDateTime = LocalDateTime.now().plus(Duration.ofHours(1));
-        this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userData, userData.getCodigo()));
+        this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userData));
         return jwt;
     }
     public String savePicture(MultipartFile file, Integer id) throws IOException, SQLException {
@@ -68,7 +68,7 @@ public class UserServices {
             fotoRepository.delete(existingPhoto);
         }
         Blob blob = new SerialBlob(file.getBytes());
-        FotoUsuario newPhoto = new FotoUsuario(null,blob,user);
+        FotoUsuario newPhoto = new FotoUsuario(null,blob,user, user.getCodigo());
         fotoRepository.save(newPhoto);
         user.setFoto_usuario(newPhoto);
         userRepository.save(user);
