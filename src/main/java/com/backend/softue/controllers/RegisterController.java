@@ -38,7 +38,8 @@ public class RegisterController {
                String errorMessages = errorFactory.errorGenerator(bindingResult);
                return new ResponseEntity<ResponseError>(new ResponseError(errorMessages), HttpStatus.BAD_REQUEST);
            }
-           return new ResponseEntity<ResponseToken>(new ResponseToken(this.userServices.registerUser(user)), HttpStatus.OK);
+           this.userServices.registerUser(user);
+           return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("Usuario Registrado Correctamente"), HttpStatus.OK);
        }
        catch (Exception e ){
             return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
