@@ -19,4 +19,5 @@ public class DocenteServices {
         usuarioServices.registerUser((User) docente);
         docenteRepository.save(docente);
     }
+
 }

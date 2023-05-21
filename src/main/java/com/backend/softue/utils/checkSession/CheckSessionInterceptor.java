@@ -29,7 +29,6 @@ public class CheckSessionInterceptor implements HandlerInterceptor {
             if (roles != null) {
                 String headerName = "X-Softue-JWT";
                 String headerActualName = request.getHeader(headerName);
-                System.out.println(headerActualName);
                 if (headerActualName == null) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Header name invalido");
                     return false;
@@ -43,7 +42,6 @@ public class CheckSessionInterceptor implements HandlerInterceptor {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Permisos Insuficientes");
                     return false;
                 }
-                System.out.println(sessionExpired(headerActualName));
                 if (!sessionExpired(headerActualName)) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Logout");
                     return false;
@@ -56,12 +54,15 @@ public class CheckSessionInterceptor implements HandlerInterceptor {
 
     private boolean sessionExpired(String token) {
         if (jwt.isTokenExpired(token)) return false;
-        List<SingInToken> tokensToDelete = this.query.findAll();
-        if(tokensToDelete.isEmpty()) return false;
-        for (SingInToken tokens : tokensToDelete) {
-            if (tokens.getToken().equals(token)) return false;
+        List<SingInToken> allsToken = this.query.findAll();
+        if(allsToken.isEmpty()) {
+            return false;
         }
-        return true;
+        for (SingInToken tokens : allsToken) {
+            if (tokens.getToken().equals(token))
+                return true;
+        }
+        return false;
     }
 
 

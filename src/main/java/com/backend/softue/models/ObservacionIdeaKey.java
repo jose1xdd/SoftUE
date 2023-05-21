@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 @Embeddable
 public class ObservacionIdeaKey implements Serializable {
 
