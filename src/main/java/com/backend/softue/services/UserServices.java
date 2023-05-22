@@ -24,6 +24,8 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Service
 public class UserServices {
@@ -52,7 +54,7 @@ public class UserServices {
         if (userSaved == null) throw new RuntimeException("Unregistered user");
         if (!encrypt.validate(user.getPassword(), userSaved.getContrasenia()))
             throw new RuntimeException("Invalid Password");
-        String jwt = this.encrypt.generarJWT(userSaved.getCorreo(), userSaved.getTipo_usuario());
+        String jwt = this.encrypt.generarJWT(userSaved.getCorreo(), userSaved.getTipoUsuario());
         LocalDateTime newDateTime = LocalDateTime.now().plus(Duration.ofHours(1));
         this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userSaved));
         return jwt;
@@ -61,8 +63,8 @@ public class UserServices {
     public void registerUser(User user) {
         User result = this.userRepository.findByCorreo(user.getCorreo());
         if (result != null) throw new RuntimeException("User already exists");
-        if (!this.validateUserRol(user.getTipo_usuario())) throw new RuntimeException("Use has Invalid Type");
-        user.setTipo_usuario(user.getTipo_usuario().toLowerCase());
+        if (!this.validateUserRol(user.getTipoUsuario())) throw new RuntimeException("Use has Invalid Type");
+        user.setTipoUsuario(user.getTipoUsuario().toLowerCase());
         user.setContrasenia(encrypt.hash(user.getContrasenia()));
         User userData = this.userRepository.save(user);
     }
@@ -75,7 +77,7 @@ public class UserServices {
             user.setContrasenia(result.getContrasenia());
             this.userRepository.save(user);
         } else {
-            if (this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipo_usuario())) {
+            if (this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipoUsuario())) {
                 user.setCodigo(result.getCodigo());
                 user.setContrasenia(result.getContrasenia());
                 this.userRepository.save(user);
@@ -131,7 +133,7 @@ public class UserServices {
         } else {
             resetToken = new ResetToken();
         }
-        String token = this.encrypt.generarJWT(user.getCorreo(), user.getTipo_usuario());
+        String token = this.encrypt.generarJWT(user.getCorreo(), user.getTipoUsuario());
         LocalDateTime newDateTime = LocalDateTime.now().plus(Duration.ofHours(1));
         resetToken.setToken(token);
         resetToken.setFecha_caducidad(newDateTime);
@@ -171,4 +173,10 @@ public class UserServices {
         else throw new RuntimeException("No se envió información con la que buscar al usuario");
 
     }
+
+    public List<User> listarUsuariosRol(String rol){
+        List<User>users = this.userRepository.findByTipoUsuario(rol);
+        return users;
+    }
+
 }

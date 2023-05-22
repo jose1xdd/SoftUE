@@ -65,7 +65,7 @@ public class UsuarioDeshabilitado {
         this.sexo = user.getSexo();
         this.correo = user.getCorreo();
         this.telefono = user.getTelefono();
-        this.tipo_usuario = user.getTipo_usuario();
+        this.tipo_usuario = user.getTipoUsuario();
     }
 
     public UsuarioDeshabilitado(Estudiante estudiante) {
@@ -76,7 +76,7 @@ public class UsuarioDeshabilitado {
         this.sexo = estudiante.getSexo();
         this.correo = estudiante.getCorreo();
         this.telefono = estudiante.getTelefono();
-        this.tipo_usuario = estudiante.getTipo_usuario();
+        this.tipo_usuario = estudiante.getTipoUsuario();
         this.curso = estudiante.getCurso();
         this.nombreAcudiente = estudiante.getNombreAcudiente();
         this.capacitacionAprobada = estudiante.getCapacitacionAprobada();
@@ -90,7 +90,7 @@ public class UsuarioDeshabilitado {
         this.sexo = docente.getSexo();
         this.correo = docente.getCorreo();
         this.telefono = docente.getTelefono();
-        this.tipo_usuario = docente.getTipo_usuario();
+        this.tipo_usuario = docente.getTipoUsuario();
         this.cedula = docente.getCedula();
         this.titulo = docente.getTitulo();
         this.area = docente.getArea();

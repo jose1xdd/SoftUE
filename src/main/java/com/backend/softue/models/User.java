@@ -62,8 +62,8 @@ public class User {
 
     @NotBlank(message = "Error: El campo 'tipo_usuario' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el tipo del usuario.")
     @NotNull(message = "Error: El campo 'tipo_usuario' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el tipo del usuario.")
-    @Column(nullable = false)
-    private String tipo_usuario;
+    @Column(name = "tipo_usuario",nullable = false)
+    private String tipoUsuario;
 
     @OneToOne(mappedBy = "usuarioCodigo",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
