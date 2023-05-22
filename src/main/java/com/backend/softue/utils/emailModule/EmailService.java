@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -30,10 +31,10 @@ public class EmailService {
             mensaje.setTo(destinatario);
             mensaje.setSubject(asunto);
             mensaje.setText(contenido);
-
             emailService.send(mensaje);
         });
     }
+
     public void enviarEmailRegistro(String email) {
         CompletableFuture.runAsync(() -> {
             try {
@@ -56,6 +57,5 @@ public class EmailService {
             }
         });
     }
-
-
 }
+

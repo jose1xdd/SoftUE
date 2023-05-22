@@ -21,12 +21,12 @@ public class EntidadFinanciadora {
 
     @NotBlank(message = "Error: El campo 'nombre' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el nombre de la Entidad financiadora.")
     @NotNull(message = "Error: El campo 'nombre' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el nombre de la Entidad financiadora.")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nombre;
 
     @NotBlank(message = "Error: El campo 'telefono' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el telefono de la Entidad financiadora.")
     @NotNull(message = "Error: El campo 'telefono' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el telefono de la Entidad financiadora.")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String telefono;
 
     @NotBlank(message = "Error: El campo 'sitioWeb' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el sitioWeb de la Entidad financiadora.")
@@ -36,7 +36,7 @@ public class EntidadFinanciadora {
 
     @Email(message = "Error: El campo 'correo' no es valido. Asegúrese de proporcionar una direccion de correo electronico valida para la Entidad financiadora.")
     @NotBlank(message = "Error: El campo 'correo' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el correo de la Entidad financiadora.")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String correo;
 
     @NotBlank(message = "Error: El campo 'descripcion' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la descripcion de la Entidad financiadora.")

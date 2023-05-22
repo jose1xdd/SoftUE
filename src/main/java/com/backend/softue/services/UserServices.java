@@ -4,10 +4,12 @@ import com.backend.softue.models.FotoUsuario;
 import com.backend.softue.models.ResetToken;
 import com.backend.softue.models.SingInToken;
 import com.backend.softue.models.User;
+import com.backend.softue.models.UsuarioDeshabilitado;
 import com.backend.softue.repositories.FotoRepository;
 import com.backend.softue.repositories.ResetTokenRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UserRepository;
+import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.emailModule.EmailService;
@@ -41,6 +43,8 @@ public class UserServices {
     private FotoRepository fotoRepository;
     @Autowired
     private EmailService emailGenericMessages;
+    @Autowired
+    private UsuarioDeshabilitadoRepository usuarioDeshabilitadoRepository;
 
     public String login(LoginResponse user) {
         SingInToken token = singInTokenRepository.findTokenByEmail(user.getEmail());
@@ -68,12 +72,27 @@ public class UserServices {
         User result = this.userRepository.findByCorreo(user.getCorreo());
         if (result == null) throw new RuntimeException("El usuario no existe");
         if (this.encrypt.getJwt().getKey(JWT).equals(user.getCorreo())) {
+            user.setCodigo(result.getCodigo());
+            user.setContrasenia(result.getContrasenia());
             this.userRepository.save(user);
-        } else {
-            if (this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipo_usuario())) {
+        }
+        else {
+            if(this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipo_usuario())) {
+                user.setCodigo(result.getCodigo());
+                user.setContrasenia(result.getContrasenia());
                 this.userRepository.save(user);
             } else throw new RuntimeException("Las credenciales de rol no permiten modifcar este usuario");
         }
+    }
+
+    public User obtenerUsuario(String email) {
+        if (email != null) {
+            User result = this.userRepository.findByCorreo(email);
+            if(result == null) throw new RuntimeException("El usuario no existe");
+            if(result.getFoto_usuario() != null) result.setFotoUsuarioId(result.getFoto_usuario().getId());
+            return result;
+        }
+        throw new RuntimeException("No se envió información con la que buscar al usuario");
     }
 
     private Boolean validateUserRol(String rol) {
@@ -123,14 +142,35 @@ public class UserServices {
         this.emailGenericMessages.enviarEmailRegistro(email);
         return token;
     }
-    public void resetPassword(String token,String password){
+    public void resetPassword(String token,String password) {
         ResetToken resetToken = this.resetTokenRepository.findByToken(token);
-        if(resetToken == null) throw  new RuntimeException("El ResetToken no existe");
+        if (resetToken == null) throw new RuntimeException("El ResetToken no existe");
         User user = resetToken.getUsuario_codigo();
         user.setContrasenia(this.encrypt.hash(password));
         this.userRepository.save(user);
         this.resetTokenRepository.delete(resetToken);
+    }
 
+
+    public byte[] obtenerFoto(String id) throws SQLException, IOException {
+        if(id != null) {
+            FotoUsuario result = this.fotoRepository.getReferenceById(Integer.parseInt(id));
+            if(result == null) throw new RuntimeException("La foto no existe");
+            return result.getFoto().getBytes(1, (int) result.getFoto().length());
+        }
+        throw new RuntimeException("No se envió información con la que buscar la foto");
+    }
+
+    public void deshabilitarUsuario(String email) {
+        if (email != null) {
+            User result = this.userRepository.findByCorreo(email);
+            if(result == null) throw new RuntimeException("El usuario no existe");
+            this.usuarioDeshabilitadoRepository.save(new UsuarioDeshabilitado(result));
+            SingInToken singInToken = this.singInTokenRepository.findTokenByEmail(email);
+            if(singInToken != null) this.singInTokenRepository.delete(singInToken);
+            this.userRepository.delete(result);
+        }
+        else throw new RuntimeException("No se envió información con la que buscar al usuario");
 
     }
 }
