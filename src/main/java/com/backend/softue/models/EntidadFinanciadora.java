@@ -1,5 +1,6 @@
 package com.backend.softue.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties({"fotoEntidadFinanciadoraId"})
 @Table(name = "Entidad_financiadora")
 public class EntidadFinanciadora {
 
@@ -48,5 +50,5 @@ public class EntidadFinanciadora {
     @JoinColumn(name = "foto_entidad_financiadora_id", referencedColumnName = "id")
     private FotoEntidadFinanciadora fotoEntidadFinanciadoraId;
     @Transient
-    private Integer fotoId;
+    private Integer fotoEntidadId;
 }
