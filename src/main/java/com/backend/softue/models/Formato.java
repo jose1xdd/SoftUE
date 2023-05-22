@@ -1,6 +1,7 @@
 package com.backend.softue.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -31,4 +32,9 @@ public class Formato {
     @Lob
     @Column(nullable = false,columnDefinition = "LONGBLOB")
     private Blob documento;
+
+    @NotNull(message = "Error: El campo 'extension' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la extensión del formato.")
+    @NotBlank(message = "Error: El campo 'extension' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la extensión del formato.")
+    @Column(nullable = false)
+    private String extension;
 }

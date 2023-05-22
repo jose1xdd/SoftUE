@@ -24,7 +24,6 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class UserServices {
