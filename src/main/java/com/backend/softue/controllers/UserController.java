@@ -7,7 +7,6 @@ import com.backend.softue.utils.response.ErrorFactory;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
