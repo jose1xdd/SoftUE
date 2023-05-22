@@ -42,7 +42,6 @@ public class DocenteController {
         }
     }
 
-    //Controller
     @CheckSession(permitedRol ={"coordinador", "administrativo"})
     @GetMapping("/deshabilitarDocente/{email}")
     public ResponseEntity<?> deshabilitarDocente(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {

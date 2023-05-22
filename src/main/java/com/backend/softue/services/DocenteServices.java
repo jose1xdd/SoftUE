@@ -15,12 +15,14 @@ public class DocenteServices {
     private DocenteRepository docenteRepository;
 
     @Autowired
-    private UserServices usuarioServices;
-    @Autowired
     private UsuarioDeshabilitadoRepository usuarioDeshabilitadoRepository;
 
     @Autowired
+    private UserServices usuarioServices;
+
+    @Autowired
     private SingInTokenRepository singInTokenRepository;
+
     public void registrarDocente(Docente docente) {
         usuarioServices.registerUser((User) docente);
         docenteRepository.save(docente);
@@ -42,7 +44,8 @@ public class DocenteServices {
         }
         throw new RuntimeException("No se envió información con la que buscar al usuario");
     }
-    //Services
+
+
     public void deshabilitarDocente(String email) {
         if (email != null) {
             Docente result = this.docenteRepository.findByCorreo(email);
