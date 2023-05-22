@@ -30,4 +30,8 @@ public class FormatoServices {
         }
         throw new RuntimeException("No se envió información con la que buscar el nombre del formato");
     }
+
+    public void guardarFormato(Formato formato) {
+        this.formatoRepository.save(formato);
+    }
 }
