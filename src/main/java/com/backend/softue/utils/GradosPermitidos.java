@@ -9,7 +9,7 @@ import java.util.Set;
 @Component
 @Getter
 @NoArgsConstructor
-public class AreasConocimiento {
-    private final Set<String> areasConocimiento = Set.of("minera", "agropecuaria", "comercial",
-            "servicios", "Industrial");
+public class GradosPermitidos {
+    private final Set<String> grados = Set.of("primero", "segundo", "tercero", "cuarto", "quinto", "sexto", "septimo", "octavo",
+            "noveno", "decimo", "once");
 }

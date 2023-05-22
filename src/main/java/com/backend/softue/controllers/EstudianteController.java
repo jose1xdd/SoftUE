@@ -63,4 +63,13 @@ public class EstudianteController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
+    @CheckSession(permitedRol = {"docente","coordinador", "administrativo"})
+    @GetMapping("/listar/{curso}")
+    public ResponseEntity<?> listarCurso(@PathVariable("curso") String curso) {
+        try {
+            return ResponseEntity.ok(this.estudianteServices.listarEstudiantesCurso(curso));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
 }
