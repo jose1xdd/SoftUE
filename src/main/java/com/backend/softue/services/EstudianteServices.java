@@ -29,4 +29,14 @@ public class EstudianteServices {
         estudiante.setContrasenia(result.getContrasenia());
         this.estudianteRepository.save(estudiante);
     }
+
+    public Estudiante obtenerEstudiante(String email) {
+        if (email != null) {
+            Estudiante result = this.estudianteRepository.findByCorreo(email);
+            if (result == null) throw new RuntimeException("El estudiante no existe");
+            if(result.getFoto_usuario() != null) result.setFotoUsuarioId(result.getFoto_usuario().getId());
+            return result;
+        }
+        throw new RuntimeException("No se envió información con la que buscar al usuario");
+    }
 }
