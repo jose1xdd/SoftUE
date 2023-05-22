@@ -27,5 +27,4 @@ public class DocenteServices {
         docente.setContrasenia(result.getContrasenia());
         this.docenteRepository.save(docente);
     }
-
 }

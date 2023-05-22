@@ -9,13 +9,12 @@ import com.backend.softue.utils.response.ResponseError;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Blob;
 
 @RestController
 @RequestMapping(value = {"/coordinador", "/administrativo"})
@@ -49,10 +48,35 @@ public class UserController {
     @PatchMapping("/update")
     public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @Valid @RequestBody User user, BindingResult bindingResult) {
         try {
+            if (bindingResult.hasErrors()) {
+                String errorMessages = errorFactory.errorGenerator(bindingResult);
+                return new ResponseEntity<ResponseError>(new ResponseError(errorMessages), HttpStatus.BAD_REQUEST);
+            }
             this.userServices.actualizarUsuario(user, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido actualizado correctamente"));
         }
         catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/{email}")
+    public ResponseEntity<?> visualizar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+        try {
+            return ResponseEntity.ok(this.userServices.obtenerUsuario(email));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+
+    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping(value = "/foto/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<?> obtenerFoto(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String id) {
+        try {
+            return ResponseEntity.ok(this.userServices.obtenerFoto(id));
+        }
+        catch (Exception e){
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
