@@ -26,11 +26,13 @@ public class EstudianteServices {
     private SingInTokenRepository singInTokenRepository;
 
     public void registrarEstudiante(Estudiante estudiante) {
+        if(!estudiante.getTipoUsuario().equals("estudiante")) throw new RuntimeException("No se puede registrar este usuario, no es un estudiante");
         usuarioServices.registerUser((User) estudiante);
         estudianteRepository.save(estudiante);
     }
 
     public void actualizarEstudiante(Estudiante estudiante, String jwt) {
+        if(!estudiante.getTipoUsuario().equals("estudiante")) throw new RuntimeException("No se puede actualizar este usuario, no se puede cambiar de rol");
         usuarioServices.actualizarUsuario((User) estudiante, jwt);
         Estudiante result = this.estudianteRepository.findByCorreo(estudiante.getCorreo());
         estudiante.setCodigo(result.getCodigo());
