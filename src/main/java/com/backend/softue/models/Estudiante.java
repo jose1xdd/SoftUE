@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "Estudiante")
-@JsonIgnoreProperties({"planesNegocioLideradas", "ideasNegocioLideradas", "ideasNegocio", "planesNegocio"})
+@JsonIgnoreProperties({"foto_usuario","planesNegocioLideradas", "ideasNegocioLideradas", "ideasNegocio", "planesNegocio"})
 public class Estudiante extends User{
 
     @NotBlank(message = "Error: El campo 'curso' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el curso del Estudiante.")
