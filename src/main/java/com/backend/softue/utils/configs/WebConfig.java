@@ -1,4 +1,4 @@
-package com.backend.softue.utils;
+package com.backend.softue.utils.configs;
 
 import com.backend.softue.utils.checkSession.CheckSessionInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;

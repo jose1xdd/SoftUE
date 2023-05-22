@@ -1,4 +1,4 @@
-package com.backend.softue.utils;
+package com.backend.softue.utils.configs;
 
 import com.backend.softue.models.ResetToken;
 import com.backend.softue.models.SingInToken;
