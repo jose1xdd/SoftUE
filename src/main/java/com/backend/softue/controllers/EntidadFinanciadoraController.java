@@ -98,7 +98,8 @@ public class EntidadFinanciadoraController {
     @GetMapping(value = "/foto/{email}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> visualizarFoto(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
         try {
-            return ResponseEntity.ok(this.entidadFinanciadoraServices.visualizarFoto(email));
+            byte [] foto = this.entidadFinanciadoraServices.visualizarFoto(email);
+            return ResponseEntity.ok(foto);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
