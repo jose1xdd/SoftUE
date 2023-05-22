@@ -14,6 +14,7 @@ import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.List;
 
 @Service
 public class EntidadFinanciadoraServices {
@@ -68,6 +69,28 @@ public class EntidadFinanciadoraServices {
         EntidadFinanciadora resultado = this.entidadFinanciadoraRepository.findById(idEntidadFinanciadora).get();
         if(resultado == null) throw new RuntimeException("La entidad financiadora a eliminar no existe");
         this.entidadFinanciadoraRepository.delete(resultado);
+    }
+
+    public EntidadFinanciadora visualizar(String correo) throws IOException{
+        EntidadFinanciadora entidadFinanciadora = this.entidadFinanciadoraRepository.findByCorreo(correo);
+        if(entidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no existe");
+        return entidadFinanciadora;
+    }
+
+    public byte[] visualizarFoto(String correo) throws IOException, SQLException{
+        EntidadFinanciadora entidadFinanciadora = this.entidadFinanciadoraRepository.findByCorreo(correo);
+        if(entidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no existe");
+        entidadFinanciadora.setFotoEntidadId(entidadFinanciadora.getFotoEntidadFinanciadoraId().getId());
+
+        FotoEntidadFinanciadora fotoEntidadFinanciadora = this.fotoEntidadFinanciadoraRepository.findById(entidadFinanciadora.getFotoEntidadId()).get();
+        if(fotoEntidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no tiene foto");
+        return fotoEntidadFinanciadora.getFoto().getBytes(1, (int) fotoEntidadFinanciadora.getFoto().length());
+    }
+
+    public List<EntidadFinanciadora> listar() throws IOException{
+        List<EntidadFinanciadora> entidadesFinanciadoras = this.entidadFinanciadoraRepository.findAll();
+        if(entidadesFinanciadoras.isEmpty()) throw new RuntimeException("No hay entidades financiadoras");
+        return entidadesFinanciadoras;
     }
 
 }
