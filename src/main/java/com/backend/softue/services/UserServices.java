@@ -77,10 +77,10 @@ public class UserServices {
     }
 
     public User obtenerUsuario(String email) {
-        if(email != null) {
+        if (email != null) {
             User result = this.userRepository.findByCorreo(email);
             if(result == null) throw new RuntimeException("El usuario no existe");
-            result.setFotoUsuarioId(result.getFoto_usuario().getId());
+            if(result.getFoto_usuario() != null) result.setFotoUsuarioId(result.getFoto_usuario().getId());
             return result;
         }
         throw new RuntimeException("No se envió información con la que buscar al usuario");
