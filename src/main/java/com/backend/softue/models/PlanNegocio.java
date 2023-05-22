@@ -21,7 +21,7 @@ public class PlanNegocio {
 
     @NotBlank(message = "Error: El campo 'titulo' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el titulo del Plan de Negocio.")
     @NotNull(message = "Error: El campo 'titulo' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el titulo del Plan de Negocio.")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String titulo;
 
     @NotBlank(message = "Error: El campo 'resumen' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el resumen del Plan de Negocio.")
