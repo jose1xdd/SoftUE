@@ -20,16 +20,10 @@ import java.util.List;
 public class EntidadFinanciadoraServices {
 
     @Autowired
-    private Roles roles;
-
-    @Autowired
     private EntidadFinanciadoraRepository entidadFinanciadoraRepository;
 
     @Autowired
     private FotoEntidadFinanciadoraRepository fotoEntidadFinanciadoraRepository;
-
-    @Autowired
-    private Hashing encrypt;
 
     public void crear(EntidadFinanciadora entidadFinanciadora) {
         EntidadFinanciadora resultado = this.entidadFinanciadoraRepository.findByCorreo(entidadFinanciadora.getCorreo());
