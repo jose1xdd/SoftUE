@@ -6,6 +6,7 @@ import com.backend.softue.services.DocenteServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,17 @@ public class DocenteController {
         try {
            this.docenteServices.actualizarDocente(docente, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El docente ha sido actualizado correctamente"));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+
+    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/{email}")
+    public ResponseEntity<?> visualizar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+        try {
+            return ResponseEntity.ok(this.docenteServices.obtenerDocente(email));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
