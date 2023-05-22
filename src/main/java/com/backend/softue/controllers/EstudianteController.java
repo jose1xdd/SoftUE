@@ -18,17 +18,24 @@ public class EstudianteController {
     @Autowired
     private EstudianteServices estudianteServices;
 
-    @GetMapping("/hola")
-    public String hello() {
-        return "HOLA MUNDO";
-    }
-
     @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo"})
     @PatchMapping("/update")
     public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @Valid @RequestBody Estudiante estudiante, BindingResult bindingResult) {
         try {
             this.estudianteServices.actualizarEstudiante(estudiante, jwt);
-            return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido actualizado correctamente"));
+            return ResponseEntity.ok(new ResponseConfirmation("El estudiante ha sido actualizado correctamente"));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+
+    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/{email}")
+    public ResponseEntity<?> visualizar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+        System.out.println(email);
+        try {
+            return ResponseEntity.ok(this.estudianteServices.obtenerEstudiante(email));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
