@@ -53,4 +53,14 @@ public class DocenteController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
+
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
+    @GetMapping("/listar")
+    public ResponseEntity<?> listar(@RequestHeader("X-Softue-JWT") String jwt) {
+        try {
+            return ResponseEntity.ok(this.docenteServices.listarDocentes());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
 }
