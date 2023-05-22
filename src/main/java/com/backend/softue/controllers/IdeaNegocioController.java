@@ -45,4 +45,20 @@ public class IdeaNegocioController {
         }
     }
 
+    @CheckSession(permitedRol ={"estudiante"})
+    @PatchMapping("/actualizarTitulo")
+    public ResponseEntity<?> actualizarTitulo(@Valid @RequestBody IdeaNegocio ideaNegocio,
+                                   BindingResult bindingResult) {
+        try {
+            if (bindingResult.hasErrors()) {
+                String errorMessages = errorFactory.errorGenerator(bindingResult);
+                return ResponseEntity.badRequest().body(new ResponseError(errorMessages));
+            }
+            this.ideaNegocioServices.actualizarTitulo(ideaNegocio);
+            return ResponseEntity.ok(new ResponseConfirmation("Título de la idea de negocio actualizado correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+
 }
