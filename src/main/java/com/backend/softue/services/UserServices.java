@@ -174,8 +174,11 @@ public class UserServices {
     }
 
     public List<User> listarUsuariosRol(String rol){
+        if(rol != "coordinador"|| rol != "administrativo") throw new RuntimeException("usa el metodo que corresponda para listar usuarios diferentes a coordiandor y administrativo");
         List<User>users = this.userRepository.findByTipoUsuario(rol);
         return users;
     }
+
+
 
 }

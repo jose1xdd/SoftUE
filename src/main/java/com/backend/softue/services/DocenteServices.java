@@ -5,6 +5,7 @@ import com.backend.softue.repositories.DocenteRepository;
 import com.backend.softue.repositories.EstudianteRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
+import com.backend.softue.utils.AreasConocimiento;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,12 +27,20 @@ public class DocenteServices {
     @Autowired
     private SingInTokenRepository singInTokenRepository;
 
+    @Autowired
+    private AreasConocimiento areasConocimiento;
     public void registrarDocente(Docente docente) {
+        docente.setArea(docente.getArea().toLowerCase());
+        if(!areasConocimiento.getAreasConocimiento().contains(docente.getArea())) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        if(!docente.getTipoUsuario().equals("docente")) throw new RuntimeException("No se puede registrar este usuario, no es un docente");
         usuarioServices.registerUser((User) docente);
         docenteRepository.save(docente);
     }
 
     public void actualizarDocente(Docente docente, String jwt) {
+        docente.setArea(docente.getArea().toLowerCase());
+        if(!areasConocimiento.getAreasConocimiento().contains(docente.getArea())) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        if(!docente.getTipoUsuario().equals("docente")) throw new RuntimeException("No se puede actualizar este usuario, no se puede cambiar de rol");
         usuarioServices.actualizarUsuario((User) docente, jwt);
         Docente result = this.docenteRepository.findByCorreo(docente.getCorreo());
         docente.setCodigo(result.getCodigo());
@@ -61,9 +70,15 @@ public class DocenteServices {
         else throw new RuntimeException("No se envió información con la que buscar al usuario");
     }
 
-    public  List<Docente> listarDocentes() throws IOException {
+    public  List<Docente> listarDocentes() {
         List<Docente> docentes = this.docenteRepository.findAll();
         if(docentes.isEmpty()) throw new RuntimeException("No hay Docentes registrados");
         return docentes;
+    }
+
+    public List<Docente> listarDocentesArea(String area){
+        area=area.toLowerCase();
+        if(!areasConocimiento.getAreasConocimiento().contains(area)) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        return this.docenteRepository.findByArea(area);
     }
 }
