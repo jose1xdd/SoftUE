@@ -84,6 +84,7 @@ public class EntidadFinanciadoraServices {
 
         idFoto = entidadFinanciadora.getFotoEntidadFinanciadoraId().getId();
         FotoEntidadFinanciadora fotoEntidadFinanciadora = this.fotoEntidadFinanciadoraRepository.findById(idFoto).get();
+
         if(fotoEntidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no tiene foto");
         return fotoEntidadFinanciadora.getFoto().getBytes(1, (int) fotoEntidadFinanciadora.getFoto().length());
     }
