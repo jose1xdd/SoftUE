@@ -19,46 +19,54 @@ public class DocenteController {
 
     @Autowired
     private DocenteServices docenteServices;
-    @CheckSession(permitedRol ={"docente", "coordinador", "administrativo"})
+
+    @CheckSession(permitedRol = {"docente", "coordinador", "administrativo"})
     @PatchMapping("/update")
     public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @Valid @RequestBody Docente docente, BindingResult bindingResult) {
         try {
-           this.docenteServices.actualizarDocente(docente, jwt);
+            this.docenteServices.actualizarDocente(docente, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El docente ha sido actualizado correctamente"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
 
-    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping("/{email}")
-    public ResponseEntity<?> visualizar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+    public ResponseEntity<?> visualizar(@PathVariable String email) {
         try {
             return ResponseEntity.ok(this.docenteServices.obtenerDocente(email));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
 
-    @CheckSession(permitedRol ={"coordinador", "administrativo"})
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @GetMapping("/deshabilitarDocente/{email}")
-    public ResponseEntity<?> deshabilitarDocente(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+    public ResponseEntity<?> deshabilitarDocente(@PathVariable String email) {
         try {
             this.docenteServices.deshabilitarDocente(email);
             return ResponseEntity.ok(new ResponseConfirmation("El docente ha sido deshabilitado correctamente"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
 
     @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @GetMapping("/listar")
-    public ResponseEntity<?> listar(@RequestHeader("X-Softue-JWT") String jwt) {
+    public ResponseEntity<?> listar() {
         try {
             return ResponseEntity.ok(this.docenteServices.listarDocentes());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/listar/{area}")
+    public ResponseEntity<?> listarArea(@PathVariable("area") String area) {
+        try {
+            return ResponseEntity.ok(this.docenteServices.listarDocentesArea(area));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
