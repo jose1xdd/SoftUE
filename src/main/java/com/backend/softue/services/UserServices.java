@@ -75,9 +75,8 @@ public class UserServices {
             user.setCodigo(result.getCodigo());
             user.setContrasenia(result.getContrasenia());
             this.userRepository.save(user);
-        }
-        else {
-            if(this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipo_usuario())) {
+        } else {
+            if (this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipo_usuario())) {
                 user.setCodigo(result.getCodigo());
                 user.setContrasenia(result.getContrasenia());
                 this.userRepository.save(user);

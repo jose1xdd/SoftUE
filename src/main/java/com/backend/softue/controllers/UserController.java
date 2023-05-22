@@ -1,6 +1,5 @@
 package com.backend.softue.controllers;
 
-
 import com.backend.softue.security.Hashing;
 import com.backend.softue.services.UserServices;
 import com.backend.softue.utils.checkSession.CheckSession;
@@ -31,6 +30,7 @@ public class UserController {
 
     @Autowired
     private Hashing encryp;
+
     @PostMapping("/saveFoto/{userId}")
     public ResponseEntity<?> saveFoto(@RequestParam("photo") MultipartFile file,
                                       @PathVariable("userId") String userId) {
@@ -61,7 +61,7 @@ public class UserController {
         }
     }
 
-    @CheckSession(permitedRol ={"coordinador", "administrativo"})
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @PatchMapping("/update")
     public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @Valid @RequestBody User user, BindingResult bindingResult) {
         try {
@@ -71,18 +71,17 @@ public class UserController {
             }
             this.userServices.actualizarUsuario(user, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido actualizado correctamente"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
-    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping("/{email}")
     public ResponseEntity<?> visualizar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
         try {
             return ResponseEntity.ok(this.userServices.obtenerUsuario(email));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
@@ -99,32 +98,31 @@ public class UserController {
     }
 
 
-    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping(value = "/foto/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> obtenerFoto(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String id) {
         try {
-                return ResponseEntity.ok(this.userServices.obtenerFoto(id));
-            }
-        catch (Exception e){
+            return ResponseEntity.ok(this.userServices.obtenerFoto(id));
+        } catch (Exception e) {
 
-                return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
-            }
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
+    }
 
     @GetMapping("/test")
-    public Boolean test(@RequestHeader("password")String password,@RequestHeader("nuevapass") String nuevaPasss){
-        return this.encryp.validate(nuevaPasss,password);
+    public Boolean test(@RequestHeader("password") String password, @RequestHeader("nuevapass") String nuevaPasss) {
+        return this.encryp.validate(nuevaPasss, password);
     }
 
 
-    @CheckSession(permitedRol ={"coordinador", "administrativo"})
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @GetMapping("/deshabilitarUsuario/{email}")
     public ResponseEntity<?> deshabilitarUsuario(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
         try {
             this.userServices.deshabilitarUsuario(email);
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido deshabilitado correctamente"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
