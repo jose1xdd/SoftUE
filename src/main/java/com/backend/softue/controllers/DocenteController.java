@@ -41,4 +41,17 @@ public class DocenteController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
+
+    //Controller
+    @CheckSession(permitedRol ={"coordinador", "administrativo"})
+    @GetMapping("/deshabilitarDocente/{email}")
+    public ResponseEntity<?> deshabilitarDocente(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+        try {
+            this.docenteServices.deshabilitarDocente(email);
+            return ResponseEntity.ok(new ResponseConfirmation("El docente ha sido deshabilitado correctamente"));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
 }
