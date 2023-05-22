@@ -8,6 +8,7 @@ import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -57,5 +58,11 @@ public class EstudianteServices {
             this.estudianteRepository.delete(result);
         }
         else throw new RuntimeException("No se envió información con la que buscar al usuario");
+    }
+
+    public  List<Estudiante> listarEstudiantes() throws IOException {
+        List<Estudiante> estudiantes = this.estudianteRepository.findAll();
+        if(estudiantes.isEmpty()) throw new RuntimeException("No hayestudiantes registrados");
+        return estudiantes;
     }
 }
