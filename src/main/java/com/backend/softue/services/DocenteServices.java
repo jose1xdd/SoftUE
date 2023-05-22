@@ -9,6 +9,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.List;
+
 @Service
 public class DocenteServices {
     @Autowired
@@ -58,4 +61,9 @@ public class DocenteServices {
         else throw new RuntimeException("No se envió información con la que buscar al usuario");
     }
 
+    public  List<Docente> listarDocentes() throws IOException {
+        List<Docente> docentes = this.docenteRepository.findAll();
+        if(docentes.isEmpty()) throw new RuntimeException("No hay Docentes registrados");
+        return docentes;
+    }
 }
