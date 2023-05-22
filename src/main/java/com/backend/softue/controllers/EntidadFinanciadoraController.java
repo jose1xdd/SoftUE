@@ -28,8 +28,7 @@ public class EntidadFinanciadoraController {
 
     @CheckSession(permitedRol ={"coordinador"})
     @PostMapping()
-    public ResponseEntity<?> crear(@RequestHeader("X-Softue-JWT") String jwt,
-                                   @Valid @RequestBody EntidadFinanciadora entidadFinanciadora,
+    public ResponseEntity<?> crear(@Valid @RequestBody EntidadFinanciadora entidadFinanciadora,
                                    BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
@@ -45,8 +44,7 @@ public class EntidadFinanciadoraController {
 
     @CheckSession(permitedRol ={"coordinador"})
     @PatchMapping()
-    public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt,
-                                        @Valid @RequestBody EntidadFinanciadora entidadFinanciadora,
+    public ResponseEntity<?> actualizar(@Valid @RequestBody EntidadFinanciadora entidadFinanciadora,
                                         BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
@@ -73,8 +71,7 @@ public class EntidadFinanciadoraController {
 
     @CheckSession(permitedRol ={"coordinador"})
     @DeleteMapping()
-    public ResponseEntity<?> eliminar(@RequestHeader("X-Softue-JWT") String jwt,
-                                      @RequestParam("idEntidadFinanciadora") Integer idEntidadFinanciadora) {
+    public ResponseEntity<?> eliminar(@RequestParam("idEntidadFinanciadora") Integer idEntidadFinanciadora) {
         try {
             this.entidadFinanciadoraServices.eliminar(idEntidadFinanciadora);
             return ResponseEntity.ok(new ResponseConfirmation("Entidad Financiadora eliminada correctamente"));
@@ -85,7 +82,7 @@ public class EntidadFinanciadoraController {
 
     @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping("/{email}")
-    public ResponseEntity<?> visualizar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+    public ResponseEntity<?> visualizar(@PathVariable String email) {
         try {
             EntidadFinanciadora entidadFinanciadora = this.entidadFinanciadoraServices.visualizar(email);
             return ResponseEntity.ok(entidadFinanciadora);
@@ -96,7 +93,7 @@ public class EntidadFinanciadoraController {
 
     @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping(value = "/foto/{email}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<?> visualizarFoto(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+    public ResponseEntity<?> visualizarFoto(@PathVariable String email) {
         try {
             byte [] foto = this.entidadFinanciadoraServices.visualizarFoto(email);
             return ResponseEntity.ok(foto);
@@ -107,7 +104,7 @@ public class EntidadFinanciadoraController {
 
     @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping()
-    public ResponseEntity<?> listar(@RequestHeader("X-Softue-JWT") String jwt) {
+    public ResponseEntity<?> listar() {
         try {
             return ResponseEntity.ok(this.entidadFinanciadoraServices.listar());
         } catch (Exception e) {
