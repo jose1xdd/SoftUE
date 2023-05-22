@@ -5,7 +5,6 @@ import com.backend.softue.services.EstudianteServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +35,18 @@ public class EstudianteController {
     public ResponseEntity<?> visualizar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
         try {
             return ResponseEntity.ok(this.estudianteServices.obtenerEstudiante(email));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+
+    @CheckSession(permitedRol ={"coordinador", "administrativo"})
+    @GetMapping("/deshabilitarEstudiante/{email}")
+    public ResponseEntity<?> deshabilitarEstudiante(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+        try {
+            this.estudianteServices.deshabilitarEstudiante(email);
+            return ResponseEntity.ok(new ResponseConfirmation("El estudiante ha sido deshabilitado correctamente"));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));

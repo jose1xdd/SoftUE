@@ -3,9 +3,11 @@ package com.backend.softue.services;
 import com.backend.softue.models.FotoUsuario;
 import com.backend.softue.models.SingInToken;
 import com.backend.softue.models.User;
+import com.backend.softue.models.UsuarioDeshabilitado;
 import com.backend.softue.repositories.FotoRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UserRepository;
+import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.response.LoginResponse;
@@ -32,9 +34,10 @@ public class UserServices {
     private UserRepository userRepository;
     @Autowired
     private Hashing encrypt;
-
     @Autowired
     private FotoRepository fotoRepository;
+    @Autowired
+    private UsuarioDeshabilitadoRepository usuarioDeshabilitadoRepository;
 
     public String login(LoginResponse user) {
         SingInToken token = singInTokenRepository.findTokenByEmail(user.getEmail());
@@ -121,5 +124,17 @@ public class UserServices {
             return result.getFoto().getBytes(1, (int) result.getFoto().length());
         }
         throw new RuntimeException("No se envió información con la que buscar la foto");
+    }
+
+    public void deshabilitarUsuario(String email) {
+        if (email != null) {
+            User result = this.userRepository.findByCorreo(email);
+            if(result == null) throw new RuntimeException("El usuario no existe");
+            this.usuarioDeshabilitadoRepository.save(new UsuarioDeshabilitado(result));
+            SingInToken singInToken = this.singInTokenRepository.findTokenByEmail(email);
+            if(singInToken != null) this.singInTokenRepository.delete(singInToken);
+            this.userRepository.delete(result);
+        }
+        else throw new RuntimeException("No se envió información con la que buscar al usuario");
     }
 }
