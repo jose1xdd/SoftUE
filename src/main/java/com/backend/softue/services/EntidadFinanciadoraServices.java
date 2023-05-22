@@ -45,6 +45,8 @@ public class EntidadFinanciadoraServices {
     }
 
     public String guardarFoto(MultipartFile archivo, String correo) throws IOException, SQLException {
+        if(correo == null || archivo == null) throw new RuntimeException("Información insuficiente para guardar una foto de una entidad financiadora");
+
         EntidadFinanciadora resultado = this.entidadFinanciadoraRepository.findByCorreo(correo);
         if(resultado == null) throw new RuntimeException("La entidad financiadora a actualizar foto no existe");
 
@@ -66,31 +68,48 @@ public class EntidadFinanciadoraServices {
     }
 
     public void eliminar(Integer idEntidadFinanciadora) {
+        if(idEntidadFinanciadora == null) throw new RuntimeException("Información insuficiente para eliminar una entidad financiadora");
+
         EntidadFinanciadora resultado = this.entidadFinanciadoraRepository.findById(idEntidadFinanciadora).get();
         if(resultado == null) throw new RuntimeException("La entidad financiadora a eliminar no existe");
         this.entidadFinanciadoraRepository.delete(resultado);
     }
 
-    public EntidadFinanciadora visualizar(String correo) throws IOException{
-        EntidadFinanciadora entidadFinanciadora = this.entidadFinanciadoraRepository.findByCorreo(correo);
-        if(entidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no existe");
-        return entidadFinanciadora;
-    }
-
     public byte[] visualizarFoto(String correo) throws IOException, SQLException{
+        Integer idFoto = null;
+        if(correo == null) throw new RuntimeException("Información insuficiente para visualizar la foto una entidad financiadora");
+
         EntidadFinanciadora entidadFinanciadora = this.entidadFinanciadoraRepository.findByCorreo(correo);
         if(entidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no existe");
-        entidadFinanciadora.setFotoEntidadId(entidadFinanciadora.getFotoEntidadFinanciadoraId().getId());
 
-        FotoEntidadFinanciadora fotoEntidadFinanciadora = this.fotoEntidadFinanciadoraRepository.findById(entidadFinanciadora.getFotoEntidadId()).get();
+        idFoto = entidadFinanciadora.getFotoEntidadFinanciadoraId().getId();
+        FotoEntidadFinanciadora fotoEntidadFinanciadora = this.fotoEntidadFinanciadoraRepository.findById(idFoto).get();
+
         if(fotoEntidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no tiene foto");
         return fotoEntidadFinanciadora.getFoto().getBytes(1, (int) fotoEntidadFinanciadora.getFoto().length());
     }
 
-    public List<EntidadFinanciadora> listar() throws IOException{
+    public List<EntidadFinanciadora> listar() throws IOException, SQLException{
+        int limite = 0;
         List<EntidadFinanciadora> entidadesFinanciadoras = this.entidadFinanciadoraRepository.findAll();
         if(entidadesFinanciadoras.isEmpty()) throw new RuntimeException("No hay entidades financiadoras");
+
+        limite = entidadesFinanciadoras.size();
+        for(int i = 0; i < limite; i++) {
+            if(entidadesFinanciadoras.get(i).getFotoEntidadFinanciadoraId() != null)
+                entidadesFinanciadoras.get(i).setFotoByte(entidadesFinanciadoras.get(i).getFotoEntidadFinanciadoraId().getFoto().getBinaryStream().readAllBytes());
+        }
+
         return entidadesFinanciadoras;
+    }
+
+    public EntidadFinanciadora visualizar(String correo) throws IOException, SQLException{
+        if(correo == null) throw new RuntimeException("Información insuficiente para visualizar una entidad financiadora");
+        EntidadFinanciadora entidadFinanciadora = this.entidadFinanciadoraRepository.findByCorreo(correo);
+        if(entidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no existe");
+        if(entidadFinanciadora.getFotoEntidadFinanciadoraId() != null)
+            entidadFinanciadora.setFotoByte(entidadFinanciadora.getFotoEntidadFinanciadoraId().getFoto().getBinaryStream().readAllBytes());
+        return entidadFinanciadora;
     }
 
 }
