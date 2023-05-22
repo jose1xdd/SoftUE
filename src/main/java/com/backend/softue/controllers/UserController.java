@@ -97,7 +97,6 @@ public class UserController {
         }
     }
 
-
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping(value = "/foto/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> obtenerFoto(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String id) {
