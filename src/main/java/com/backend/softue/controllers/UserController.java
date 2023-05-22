@@ -80,4 +80,16 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
+
+    @CheckSession(permitedRol ={"coordinador", "administrativo"})
+    @GetMapping("/deshabilitarUsuario/{email}")
+    public ResponseEntity<?> deshabilitarUsuario(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
+        try {
+            this.userServices.deshabilitarUsuario(email);
+            return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido deshabilitado correctamente"));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
 }
