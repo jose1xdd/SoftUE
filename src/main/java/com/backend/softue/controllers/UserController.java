@@ -98,7 +98,6 @@ public class UserController {
     }
 
 
-
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping(value = "/foto/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<?> obtenerFoto(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String id) {
@@ -124,6 +123,18 @@ public class UserController {
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido deshabilitado correctamente"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
+    @GetMapping("/listar/{rol}")
+    public ResponseEntity<?> listarUsers(@PathVariable String rol) {
+        try {
+            return ResponseEntity.ok(this.userServices.listarUsuariosRol(rol));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+
         }
     }
 }
