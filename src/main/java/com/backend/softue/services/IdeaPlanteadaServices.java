@@ -66,4 +66,5 @@ public class IdeaPlanteadaServices {
                 this.ideaPlanteadaRepository.delete(ideaPlanteadaEliminar);
         }
     }
+
 }

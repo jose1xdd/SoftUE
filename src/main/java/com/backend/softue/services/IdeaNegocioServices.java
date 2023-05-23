@@ -41,16 +41,16 @@ public class IdeaNegocioServices {
         if(!this.encrypt.getJwt().getValue(JWT).toLowerCase().equals("estudiante"))
             throw new RuntimeException("No se puede crear una idea de negocio si no se es un estudiante");
 
-        correo = this.estudianteServices.estudiantesExisten(ideaNegocio.getCorreoEstudiantesIntegrantes());
-        if(!correo.equals(""))
-            throw new RuntimeException("El estudiante integrante que tiene como correo " + correo + " no existe");
+        if(ideaNegocio.getCorreoEstudiantesIntegrantes() != null) {
+            correo = this.estudianteServices.estudiantesExisten(ideaNegocio.getCorreoEstudiantesIntegrantes());
+            if (!correo.equals(""))
+                throw new RuntimeException("El estudiante integrante que tiene como correo " + correo + " no existe");
+            correo = this.encrypt.getJwt().getKey(JWT);
+            //Devuelve un error si encuentra estudiantes repetidos
+            this.estudianteServices.estudiantesRepetidos(ideaNegocio.getCorreoEstudiantesIntegrantes(), new String[]{correo});
+        }
 
         correo = this.encrypt.getJwt().getKey(JWT);
-
-        //Devuelve un error si encuentra estudiantes repetidos
-        this.estudianteServices.estudiantesRepetidos(ideaNegocio.getCorreoEstudiantesIntegrantes(), new String[]{correo});
-
-
         Estudiante estudiante = this.estudianteRepository.findByCorreo(correo);
         ideaNegocio.setEstudianteLider(estudiante);
 
@@ -98,6 +98,5 @@ public class IdeaNegocioServices {
 
         this.ideaPlanteadaServices.eliminar(ideaNegocio, estudiante);
     }
-
 
 }
