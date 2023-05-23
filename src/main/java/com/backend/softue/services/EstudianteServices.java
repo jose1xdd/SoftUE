@@ -30,6 +30,7 @@ public class EstudianteServices {
     private GradosPermitidos gradosPermitidos;
 
     public void registrarEstudiante(Estudiante estudiante) {
+
         if (!gradosPermitidos.getGrados().contains(estudiante.getCurso()))
             throw new RuntimeException("No se puede registrar este usuario, ya que el curso diligenciado no es valido");
         if (!estudiante.getTipoUsuario().equals("estudiante"))

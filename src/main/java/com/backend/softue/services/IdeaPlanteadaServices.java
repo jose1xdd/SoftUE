@@ -48,29 +48,4 @@ public class IdeaPlanteadaServices {
         this.ideaPlanteadaRepository.save(new IdeaPlanteada(new EstudianteIdeaKey(estudiante.getCodigo(), ideaNegocio.getId()), estudiante, ideaNegocio));
     }
 
-    /*public void integrantesExistentes(IdeaNegocio ideaNegocio){
-        int numeroEstudiantes = 0;
-        String correo = "";
-        Estudiante estudiante = null;
-
-        numeroEstudiantes = ideaNegocio.getCorreoEstudiantesIntegrantes().length;
-        for(int i = 0; i < numeroEstudiantes; i++) {
-            correo = ideaNegocio.getCorreoEstudiantesIntegrantes()[i];
-            estudiante = this.estudianteRepository.findByCorreo(correo);
-            if (estudiante == null)
-                throw new RuntimeException("El estudiante integrante que tiene como correo " + correo + " no existe");
-        }
-    }
-
-    public void eliminar(IdeaNegocio ideaNegocio, Estudiante estudiante) {
-        IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
-        if(resultado == null)
-            throw new RuntimeException("No existe la idea de negocio a la cuál se le desea eliminar un integrante estudiante");
-        Estudiante estudianteEliminar = this.estudianteRepository.findByCorreo(estudiante.getCorreo());
-        EstudianteIdeaKey estudianteIdeaKey = new EstudianteIdeaKey(estudianteEliminar.getCodigo(), resultado.getId());
-        IdeaPlanteada ideaPlanteadaEliminar = this.ideaPlanteadaRepository.findById(estudianteIdeaKey).get();
-
-        if(ideaPlanteadaEliminar != null)
-            this.ideaPlanteadaRepository.delete(ideaPlanteadaEliminar);
-    }*/
 }
