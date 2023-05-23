@@ -25,6 +25,9 @@ public class IdeaPlanteadaServices {
     @Autowired
     private EstudianteRepository estudianteRepository;
 
+    @Autowired
+    private EstudianteServices estudianteServices;
+
     public void crear(IdeaNegocio ideaNegocio) {
         int numeroEstudiantes = 0;
         Estudiante estudiante = null;
@@ -35,7 +38,9 @@ public class IdeaPlanteadaServices {
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
         if(resultado == null) throw new RuntimeException("No existe la idea de negocio a la cuál se le desea agregar integrantes estudiantes");
 
-        integrantesExistentes(ideaNegocio);
+        correo = this.estudianteServices.estudiantesExisten(ideaNegocio.getCorreoEstudiantesIntegrantes());
+        if(!correo.equals(""))
+            throw new RuntimeException("El estudiante integrante que tiene como correo " + correo + " no existe");
 
         numeroEstudiantes = ideaNegocio.getCorreoEstudiantesIntegrantes().length;
         for(int i = 0; i < numeroEstudiantes; i++) {
@@ -48,29 +53,17 @@ public class IdeaPlanteadaServices {
 
     }
 
-    public void integrantesExistentes(IdeaNegocio ideaNegocio){
-        int numeroEstudiantes = 0;
-        String correo = "";
-        Estudiante estudiante = null;
-
-        numeroEstudiantes = ideaNegocio.getCorreoEstudiantesIntegrantes().length;
-        for(int i = 0; i < numeroEstudiantes; i++) {
-            correo = ideaNegocio.getCorreoEstudiantesIntegrantes()[i];
-            estudiante = this.estudianteRepository.findByCorreo(correo);
-            if (estudiante == null)
-                throw new RuntimeException("El estudiante integrante que tiene como correo " + correo + " no existe");
-        }
-    }
-
     public void eliminar(IdeaNegocio ideaNegocio, Estudiante estudiante) {
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
         if(resultado == null)
             throw new RuntimeException("No existe la idea de negocio a la cuál se le desea eliminar un integrante estudiante");
         Estudiante estudianteEliminar = this.estudianteRepository.findByCorreo(estudiante.getCorreo());
-        EstudianteIdeaKey estudianteIdeaKey = new EstudianteIdeaKey(estudianteEliminar.getCodigo(), resultado.getId());
-        IdeaPlanteada ideaPlanteadaEliminar = this.ideaPlanteadaRepository.findById(estudianteIdeaKey).get();
+        if(estudianteEliminar != null) {
+            EstudianteIdeaKey estudianteIdeaKey = new EstudianteIdeaKey(estudianteEliminar.getCodigo(), resultado.getId());
+            IdeaPlanteada ideaPlanteadaEliminar = this.ideaPlanteadaRepository.findById(estudianteIdeaKey).get();
 
-        if(ideaPlanteadaEliminar != null)
-            this.ideaPlanteadaRepository.delete(ideaPlanteadaEliminar);
+            if (ideaPlanteadaEliminar != null)
+                this.ideaPlanteadaRepository.delete(ideaPlanteadaEliminar);
+        }
     }
 }

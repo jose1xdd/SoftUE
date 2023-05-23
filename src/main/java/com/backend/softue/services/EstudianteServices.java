@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class EstudianteServices {
@@ -81,4 +84,34 @@ public class EstudianteServices {
         return this.estudianteRepository.findByCurso(curso);
 
     }
+
+    public String estudiantesExisten(String [] correoEstudiantes){
+        String noExiste = "";
+        int numeroEstudiantes = 0;
+        String correo = "";
+        Estudiante estudiante = null;
+
+        numeroEstudiantes = correoEstudiantes.length;
+        for(int i = 0; i < numeroEstudiantes && noExiste.equals(""); i++) {
+            correo = correoEstudiantes[i];
+            estudiante = this.estudianteRepository.findByCorreo(correo);
+            if(estudiante == null)
+                noExiste = correo;
+        }
+        return noExiste;
+    }
+
+    public void estudiantesRepetidos(String [] correoEstudiantesA, String [] correoEstudiantesB) {
+        Set<String> conjunto = new HashSet<>();
+        for(int i = 0; i < correoEstudiantesA.length; i++) {
+            conjunto.add(correoEstudiantesA[i]);
+        }
+        for(int i = 0; i < correoEstudiantesB.length; i++) {
+            conjunto.add(correoEstudiantesB[i]);
+        }
+
+        if(conjunto.size() != correoEstudiantesA.length + correoEstudiantesB.length)
+            throw new RuntimeException("Existen estudiantes repetidos");
+    }
+
 }

@@ -39,14 +39,11 @@ public class IdeaNegocio {
     @ManyToOne
     @JoinColumn(name = "tutor_codigo")
     private Docente tutor;
-    @Transient
-    private String correoTutor;
 
     @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion de la Idea de Negocio.")
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 
-    //@NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider de la Idea de Negocio.")
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
