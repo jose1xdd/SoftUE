@@ -46,7 +46,7 @@ public class EmailService {
 
                 emailService.send(message);
             } catch (MessagingException e) {
-                ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+                ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getCause().toString()));
             }
         });
     }

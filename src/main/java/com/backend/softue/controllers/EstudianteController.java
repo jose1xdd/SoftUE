@@ -27,7 +27,7 @@ public class EstudianteController {
             return ResponseEntity.ok(new ResponseConfirmation("El estudiante ha sido actualizado correctamente"));
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -38,7 +38,7 @@ public class EstudianteController {
             return ResponseEntity.ok(this.estudianteServices.obtenerEstudiante(email));
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -50,7 +50,7 @@ public class EstudianteController {
             return ResponseEntity.ok(new ResponseConfirmation("El estudiante ha sido deshabilitado correctamente"));
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -60,7 +60,17 @@ public class EstudianteController {
         try {
             return ResponseEntity.ok(this.estudianteServices.listarEstudiantes());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+    @CheckSession(permitedRol = {"docente","coordinador", "administrativo"})
+    @GetMapping("/listar/{curso}")
+    public ResponseEntity<?> listarCurso(@PathVariable("curso") String curso) {
+        try {
+            return ResponseEntity.ok(this.estudianteServices.listarEstudiantesCurso(curso));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
 }

@@ -5,12 +5,12 @@ import com.backend.softue.services.FormatoServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
+import com.backend.softue.utils.response.ErrorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -20,6 +20,9 @@ public class FormatoController {
 
     @Autowired
     private FormatoServices formatoServices;
+
+    @Autowired
+    private ErrorFactory errorFactory;
 
     @GetMapping(value = "/recuperar/{id}", produces = { "application/octet-stream", "application/pdf" })
     public ResponseEntity<?> recuperarFormato(@PathVariable String id) {
@@ -38,7 +41,7 @@ public class FormatoController {
             return new ResponseEntity<>(this.formatoServices.obtenerFormato(id), headers, HttpStatus.OK);
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -51,7 +54,7 @@ public class FormatoController {
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El formato se guardo correctamente"), HttpStatus.OK);
         }
         catch (Exception e) {
-            return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -63,7 +66,7 @@ public class FormatoController {
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El formato se borro correctamente"), HttpStatus.OK);
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -74,7 +77,7 @@ public class FormatoController {
             return new ResponseEntity<List<Formato>>(this.formatoServices.obtenerListado(), HttpStatus.OK);
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 }

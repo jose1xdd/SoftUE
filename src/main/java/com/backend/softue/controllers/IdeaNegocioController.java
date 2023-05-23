@@ -35,13 +35,13 @@ public class IdeaNegocioController {
         try {
             if (bindingResult.hasErrors()) {
                 String errorMessages = errorFactory.errorGenerator(bindingResult);
-                return ResponseEntity.badRequest().body(new ResponseError(errorMessages));
+                return ResponseEntity.badRequest().body(new ResponseError("Input Error",errorMessages,"Bad Request"));
             }
             this.ideaNegocioServices.crear(ideaNegocio, jwt);
             this.ideaPlanteadaServices.crear(ideaNegocio);
             return ResponseEntity.ok(new ResponseConfirmation("Idea de negocio creada correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
