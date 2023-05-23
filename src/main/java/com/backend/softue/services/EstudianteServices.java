@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class EstudianteServices {
@@ -30,6 +33,7 @@ public class EstudianteServices {
     private GradosPermitidos gradosPermitidos;
 
     public void registrarEstudiante(Estudiante estudiante) {
+
         if (!gradosPermitidos.getGrados().contains(estudiante.getCurso()))
             throw new RuntimeException("No se puede registrar este usuario, ya que el curso diligenciado no es valido");
         if (!estudiante.getTipoUsuario().equals("estudiante"))
@@ -81,4 +85,5 @@ public class EstudianteServices {
         return this.estudianteRepository.findByCurso(curso);
 
     }
+
 }

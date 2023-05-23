@@ -1,8 +1,6 @@
 package com.backend.softue.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.sql.Blob;
@@ -23,9 +21,11 @@ public class DocumentoIdea {
     
     @Lob
     @Column(nullable = false, columnDefinition = "LONGBLOB")
-    private Blob documento;
+    private byte[] documento;
 
-    @OneToOne(mappedBy = "documentoIdea")
+    @OneToOne()
+    @MapsId
+    @JoinColumn(name = "documentoIdea")
     private IdeaNegocio ideaNegocio;
 
 }

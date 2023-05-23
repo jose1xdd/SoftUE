@@ -39,25 +39,19 @@ public class IdeaNegocio {
     @ManyToOne
     @JoinColumn(name = "tutor_codigo")
     private Docente tutor;
-    @Transient
-    private String correoTutor;
 
     @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion de la Idea de Negocio.")
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 
-    //@NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider de la Idea de Negocio.")
+    @NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider de la Idea de Negocio.")
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
-    @Transient
-    private String correoEstudianteLider;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "documento_idea_id", referencedColumnName = "documento_idea_id")
+    @OneToOne(mappedBy = "ideaNegocio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
     private DocumentoIdea documentoIdea;
-    @Transient
-    private Integer idDocumentoIdea;
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<EvaluacionIdea> evaluaciones;
@@ -65,12 +59,8 @@ public class IdeaNegocio {
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<DocenteApoyoIdea> docentesApoyo;
 
-
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<IdeaPlanteada> estudiantesIntegrantes;
-    @Transient
-    private String [] correoEstudiantesIntegrantes;
-
 
     @OneToMany(mappedBy = "ideaNegocioId", fetch = FetchType.LAZY)
     private Set<ObservacionIdea> observaciones;
