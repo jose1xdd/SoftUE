@@ -33,6 +33,7 @@ public class EstudianteServices {
     private GradosPermitidos gradosPermitidos;
 
     public void registrarEstudiante(Estudiante estudiante) {
+
         if (!gradosPermitidos.getGrados().contains(estudiante.getCurso()))
             throw new RuntimeException("No se puede registrar este usuario, ya que el curso diligenciado no es valido");
         if (!estudiante.getTipoUsuario().equals("estudiante"))
@@ -85,7 +86,7 @@ public class EstudianteServices {
 
     }
 
-    public String estudiantesExisten(String [] correoEstudiantes){
+    public String estudiantesExisten(String [][] correoEstudiantes){
         String noExiste = "";
         int numeroEstudiantes = 0;
         String correo = "";
@@ -93,7 +94,7 @@ public class EstudianteServices {
 
         numeroEstudiantes = correoEstudiantes.length;
         for(int i = 0; i < numeroEstudiantes && noExiste.equals(""); i++) {
-            correo = correoEstudiantes[i];
+            correo = correoEstudiantes[i][0];
             estudiante = this.estudianteRepository.findByCorreo(correo);
             if(estudiante == null)
                 noExiste = correo;
@@ -101,13 +102,13 @@ public class EstudianteServices {
         return noExiste;
     }
 
-    public void estudiantesRepetidos(String [] correoEstudiantesA, String [] correoEstudiantesB) {
+    public void estudiantesRepetidos(String [][] correoEstudiantesA, String [][] correoEstudiantesB) {
         Set<String> conjunto = new HashSet<>();
         for(int i = 0; i < correoEstudiantesA.length; i++) {
-            conjunto.add(correoEstudiantesA[i]);
+            conjunto.add(correoEstudiantesA[i][0]);
         }
         for(int i = 0; i < correoEstudiantesB.length; i++) {
-            conjunto.add(correoEstudiantesB[i]);
+            conjunto.add(correoEstudiantesB[i][0]);
         }
 
         if(conjunto.size() != correoEstudiantesA.length + correoEstudiantesB.length)

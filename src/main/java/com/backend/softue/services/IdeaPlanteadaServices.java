@@ -38,13 +38,13 @@ public class IdeaPlanteadaServices {
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
         if(resultado == null) throw new RuntimeException("No existe la idea de negocio a la cuál se le desea agregar integrantes estudiantes");
 
-        correo = this.estudianteServices.estudiantesExisten(ideaNegocio.getCorreoEstudiantesIntegrantes());
+        correo = this.estudianteServices.estudiantesExisten(ideaNegocio.getInfoEstudiantesIntegrantes());
         if(!correo.equals(""))
             throw new RuntimeException("El estudiante integrante que tiene como correo " + correo + " no existe");
 
-        numeroEstudiantes = ideaNegocio.getCorreoEstudiantesIntegrantes().length;
+        numeroEstudiantes = ideaNegocio.getInfoEstudiantesIntegrantes().length;
         for(int i = 0; i < numeroEstudiantes; i++) {
-            correo = ideaNegocio.getCorreoEstudiantesIntegrantes()[i];
+            correo = ideaNegocio.getInfoEstudiantesIntegrantes()[i][0];
             estudiante = this.estudianteRepository.findByCorreo(correo);
             id = new EstudianteIdeaKey(estudiante.getCodigo(), resultado.getId());
             ideaPlanteada = new IdeaPlanteada(id, estudiante, resultado);
