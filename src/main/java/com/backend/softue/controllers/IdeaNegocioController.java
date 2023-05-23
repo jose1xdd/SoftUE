@@ -1,6 +1,7 @@
 package com.backend.softue.controllers;
 
 
+import com.backend.softue.models.Estudiante;
 import com.backend.softue.models.IdeaNegocio;
 import com.backend.softue.services.IdeaNegocioServices;
 import com.backend.softue.services.IdeaPlanteadaServices;
@@ -46,19 +47,53 @@ public class IdeaNegocioController {
     }
 
     @CheckSession(permitedRol ={"estudiante"})
-    @PatchMapping("/actualizarTitulo")
-    public ResponseEntity<?> actualizarTitulo(@Valid @RequestBody IdeaNegocio ideaNegocio,
-                                   BindingResult bindingResult) {
+    @PatchMapping("/titulo")
+    public ResponseEntity<?> actualizarTitulo(@RequestHeader("X-Softue-JWT") String jwt,
+                                              @Valid @RequestBody IdeaNegocio ideaNegocio,
+                                              BindingResult bindingResult) {
         try {
             if (bindingResult.hasErrors()) {
                 String errorMessages = errorFactory.errorGenerator(bindingResult);
                 return ResponseEntity.badRequest().body(new ResponseError(errorMessages));
             }
-            this.ideaNegocioServices.actualizarTitulo(ideaNegocio);
+            this.ideaNegocioServices.actualizarTitulo(ideaNegocio, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Título de la idea de negocio actualizado correctamente"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
         }
     }
 
+    @CheckSession(permitedRol ={"docente"})
+    @PatchMapping("/agregarIntegrante/{titulo}")
+    public ResponseEntity<?> agregarIntegrante(@RequestHeader("X-Softue-JWT") String jwt,
+                                               @Valid @RequestBody Estudiante estudiante,
+                                               BindingResult bindingResult, @PathVariable String titulo) {
+        try {
+            if (bindingResult.hasErrors()) {
+                String errorMessages = errorFactory.errorGenerator(bindingResult);
+                return ResponseEntity.badRequest().body(new ResponseError(errorMessages));
+            }
+            this.ideaNegocioServices.agregarIntegrante(estudiante, titulo, jwt);
+            return ResponseEntity.ok(new ResponseConfirmation("Estudiante agregado a la idea de negocio correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
+
+    @CheckSession(permitedRol ={"docente"})
+    @DeleteMapping("/eliminarIntegrante/{titulo}")
+    public ResponseEntity<?> eliminarIntegrante(@RequestHeader("X-Softue-JWT") String jwt,
+                                               @Valid @RequestBody Estudiante estudiante,
+                                               BindingResult bindingResult, @PathVariable String titulo) {
+        try {
+            if (bindingResult.hasErrors()) {
+                String errorMessages = errorFactory.errorGenerator(bindingResult);
+                return ResponseEntity.badRequest().body(new ResponseError(errorMessages));
+            }
+            this.ideaNegocioServices.eliminarIntegrante(estudiante, titulo, jwt);
+            return ResponseEntity.ok(new ResponseConfirmation("Estudiante eliminado de la idea de negocio correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+        }
+    }
 }

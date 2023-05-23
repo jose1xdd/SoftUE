@@ -44,11 +44,39 @@ public class IdeaNegocioServices {
         this.ideaNegocioRepository.save(ideaNegocio);
     }
 
-    public void actualizarTitulo(IdeaNegocio ideaNegocio) {
+    public void actualizarTitulo(IdeaNegocio ideaNegocio, String JWT) {
         IdeaNegocio resultado = this.ideaNegocioRepository.findById(ideaNegocio.getId()).get();
-        if(resultado == null) throw new RuntimeException("No existe la idea de negocio a la cuál se le desea actualizar");
+        if(resultado == null)
+            throw new RuntimeException("No existe la idea de negocio a la cuál se le desea actualizar.");
+        if(!this.encrypt.getJwt().getKey(JWT).equals(resultado.getEstudianteLider().getCorreo()))
+            throw new RuntimeException("Solo el estudiante líder de la idea de negocio puede actualizar el título.");
         resultado.setTitulo(ideaNegocio.getTitulo());
 
         this.ideaNegocioRepository.save(resultado);
+    }
+
+    public void agregarIntegrante(Estudiante estudiante, String titulo, String JWT) {
+        IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
+        if(ideaNegocio == null)
+            throw new RuntimeException("No existe la idea de negocio a la cuál se le desea agregar un integrante estudiante");
+        if(ideaNegocio.getTutor() != null)
+            ideaNegocio.setCorreoTutor(ideaNegocio.getTutor().getCorreo());
+        if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getCorreoTutor()))
+            throw new RuntimeException("Solo el docente tutor de la idea de negocio puede agregar un integrantes.");
+
+        ideaNegocio.setCorreoEstudiantesIntegrantes(new String[] {estudiante.getCorreo()});
+        this.ideaPlanteadaServices.crear(ideaNegocio);
+    }
+
+    public void eliminarIntegrante(Estudiante estudiante, String titulo, String JWT){
+        IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
+        if(ideaNegocio == null)
+            throw new RuntimeException("No existe la idea de negocio a la cuál se le desea eliminar un integrante estudiante");
+        if(ideaNegocio.getTutor() != null)
+            ideaNegocio.setCorreoTutor(ideaNegocio.getTutor().getCorreo());
+        if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getCorreoTutor()))
+            throw new RuntimeException("Solo el docente tutor de la idea de negocio puede eliminar integrantes.");
+
+        this.ideaPlanteadaServices.eliminar(ideaNegocio, estudiante);
     }
 }
