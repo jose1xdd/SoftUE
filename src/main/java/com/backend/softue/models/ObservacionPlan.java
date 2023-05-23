@@ -14,8 +14,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "Observacion_plan")
 public class ObservacionPlan {
-    @EmbeddedId
-    ObservacionPlanKey id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 
     @NotNull(message = "Error: El campo 'planNegocioId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el planNegocioId de la Observacion Plan.")
     @ManyToOne()
