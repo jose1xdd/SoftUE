@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.List;
 
 @Service
 public class FormatoServices {
@@ -17,7 +18,7 @@ public class FormatoServices {
         if (id != null) {
             Formato result = this.formatoRepository.getReferenceById(Integer.parseInt(id));
             if(result == null) throw new RuntimeException("El formato no existe");
-            return result.getDocumento().getBytes(1, (int) result.getDocumento().length());
+            return result.getDocumento();
         }
         throw new RuntimeException("No se envió información con la que buscar el formato");
     }
@@ -33,5 +34,22 @@ public class FormatoServices {
 
     public void guardarFormato(Formato formato) {
         this.formatoRepository.save(formato);
+    }
+
+    public void borrarFormato(String id) {
+        if (id != null) {
+            Formato result = this.formatoRepository.getReferenceById(Integer.parseInt(id));
+            if (result == null) throw new RuntimeException("El formato no existe");
+            this.formatoRepository.delete(result);
+        }
+        else throw new RuntimeException("No se envió información con la que borrar el formato");
+    }
+
+    public List<Formato> obtenerListado() {
+        List<Formato> result = this.formatoRepository.findAll();
+        for (Formato formato : result) {
+            formato.setDocumento(null);
+        }
+        return result;
     }
 }
