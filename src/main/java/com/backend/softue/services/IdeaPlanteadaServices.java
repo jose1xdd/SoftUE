@@ -38,17 +38,14 @@ public class IdeaPlanteadaServices {
         IdeaNegocio ideaNegocio = null;
         Estudiante estudiante = null;
         try {
-            ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
-        }
-        catch (Exception e) {
-            throw new RuntimeException("La idea de negocio no existe en la base de datos");
-        }
-        try {
             estudiante = this.estudianteServices.obtenerEstudiante(correo);
         }
         catch (Exception e) {
             throw new RuntimeException("El estudiante no existe en la base de datos");
         }
+        
+        ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
+
         if(ideaNegocio.getTutor() == null)
             throw new RuntimeException("La idea de negocio a eliminar no tiene un tutor asignado");
         if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getTutor().getCorreo()))
