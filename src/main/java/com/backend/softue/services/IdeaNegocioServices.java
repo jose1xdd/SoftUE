@@ -10,8 +10,11 @@ import com.backend.softue.utils.AreasConocimiento;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class IdeaNegocioServices {
@@ -69,6 +72,10 @@ public class IdeaNegocioServices {
         catch (Exception e) {
             throw new RuntimeException("El estudiante lider de la idea no existe");
         }
+
+        if(!this.validarIntegrantes(estudiantesIntegrantes, correo))
+            throw new RuntimeException("Los integrantes seleccionados son invalidos");
+
         this.ideaNegocioRepository.save(ideaNegocio);
         this.ideaPlanteadaServices.agregarIntegrantes(ideaNegocio, estudiantesIntegrantes);
         if (documento != null) {
@@ -86,6 +93,18 @@ public class IdeaNegocioServices {
         if (result == null)
             throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
         return result;
+    }
+
+    private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {
+        boolean valido;
+
+        Set<String> conjuntoCorreos = new HashSet<>();
+        for(Estudiante estudiante : integrantes) {
+            conjuntoCorreos.add(estudiante.getCorreo());
+        }
+        valido = conjuntoCorreos.size() == integrantes.size() && !conjuntoCorreos.contains(lider);
+
+        return valido;
     }
 
 }
