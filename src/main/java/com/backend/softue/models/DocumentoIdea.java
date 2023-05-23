@@ -23,7 +23,7 @@ public class DocumentoIdea {
     
     @Lob
     @Column(nullable = false, columnDefinition = "LONGBLOB")
-    private Blob documento;
+    private byte[] documento;
 
     @OneToOne(mappedBy = "documentoIdea")
     private IdeaNegocio ideaNegocio;

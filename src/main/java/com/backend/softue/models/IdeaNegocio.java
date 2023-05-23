@@ -39,19 +39,15 @@ public class IdeaNegocio {
     @ManyToOne
     @JoinColumn(name = "tutor_codigo")
     private Docente tutor;
-    @Transient
-    private String [][] infoTutor;
 
     @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion de la Idea de Negocio.")
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 
-    //@NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider de la Idea de Negocio.")
+    @NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider de la Idea de Negocio.")
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
-    @Transient
-    private String[][] infoEstudianteLider;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "documento_idea_id", referencedColumnName = "documento_idea_id")
@@ -64,14 +60,9 @@ public class IdeaNegocio {
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<DocenteApoyoIdea> docentesApoyo;
-    @Transient
-    private String [][] infoDocentesApoyo;
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<IdeaPlanteada> estudiantesIntegrantes;
-    @Transient
-    private String [][] infoEstudiantesIntegrantes;
-
 
     @OneToMany(mappedBy = "ideaNegocioId", fetch = FetchType.LAZY)
     private Set<ObservacionIdea> observaciones;

@@ -11,5 +11,5 @@ import java.util.Set;
 @NoArgsConstructor
 public class AreasConocimiento {
     private final Set<String> areasConocimiento = Set.of("minera", "agropecuaria", "comercial",
-            "servicios", "Industrial");
+            "servicios", "industrial");
 }
