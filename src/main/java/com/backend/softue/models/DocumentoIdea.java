@@ -25,7 +25,9 @@ public class DocumentoIdea {
     @Column(nullable = false, columnDefinition = "LONGBLOB")
     private byte[] documento;
 
-    @OneToOne(mappedBy = "documentoIdea")
+    @OneToOne()
+    @MapsId
+    @JoinColumn(name = "documentoIdea")
     private IdeaNegocio ideaNegocio;
 
 }

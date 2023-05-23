@@ -49,18 +49,15 @@ public class IdeaNegocio {
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "documento_idea_id", referencedColumnName = "documento_idea_id")
+    @OneToOne(mappedBy = "ideaNegocio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
     private DocumentoIdea documentoIdea;
-    @Transient
-    private Integer idDocumentoIdea;
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<EvaluacionIdea> evaluaciones;
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<DocenteApoyoIdea> docentesApoyo;
-
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<IdeaPlanteada> estudiantesIntegrantes;

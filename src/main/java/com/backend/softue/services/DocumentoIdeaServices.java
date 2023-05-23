@@ -19,9 +19,10 @@ public class DocumentoIdeaServices {
 
     private IdeaNegocioServices ideaNegocioServices;
 
-    public void agregarDocumentoIdea(IdeaNegocio ideaNegocio, byte[] documento) {
+    public void agregarDocumentoIdea(String titulo, byte[] documento) {
+        IdeaNegocio ideaNegocio;
         try {
-            ideaNegocio = ideaNegocioServices.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+            ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
         }
         catch (Exception e) {
             throw new RuntimeException("La idea de negocio a la que se le quiere asignar un documento no existe");
@@ -29,6 +30,15 @@ public class DocumentoIdeaServices {
         if (documento == null)
             throw new RuntimeException("No se envio ningún documento para ser agregado");
         this.documentoIdeaRepository.save(new DocumentoIdea(null, documento, ideaNegocio));
+    }
+
+    public void eliminarDocumentoIdea(Integer id) {
+        if (id == null)
+            throw new RuntimeException("No se envió un id para eliminar el documento de idea de negocio");
+        Optional<DocumentoIdea> result = this.documentoIdeaRepository.findById(id);
+        if (!result.isPresent())
+            throw new RuntimeException("El documento con el id especificado no existe");
+        this.documentoIdeaRepository.deleteById(id);
     }
 
     public DocumentoIdea obtenerDocumento(String titulo) {
