@@ -11,8 +11,10 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class IdeaNegocioServices {
@@ -43,6 +45,7 @@ public class IdeaNegocioServices {
         this.ideaPlanteadaServices.setIdeaNegocioServices(this);
         this.documentoIdeaServices.setIdeaNegocioServices(this);
     }
+
     public void crear(IdeaNegocio ideaNegocio, String integrantes[], byte[] documento, String JWT) {
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
         if (resultado != null)
@@ -69,6 +72,10 @@ public class IdeaNegocioServices {
         catch (Exception e) {
             throw new RuntimeException("El estudiante lider de la idea no existe");
         }
+
+        if(!this.validarIntegrantes(estudiantesIntegrantes, correo))
+            throw new RuntimeException("Los integrantes seleccionados son invalidos");
+
         this.ideaNegocioRepository.save(ideaNegocio);
         this.ideaPlanteadaServices.agregarIntegrantes(ideaNegocio, estudiantesIntegrantes);
         if (documento != null)
@@ -109,26 +116,39 @@ public class IdeaNegocioServices {
         return result;
     }
 
-    public void actualizar(String tituloActual, String tituloNuevo , String area, String jwt){
-        if(tituloActual == null) throw new RuntimeException("No se envio el titulo de la idea a modificar");
-        if(tituloNuevo == null) throw new RuntimeException("No se envio el nuevo titulo de la idea");
-        if(area == null) throw new RuntimeException("No se envio la nueva area de la idea");
+    public void actualizar(String tituloActual, String tituloNuevo , String area, String jwt) {
+        if (tituloActual == null)
+            throw new RuntimeException("No se envio el titulo de la idea a modificar");
+        if (tituloNuevo == null)
+            throw new RuntimeException("No se envio el nuevo titulo de la idea");
+        if (area == null)
+            throw new RuntimeException("No se envio la nueva area de la idea");
 
         IdeaNegocio idea = this.ideaNegocioRepository.findByTitulo(tituloActual);
-        if (idea == null) throw new RuntimeException("No existe la idea de negocio la cual desea modificar");
+        if (idea == null)
+            throw new RuntimeException("No existe la idea de negocio la cual desea modificar");
 
-        if(!tituloActual.equals(tituloNuevo)){
+        if (!tituloActual.equals(tituloNuevo)) {
             IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(tituloNuevo);
             if (resultado != null)
                 throw new RuntimeException("No se puede actualizar la idea, ya existe una idea con el titulo que desea cambiar.");
+            if (!areasConocimiento.getAreasConocimiento().contains(area))
+                throw new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+
+            String correo = this.encrypt.getJwt().getKey(jwt);
+            if (!correo.equals(idea.getEstudianteLider().getCorreo()))
+                throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
+
+            idea.setAreaEnfoque(area);
+            idea.setTitulo(tituloNuevo);
+            this.ideaNegocioRepository.save(idea);
         }
-
-        if (!areasConocimiento.getAreasConocimiento().contains(area)) throw  new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
-        String correo = this.encrypt.getJwt().getKey(jwt);
-        if(!correo.equals(idea.getEstudianteLider().getCorreo())) throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
-
-        idea.setAreaEnfoque(area);
-        idea.setTitulo(tituloNuevo);
-        this.ideaNegocioRepository.save(idea);
+    }
+    private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {
+        Set<String> conjuntoCorreos = new HashSet<>();
+        for(Estudiante estudiante : integrantes) {
+            conjuntoCorreos.add(estudiante.getCorreo());
+        }
+        return conjuntoCorreos.size() == integrantes.size() && !conjuntoCorreos.contains(lider);
     }
 }
