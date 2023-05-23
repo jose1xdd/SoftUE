@@ -41,7 +41,7 @@ public class IdeaPlanteadaServices {
         for(int i = 0; i < numeroEstudiantes; i++) {
             correo = ideaNegocio.getCorreoEstudiantesIntegrantes()[i];
             estudiante = this.estudianteRepository.findByCorreo(correo);
-            id = new EstudianteIdeaKey(estudiante.getCodigo(), ideaNegocio.getId());
+            id = new EstudianteIdeaKey(estudiante.getCodigo(), resultado.getId());
             ideaPlanteada = new IdeaPlanteada(id, estudiante, resultado);
             this.ideaPlanteadaRepository.save(ideaPlanteada);
         }
@@ -60,5 +60,17 @@ public class IdeaPlanteadaServices {
             if (estudiante == null)
                 throw new RuntimeException("El estudiante integrante que tiene como correo " + correo + " no existe");
         }
+    }
+
+    public void eliminar(IdeaNegocio ideaNegocio, Estudiante estudiante) {
+        IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
+        if(resultado == null)
+            throw new RuntimeException("No existe la idea de negocio a la cuál se le desea eliminar un integrante estudiante");
+        Estudiante estudianteEliminar = this.estudianteRepository.findByCorreo(estudiante.getCorreo());
+        EstudianteIdeaKey estudianteIdeaKey = new EstudianteIdeaKey(estudianteEliminar.getCodigo(), resultado.getId());
+        IdeaPlanteada ideaPlanteadaEliminar = this.ideaPlanteadaRepository.findById(estudianteIdeaKey).get();
+
+        if(ideaPlanteadaEliminar != null)
+            this.ideaPlanteadaRepository.delete(ideaPlanteadaEliminar);
     }
 }
