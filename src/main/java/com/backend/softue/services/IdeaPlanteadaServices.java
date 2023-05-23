@@ -7,48 +7,48 @@ import com.backend.softue.models.IdeaPlanteada;
 import com.backend.softue.repositories.EstudianteRepository;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.repositories.IdeaPlanteadaRepository;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Setter
 @Service
 public class IdeaPlanteadaServices {
 
     @Autowired
-    private IdeaNegocioRepository ideaNegocioRepository;
-
-    @Autowired
     private IdeaPlanteadaRepository ideaPlanteadaRepository;
 
+    private IdeaNegocioServices ideaNegocioServices;
+
     @Autowired
-    private EstudianteRepository estudianteRepository;
+    private EstudianteServices estudianteServices;
 
-    public void crear(IdeaNegocio ideaNegocio) {
-        int numeroEstudiantes = 0;
-        Estudiante estudiante = null;
-        EstudianteIdeaKey id = null;
-        IdeaPlanteada ideaPlanteada = null;
-        String correo = "";
-
-        IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
-        if(resultado == null) throw new RuntimeException("No existe la idea de negocio a la cuál se le desea agregar integrantes estudiantes");
-
-        integrantesExistentes(ideaNegocio);
-
-        numeroEstudiantes = ideaNegocio.getCorreoEstudiantesIntegrantes().length;
-        for(int i = 0; i < numeroEstudiantes; i++) {
-            correo = ideaNegocio.getCorreoEstudiantesIntegrantes()[i];
-            estudiante = this.estudianteRepository.findByCorreo(correo);
-            id = new EstudianteIdeaKey(estudiante.getCodigo(), resultado.getId());
-            ideaPlanteada = new IdeaPlanteada(id, estudiante, resultado);
-            this.ideaPlanteadaRepository.save(ideaPlanteada);
+    public void agregarIntegrantes(IdeaNegocio ideaNegocio, List<Estudiante> estudiantesIntegrantes) {
+        for (Estudiante estudiante : estudiantesIntegrantes) {
+            agregarIntegrante(ideaNegocio, estudiante);
         }
-
     }
 
-    public void integrantesExistentes(IdeaNegocio ideaNegocio){
+    public void agregarIntegrante(IdeaNegocio ideaNegocio, Estudiante estudiante) {
+        try {
+            ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        catch (Exception e) {
+            throw new RuntimeException("La idea de negocio no existe en la base de datos");
+        }
+        try {
+            estudiante = this.estudianteServices.obtenerEstudiante(estudiante.getCorreo());
+        }
+        catch (Exception e) {
+            throw new RuntimeException("El estudiante no existe en la base de datos");
+        }
+        this.ideaPlanteadaRepository.save(new IdeaPlanteada(new EstudianteIdeaKey(estudiante.getCodigo(), ideaNegocio.getId()), estudiante, ideaNegocio));
+    }
+
+    /*public void integrantesExistentes(IdeaNegocio ideaNegocio){
         int numeroEstudiantes = 0;
         String correo = "";
         Estudiante estudiante = null;
@@ -72,5 +72,5 @@ public class IdeaPlanteadaServices {
 
         if(ideaPlanteadaEliminar != null)
             this.ideaPlanteadaRepository.delete(ideaPlanteadaEliminar);
-    }
+    }*/
 }
