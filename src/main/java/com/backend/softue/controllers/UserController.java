@@ -37,7 +37,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(userServices.savePicture(file, userId));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getCause().toString()));
         }
     }
 
@@ -48,7 +48,7 @@ public class UserController {
             this.userServices.logout(jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Cierre de Sesion Exitoso"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -57,7 +57,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(new ResponseToken(this.userServices.forgotPassword(email)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -67,12 +67,12 @@ public class UserController {
         try {
             if (bindingResult.hasErrors()) {
                 String errorMessages = errorFactory.errorGenerator(bindingResult);
-                return new ResponseEntity<ResponseError>(new ResponseError(errorMessages), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body(new ResponseError("Input Error",errorMessages,"Bad Request"));
             }
             this.userServices.actualizarUsuario(user, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido actualizado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -82,7 +82,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(this.userServices.obtenerUsuario(email));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -93,7 +93,7 @@ public class UserController {
             return ResponseEntity.ok(new ResponseConfirmation("Contraseña Restablecida"));
         } catch (Exception e) {
 
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -104,15 +104,9 @@ public class UserController {
             return ResponseEntity.ok(this.userServices.obtenerFoto(id));
         } catch (Exception e) {
 
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
-
-    @GetMapping("/test")
-    public Boolean test(@RequestHeader("password") String password, @RequestHeader("nuevapass") String nuevaPasss) {
-        return this.encryp.validate(nuevaPasss, password);
-    }
-
 
     @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @GetMapping("/deshabilitarUsuario/{email}")
@@ -121,7 +115,7 @@ public class UserController {
             this.userServices.deshabilitarUsuario(email);
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido deshabilitado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -132,8 +126,7 @@ public class UserController {
             return ResponseEntity.ok(this.userServices.listarUsuariosRol(rol));
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
-
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 }
