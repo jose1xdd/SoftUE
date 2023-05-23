@@ -86,33 +86,4 @@ public class EstudianteServices {
 
     }
 
-    public String estudiantesExisten(String [][] correoEstudiantes){
-        String noExiste = "";
-        int numeroEstudiantes = 0;
-        String correo = "";
-        Estudiante estudiante = null;
-
-        numeroEstudiantes = correoEstudiantes.length;
-        for(int i = 0; i < numeroEstudiantes && noExiste.equals(""); i++) {
-            correo = correoEstudiantes[i][0];
-            estudiante = this.estudianteRepository.findByCorreo(correo);
-            if(estudiante == null)
-                noExiste = correo;
-        }
-        return noExiste;
-    }
-
-    public void estudiantesRepetidos(String [][] correoEstudiantesA, String [][] correoEstudiantesB) {
-        Set<String> conjunto = new HashSet<>();
-        for(int i = 0; i < correoEstudiantesA.length; i++) {
-            conjunto.add(correoEstudiantesA[i][0]);
-        }
-        for(int i = 0; i < correoEstudiantesB.length; i++) {
-            conjunto.add(correoEstudiantesB[i][0]);
-        }
-
-        if(conjunto.size() != correoEstudiantesA.length + correoEstudiantesB.length)
-            throw new RuntimeException("Existen estudiantes repetidos");
-    }
-
 }
