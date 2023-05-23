@@ -50,13 +50,13 @@ public class FormatoController {
         try {
             if (bindingResult.hasErrors()) {
                 String errorMessages = errorFactory.errorGenerator(bindingResult);
-                return new ResponseEntity<ResponseError>(new ResponseError(errorMessages), HttpStatus.BAD_REQUEST);
+                return ResponseEntity.badRequest().body(new ResponseError("Input Error",errorMessages,"Bad Request"));
             }
             this.formatoServices.guardarFormato(formato);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El formato se guardo correctamente"), HttpStatus.OK);
         }
         catch (Exception e) {
-            return new ResponseEntity<ResponseError>(new ResponseError(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 }
