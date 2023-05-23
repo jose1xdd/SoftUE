@@ -25,7 +25,7 @@ public class IdeaPlanteadaServices {
     @Autowired
     private EstudianteRepository estudianteRepository;
 
-    public void crear(IdeaNegocio ideaNegocio) {
+    /*public void crear(IdeaNegocio ideaNegocio) {
         int numeroEstudiantes = 0;
         Estudiante estudiante = null;
         EstudianteIdeaKey id = null;
@@ -46,9 +46,9 @@ public class IdeaPlanteadaServices {
             this.ideaPlanteadaRepository.save(ideaPlanteada);
         }
 
-    }
+    }*/
 
-    public void integrantesExistentes(IdeaNegocio ideaNegocio){
+   /* public void integrantesExistentes(IdeaNegocio ideaNegocio){
         int numeroEstudiantes = 0;
         String correo = "";
         Estudiante estudiante = null;
@@ -61,6 +61,8 @@ public class IdeaPlanteadaServices {
                 throw new RuntimeException("El estudiante integrante que tiene como correo " + correo + " no existe");
         }
     }
+
+    */
 
     public void eliminar(IdeaNegocio ideaNegocio, Estudiante estudiante) {
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());

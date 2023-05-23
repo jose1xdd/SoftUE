@@ -27,7 +27,7 @@ public class IdeaNegocioController {
 
     @Autowired
     private ErrorFactory errorFactory;
-
+/*
     @CheckSession(permitedRol ={"estudiante"})
     @PostMapping()
     public ResponseEntity<?> crear(@RequestHeader("X-Softue-JWT") String jwt,
@@ -44,10 +44,10 @@ public class IdeaNegocioController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
-    }
+    }*/
 
     @CheckSession(permitedRol ={"estudiante"})
-    @PatchMapping("/titulo")
+    @PatchMapping("/actualizar/titulo")
     public ResponseEntity<?> actualizarTitulo(@RequestHeader("X-Softue-JWT") String jwt,
                                               @Valid @RequestBody IdeaNegocio ideaNegocio,
                                               BindingResult bindingResult) {
@@ -62,7 +62,7 @@ public class IdeaNegocioController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
-
+/*
     @CheckSession(permitedRol ={"docente"})
     @PatchMapping("/agregarIntegrante/{titulo}")
     public ResponseEntity<?> agregarIntegrante(@RequestHeader("X-Softue-JWT") String jwt,
@@ -92,6 +92,16 @@ public class IdeaNegocioController {
             }
             this.ideaNegocioServices.eliminarIntegrante(estudiante, titulo, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Estudiante eliminado de la idea de negocio correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+*/
+    @CheckSession(permitedRol ={"docente","estudiante","coordinador","administrativo"})
+    @GetMapping("/{titulo}")
+    public ResponseEntity<?> visualizarIdea(@PathVariable String titulo) {
+        try {
+            return ResponseEntity.ok(this.ideaNegocioServices.obtenerIdea(titulo));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }

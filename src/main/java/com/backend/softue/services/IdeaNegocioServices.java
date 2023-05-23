@@ -1,7 +1,9 @@
 package com.backend.softue.services;
 
+import com.backend.softue.models.DocenteApoyoIdea;
 import com.backend.softue.models.Estudiante;
 import com.backend.softue.models.IdeaNegocio;
+import com.backend.softue.models.IdeaPlanteada;
 import com.backend.softue.repositories.EstudianteRepository;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
@@ -27,7 +29,7 @@ public class IdeaNegocioServices {
     @Autowired
     private Roles roles;
 
-    public void crear(IdeaNegocio ideaNegocio, String JWT) {
+   /* public void crear(IdeaNegocio ideaNegocio, String JWT) {
         String correo;
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
         if(resultado != null)
@@ -42,7 +44,7 @@ public class IdeaNegocioServices {
         ideaNegocio.setEstudianteLider(estudiante);
 
         this.ideaNegocioRepository.save(ideaNegocio);
-    }
+    }*/
 
     public void actualizarTitulo(IdeaNegocio ideaNegocio, String JWT) {
         IdeaNegocio resultado = this.ideaNegocioRepository.findById(ideaNegocio.getId()).get();
@@ -54,7 +56,7 @@ public class IdeaNegocioServices {
 
         this.ideaNegocioRepository.save(resultado);
     }
-
+/*
     public void agregarIntegrante(Estudiante estudiante, String titulo, String JWT) {
         IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
         if(ideaNegocio == null)
@@ -64,9 +66,10 @@ public class IdeaNegocioServices {
         if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getCorreoTutor()))
             throw new RuntimeException("Solo el docente tutor de la idea de negocio puede agregar un integrantes.");
 
-        ideaNegocio.setCorreoEstudiantesIntegrantes(new String[] {estudiante.getCorreo()});
+        /*ideaNegocio.setCorreoEstudiantesIntegrantes(new String[] {estudiante.getCorreo()});
         this.ideaPlanteadaServices.crear(ideaNegocio);
     }
+
 
     public void eliminarIntegrante(Estudiante estudiante, String titulo, String JWT){
         IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
@@ -78,5 +81,49 @@ public class IdeaNegocioServices {
             throw new RuntimeException("Solo el docente tutor de la idea de negocio puede eliminar integrantes.");
 
         this.ideaPlanteadaServices.eliminar(ideaNegocio, estudiante);
+    }
+*/
+    public IdeaNegocio obtenerIdea(String titulo){
+        IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
+        if(ideaNegocio == null) throw new RuntimeException("No existe la idea de negocio a la cuál se desea visualizar");
+
+        //Se comprueba que exista el documento de la idea de negocio, si existe se asigna
+        if(ideaNegocio.getDocumentoIdea() != null) ideaNegocio.setIdDocumentoIdea(ideaNegocio.getDocumentoIdea().getDocumentoIdeaId());
+
+        //Se compruba que exista el tutor, si existe se asignan los datos de este
+        if(ideaNegocio.getTutor() != null){
+            ideaNegocio.setInfoTutor(new String[][]{{ideaNegocio.getTutor().getCorreo(),
+                    ideaNegocio.getTutor().getApellido() + ideaNegocio.getTutor().getNombre()}});
+        }
+
+        //Se comprueba si existen docentes de apoyo asignados, si es asi se asignan los datos de estos
+        if(!ideaNegocio.getDocentesApoyo().isEmpty()){
+            int ctn = 0;
+            String arr [][] = new String[ideaNegocio.getDocentesApoyo().size()][2];
+            for(DocenteApoyoIdea v : ideaNegocio.getDocentesApoyo()){
+                arr[ctn][0] = v.getDocente().getCorreo();
+                arr[ctn][1] = (v.getDocente().getApellido() + v.getDocente().getNombre());
+                ctn++;
+            }
+            ideaNegocio.setInfoDocentesApoyo(arr);
+        }
+
+        //Se comprueba si existen estudiantes de apoyo asignados, si es asi se asignan los datos de estos
+        if(!ideaNegocio.getEstudiantesIntegrantes().isEmpty()){
+            int ctn = 0;
+            String arr [][] = new String[ideaNegocio.getEstudiantesIntegrantes().size()][2];
+            for(IdeaPlanteada v : ideaNegocio.getEstudiantesIntegrantes()){
+                arr[ctn][0] = v.getEstudiante().getCorreo();
+                arr[ctn][1] = (v.getEstudiante().getApellido() + v.getEstudiante().getNombre());
+                ctn++;
+            }
+            ideaNegocio.setInfoEstudiantesIntegrantes(arr);
+        }
+
+        //Se asigna el estudiante lider
+        ideaNegocio.setInfoEstudianteLider(new String[][]{{ideaNegocio.getEstudianteLider().getCorreo(),
+                                                        ideaNegocio.getEstudianteLider().getApellido() + ideaNegocio.getEstudianteLider().getNombre()}});
+
+        return ideaNegocio;
     }
 }
