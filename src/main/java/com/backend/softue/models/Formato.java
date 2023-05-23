@@ -31,7 +31,7 @@ public class Formato {
 
     @Lob
     @Column(nullable = false,columnDefinition = "LONGBLOB")
-    private Blob documento;
+    private byte[] documento;
 
     @NotNull(message = "Error: El campo 'extension' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la extensión del formato.")
     @NotBlank(message = "Error: El campo 'extension' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la extensión del formato.")

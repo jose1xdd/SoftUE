@@ -36,13 +36,13 @@ public class IdeaNegocioController {
         try {
             if (bindingResult.hasErrors()) {
                 String errorMessages = errorFactory.errorGenerator(bindingResult);
-                return ResponseEntity.badRequest().body(new ResponseError(errorMessages));
+                return ResponseEntity.badRequest().body(new ResponseError("Input Error",errorMessages,"Bad Request"));
             }
             this.ideaNegocioServices.crear(ideaNegocio, jwt);
             this.ideaPlanteadaServices.crear(ideaNegocio);
             return ResponseEntity.ok(new ResponseConfirmation("Idea de negocio creada correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -54,12 +54,12 @@ public class IdeaNegocioController {
         try {
             if (bindingResult.hasErrors()) {
                 String errorMessages = errorFactory.errorGenerator(bindingResult);
-                return ResponseEntity.badRequest().body(new ResponseError(errorMessages));
+                return ResponseEntity.badRequest().body(new ResponseError("Input Error",errorMessages,"Bad Request"));
             }
             this.ideaNegocioServices.actualizarTitulo(ideaNegocio, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Título de la idea de negocio actualizado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -71,12 +71,12 @@ public class IdeaNegocioController {
         try {
             if (bindingResult.hasErrors()) {
                 String errorMessages = errorFactory.errorGenerator(bindingResult);
-                return ResponseEntity.badRequest().body(new ResponseError(errorMessages));
+                return ResponseEntity.badRequest().body(new ResponseError("Input Error",errorMessages,"Bad Request"));
             }
             this.ideaNegocioServices.agregarIntegrante(estudiante, titulo, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Estudiante agregado a la idea de negocio correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -88,12 +88,12 @@ public class IdeaNegocioController {
         try {
             if (bindingResult.hasErrors()) {
                 String errorMessages = errorFactory.errorGenerator(bindingResult);
-                return ResponseEntity.badRequest().body(new ResponseError(errorMessages));
+                return ResponseEntity.badRequest().body(new ResponseError("Input Error",errorMessages,"Bad Request"));
             }
             this.ideaNegocioServices.eliminarIntegrante(estudiante, titulo, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Estudiante eliminado de la idea de negocio correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 }

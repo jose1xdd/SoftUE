@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ResponseError {
-    private String Error;
+public class ResponseError{
+    private  String errorType;
+    private  String errorMessage;
+    private  String cause;
 }
