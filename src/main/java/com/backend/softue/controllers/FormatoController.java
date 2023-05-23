@@ -34,7 +34,7 @@ public class FormatoController {
             return new ResponseEntity<>(this.formatoServices.obtenerFormato(id), headers, HttpStatus.OK);
         }
         catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 }

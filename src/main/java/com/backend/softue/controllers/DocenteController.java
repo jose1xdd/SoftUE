@@ -27,7 +27,7 @@ public class DocenteController {
             this.docenteServices.actualizarDocente(docente, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El docente ha sido actualizado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -37,7 +37,7 @@ public class DocenteController {
         try {
             return ResponseEntity.ok(this.docenteServices.obtenerDocente(email));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -48,7 +48,7 @@ public class DocenteController {
             this.docenteServices.deshabilitarDocente(email);
             return ResponseEntity.ok(new ResponseConfirmation("El docente ha sido deshabilitado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -58,7 +58,7 @@ public class DocenteController {
         try {
             return ResponseEntity.ok(this.docenteServices.listarDocentes());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 
@@ -68,7 +68,7 @@ public class DocenteController {
         try {
             return ResponseEntity.ok(this.docenteServices.listarDocentesArea(area));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 }
