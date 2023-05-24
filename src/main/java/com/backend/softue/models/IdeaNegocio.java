@@ -48,6 +48,8 @@ public class IdeaNegocio {
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
+    @Transient
+    private String [][] estudianteLiderInfo;
 
     @OneToOne(mappedBy = "ideaNegocio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
@@ -58,9 +60,13 @@ public class IdeaNegocio {
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<DocenteApoyoIdea> docentesApoyo;
+    @Transient
+    private String [][] docentesApoyoInfo;
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<IdeaPlanteada> estudiantesIntegrantes;
+    @Transient
+    private String [][] estudiantesIntegrantesInfo;
 
     @OneToMany(mappedBy = "ideaNegocioId", fetch = FetchType.LAZY)
     private Set<ObservacionIdea> observaciones;

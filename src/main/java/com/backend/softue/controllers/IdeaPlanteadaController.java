@@ -29,4 +29,15 @@ public class IdeaPlanteadaController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+
+    @CheckSession(permitedRol ={"docente"})
+    @PostMapping("/{titulo}/{correo}")
+    public ResponseEntity<?> agregar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String titulo, @PathVariable String correo) {
+        try {
+            this.ideaPlanteadaServices.agregarIntegrante(jwt, titulo, correo);
+            return ResponseEntity.ok(new ResponseConfirmation("Integrante agregado a la idea de negocio correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
 }

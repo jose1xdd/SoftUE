@@ -34,7 +34,7 @@ public class IdeaNegocioController {
     @PostMapping()
     public ResponseEntity<?> crear(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String[] integrantes, @RequestParam String area, @RequestParam MultipartFile documento) {
         try {
-            IdeaNegocio ideaNegocio = new IdeaNegocio(null, titulo, 'F', area, null, LocalDate.now(), null, null, null, null, null, null);
+            IdeaNegocio ideaNegocio = new IdeaNegocio(null, titulo, 'F', area, null, LocalDate.now(), null, null, null, null, null, null, null,null,null);
             this.ideaNegocioServices.crear(ideaNegocio, integrantes, documento.getBytes(), jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Idea de negocio creada correctamente"));
         } catch (Exception e) {
@@ -74,6 +74,7 @@ public class IdeaNegocioController {
         }
     }
 
+
     @GetMapping("/filtrar")
     public ResponseEntity<List<IdeaNegocio>> buscarIdeasPorFiltros(
             @RequestParam(required = false) String estudianteEmail,
@@ -84,6 +85,29 @@ public class IdeaNegocioController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
         List<IdeaNegocio> ideasNegocio = ideaNegocioServices.buscarIdeasPorFiltros(estudianteEmail, docenteEmail, area, estado,fechaInicio, fechaFin);
         return ResponseEntity.ok(ideasNegocio);
+    }
+
+
+    @GetMapping("/{titulo}")
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    public ResponseEntity<?> visualizar(@PathVariable String titulo) {
+       try {
+           return ResponseEntity.ok(this.ideaNegocioServices.obtenerIdeaNegocio(titulo));
+       }
+       catch (Exception e) {
+           return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+       }
+    }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping()
+    public ResponseEntity<?> listar() {
+        try {
+            return ResponseEntity.ok(this.ideaNegocioServices.listar());
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
     }
 
 }
