@@ -153,4 +153,13 @@ public class IdeaNegocioServices {
         }
         return conjuntoCorreos.size() == integrantes.size() && !conjuntoCorreos.contains(lider);
     }
+
+    public List<IdeaNegocio> listar() {
+        List<IdeaNegocio> ideasNegocio = this.ideaNegocioRepository.findAll();
+        for(IdeaNegocio ideaNegocio : ideasNegocio) {
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocio;
+    }
+
 }
