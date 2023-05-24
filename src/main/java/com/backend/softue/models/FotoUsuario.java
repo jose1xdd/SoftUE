@@ -23,7 +23,7 @@ public class FotoUsuario {
     @Column(nullable = false, columnDefinition = "LONGBLOB")
     private Blob foto;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne()
     @MapsId
     @JoinColumn(name = "foto_usuario")
     private User usuarioCodigo;

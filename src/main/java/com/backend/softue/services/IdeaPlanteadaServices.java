@@ -4,73 +4,100 @@ import com.backend.softue.models.Estudiante;
 import com.backend.softue.models.EstudianteIdeaKey;
 import com.backend.softue.models.IdeaNegocio;
 import com.backend.softue.models.IdeaPlanteada;
-import com.backend.softue.repositories.EstudianteRepository;
-import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.repositories.IdeaPlanteadaRepository;
+import com.backend.softue.security.Hashing;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Setter
 @Service
 public class IdeaPlanteadaServices {
 
     @Autowired
-    private IdeaNegocioRepository ideaNegocioRepository;
-
-    @Autowired
     private IdeaPlanteadaRepository ideaPlanteadaRepository;
 
+    private IdeaNegocioServices ideaNegocioServices;
+
     @Autowired
-    private EstudianteRepository estudianteRepository;
+    private EstudianteServices estudianteServices;
 
-    public void crear(IdeaNegocio ideaNegocio) {
-        int numeroEstudiantes = 0;
-        Estudiante estudiante = null;
-        EstudianteIdeaKey id = null;
-        IdeaPlanteada ideaPlanteada = null;
-        String correo = "";
+    @Autowired
+    private Hashing encrypt;
 
-        IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
-        if(resultado == null) throw new RuntimeException("No existe la idea de negocio a la cuál se le desea agregar integrantes estudiantes");
-
-        integrantesExistentes(ideaNegocio);
-
-        numeroEstudiantes = ideaNegocio.getCorreoEstudiantesIntegrantes().length;
-        for(int i = 0; i < numeroEstudiantes; i++) {
-            correo = ideaNegocio.getCorreoEstudiantesIntegrantes()[i];
-            estudiante = this.estudianteRepository.findByCorreo(correo);
-            id = new EstudianteIdeaKey(estudiante.getCodigo(), resultado.getId());
-            ideaPlanteada = new IdeaPlanteada(id, estudiante, resultado);
-            this.ideaPlanteadaRepository.save(ideaPlanteada);
-        }
-
-    }
-
-    public void integrantesExistentes(IdeaNegocio ideaNegocio){
-        int numeroEstudiantes = 0;
-        String correo = "";
-        Estudiante estudiante = null;
-
-        numeroEstudiantes = ideaNegocio.getCorreoEstudiantesIntegrantes().length;
-        for(int i = 0; i < numeroEstudiantes; i++) {
-            correo = ideaNegocio.getCorreoEstudiantesIntegrantes()[i];
-            estudiante = this.estudianteRepository.findByCorreo(correo);
-            if (estudiante == null)
-                throw new RuntimeException("El estudiante integrante que tiene como correo " + correo + " no existe");
+    public void agregarIntegrantes(IdeaNegocio ideaNegocio, List<Estudiante> estudiantesIntegrantes) {
+        for (Estudiante estudiante : estudiantesIntegrantes) {
+            agregarIntegrante(ideaNegocio, estudiante);
         }
     }
 
-    public void eliminar(IdeaNegocio ideaNegocio, Estudiante estudiante) {
-        IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
-        if(resultado == null)
-            throw new RuntimeException("No existe la idea de negocio a la cuál se le desea eliminar un integrante estudiante");
-        Estudiante estudianteEliminar = this.estudianteRepository.findByCorreo(estudiante.getCorreo());
-        EstudianteIdeaKey estudianteIdeaKey = new EstudianteIdeaKey(estudianteEliminar.getCodigo(), resultado.getId());
-        IdeaPlanteada ideaPlanteadaEliminar = this.ideaPlanteadaRepository.findById(estudianteIdeaKey).get();
+    public void agregarIntegrante(String JWT, String titulo, String correo) {
+        IdeaNegocio ideaNegocio = null;
+        Estudiante estudiante = null;
+        try {
+            estudiante = this.estudianteServices.obtenerEstudiante(correo);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("El estudiante no existe en la base de datos");
+        }
+        
+        ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
 
-        if(ideaPlanteadaEliminar != null)
-            this.ideaPlanteadaRepository.delete(ideaPlanteadaEliminar);
+        if(ideaNegocio.getTutor() == null)
+            throw new RuntimeException("La idea de negocio a eliminar no tiene un tutor asignado");
+        if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getTutor().getCorreo()))
+            throw new RuntimeException("Solo el tutor de una idea de negocio puede gestionar los integrantes de la misma");
+
+        agregarIntegrante(ideaNegocio, estudiante);
+    }
+
+    public void agregarIntegrante(IdeaNegocio ideaNegocio, Estudiante estudiante) {
+        try {
+            System.out.println(ideaNegocio.getTitulo());
+            ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        catch (Exception e) {
+            throw new RuntimeException("La idea de negocio no existe en la base de datos");
+        }
+        try {
+            estudiante = this.estudianteServices.obtenerEstudiante(estudiante.getCorreo());
+        }
+        catch (Exception e) {
+            throw new RuntimeException("El estudiante no existe en la base de datos");
+        }
+        this.ideaPlanteadaRepository.save(new IdeaPlanteada(new EstudianteIdeaKey(estudiante.getCodigo(), ideaNegocio.getId()), estudiante, ideaNegocio));
+    }
+
+    public void eliminarIntegrante(String JWT, String titulo, String correo) {
+        IdeaNegocio ideaNegocio = null;
+        Estudiante estudiante = null;
+        try {
+            ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("La idea de negocio no existe en la base de datos");
+        }
+        if(ideaNegocio.getTutor() == null)
+            throw new RuntimeException("La idea de negocio a eliminar no tiene un tutor asignado");
+        if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getTutor().getCorreo()))
+            throw new RuntimeException("Solo el tutor de una idea de negocio puede gestionar los integrantes de la misma");
+
+        try {
+            estudiante = this.estudianteServices.obtenerEstudiante(correo);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("El estudiante no existe en la base de datos");
+        }
+
+        IdeaPlanteada ideaPlanteada = new IdeaPlanteada(new EstudianteIdeaKey(estudiante.getCodigo(), ideaNegocio.getId()), estudiante, ideaNegocio);
+        Optional<IdeaPlanteada> resultado = this.ideaPlanteadaRepository.findById(ideaPlanteada.getId());
+
+        if(!resultado.isPresent())
+            throw new RuntimeException("El estudiante a eliminar no es integrante de la idea negocio");
+
+        this.ideaPlanteadaRepository.delete(resultado.get());
     }
 }

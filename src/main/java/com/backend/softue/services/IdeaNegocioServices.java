@@ -1,13 +1,22 @@
 package com.backend.softue.services;
 
+import com.backend.softue.models.DocenteApoyoIdea;
+import com.backend.softue.models.DocumentoIdea;
 import com.backend.softue.models.Estudiante;
 import com.backend.softue.models.IdeaNegocio;
-import com.backend.softue.repositories.EstudianteRepository;
+import com.backend.softue.models.IdeaPlanteada;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
+import com.backend.softue.utils.AreasConocimiento;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class IdeaNegocioServices {
@@ -16,10 +25,13 @@ public class IdeaNegocioServices {
     private IdeaNegocioRepository ideaNegocioRepository;
 
     @Autowired
-    private EstudianteRepository estudianteRepository;
+    private EstudianteServices estudianteServices;
 
     @Autowired
     private IdeaPlanteadaServices ideaPlanteadaServices;
+
+    @Autowired
+    private DocumentoIdeaServices documentoIdeaServices;
 
     @Autowired
     private Hashing encrypt;
@@ -27,56 +39,152 @@ public class IdeaNegocioServices {
     @Autowired
     private Roles roles;
 
-    public void crear(IdeaNegocio ideaNegocio, String JWT) {
-        String correo;
+    @Autowired
+    private AreasConocimiento areasConocimiento;
+
+    @PostConstruct
+    public void init() {
+        this.ideaPlanteadaServices.setIdeaNegocioServices(this);
+        this.documentoIdeaServices.setIdeaNegocioServices(this);
+    }
+
+    public void crear(IdeaNegocio ideaNegocio, String integrantes[], byte[] documento, String JWT) {
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
-        if(resultado != null)
+        if (resultado != null)
             throw new RuntimeException("Existe otra idea de negocio con el mismo título");
-        if(!this.encrypt.getJwt().getValue(JWT).toLowerCase().equals("estudiante"))
+        if (!this.encrypt.getJwt().getValue(JWT).toLowerCase().equals("estudiante"))
             throw new RuntimeException("No se puede crear una idea de negocio si no se es un estudiante");
+        if (!areasConocimiento.getAreasConocimiento().contains(ideaNegocio.getAreaEnfoque()))
+            throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        List<Estudiante> estudiantesIntegrantes = new LinkedList<Estudiante>();
+        try {
+            for (String correo : integrantes) {
+                estudiantesIntegrantes.add(this.estudianteServices.obtenerEstudiante(correo));
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Los integrantes de la idea de negocio no son validos");
+        }
 
-        this.ideaPlanteadaServices.integrantesExistentes(ideaNegocio);
+        String correo = this.encrypt.getJwt().getKey(JWT);
+        try {
+            Estudiante estudiante = this.estudianteServices.obtenerEstudiante(correo);
+            ideaNegocio.setEstudianteLider(estudiante);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("El estudiante lider de la idea no existe");
+        }
 
-        correo = this.encrypt.getJwt().getKey(JWT);
-        Estudiante estudiante = this.estudianteRepository.findByCorreo(correo);
-        ideaNegocio.setEstudianteLider(estudiante);
+        if(!this.validarIntegrantes(estudiantesIntegrantes, correo))
+            throw new RuntimeException("Los integrantes seleccionados son invalidos");
 
+        this.ideaNegocioRepository.save(ideaNegocio);
+        this.ideaPlanteadaServices.agregarIntegrantes(ideaNegocio, estudiantesIntegrantes);
+        if (documento != null)
+            agregarDocumento(ideaNegocio.getTitulo(), documento);
+    }
+
+    public void agregarDocumento(String titulo, byte[] documento) {
+        if (titulo == null)
+            throw new RuntimeException("No se proporciono un titulo para buscar la idea de negocio que se le quiere agregar el documento");
+        if (documento == null)
+            throw new RuntimeException("No se envió un documento agregar la idea de negocio");
+        IdeaNegocio ideaNegocio = this.obtenerIdeaNegocio(titulo);
+        if (ideaNegocio == null)
+            throw new RuntimeException("No existe una idea de negocio con ese nombre");
+        if (ideaNegocio.getDocumentoIdea() != null)
+            eliminarDocumento(titulo);
+        this.documentoIdeaServices.agregarDocumentoIdea(titulo, documento);
+        DocumentoIdea result = this.documentoIdeaServices.obtenerDocumento(titulo);
+        ideaNegocio.setDocumentoIdea(result);
         this.ideaNegocioRepository.save(ideaNegocio);
     }
 
-    public void actualizarTitulo(IdeaNegocio ideaNegocio, String JWT) {
-        IdeaNegocio resultado = this.ideaNegocioRepository.findById(ideaNegocio.getId()).get();
-        if(resultado == null)
-            throw new RuntimeException("No existe la idea de negocio a la cuál se le desea actualizar.");
-        if(!this.encrypt.getJwt().getKey(JWT).equals(resultado.getEstudianteLider().getCorreo()))
-            throw new RuntimeException("Solo el estudiante líder de la idea de negocio puede actualizar el título.");
-        resultado.setTitulo(ideaNegocio.getTitulo());
-
-        this.ideaNegocioRepository.save(resultado);
+    public  void eliminarDocumento(String titulo) {
+        if (titulo == null)
+            throw new RuntimeException("No se proporciono un titulo para buscar la idea de negocio que se le quiere eliminar el documento");
+        IdeaNegocio ideaNegocio = this.obtenerIdeaNegocio(titulo);
+        ideaNegocio.setDocumentoIdea(null);
+        this.ideaNegocioRepository.save(ideaNegocio);
+        this.documentoIdeaServices.eliminarDocumentoIdea(ideaNegocio.getId());
     }
 
-    public void agregarIntegrante(Estudiante estudiante, String titulo, String JWT) {
-        IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
-        if(ideaNegocio == null)
-            throw new RuntimeException("No existe la idea de negocio a la cuál se le desea agregar un integrante estudiante");
-        if(ideaNegocio.getTutor() != null)
-            ideaNegocio.setCorreoTutor(ideaNegocio.getTutor().getCorreo());
-        if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getCorreoTutor()))
-            throw new RuntimeException("Solo el docente tutor de la idea de negocio puede agregar un integrantes.");
+    public IdeaNegocio obtenerIdeaNegocio(String titulo) {
+        if (titulo == null)
+            throw new RuntimeException("No se enviaron datos para buscar la idea de negocio");
+        IdeaNegocio result = this.ideaNegocioRepository.findByTitulo(titulo);
+        if (result == null)
+            throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
+        if (result.getEstudianteLider() != null)
+            result.setStudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
+        if(result.getEstudiantesIntegrantes() != null){
+            Integer ctn = 0;
+            String arr [][] = new String[2][result.getEstudiantesIntegrantes().size()];
 
-        ideaNegocio.setCorreoEstudiantesIntegrantes(new String[] {estudiante.getCorreo()});
-        this.ideaPlanteadaServices.crear(ideaNegocio);
+            for(IdeaPlanteada v : result.getEstudiantesIntegrantes()){
+                arr[0][ctn] = v.getEstudiante().getCorreo();
+                arr[1][ctn] = v.getEstudiante().getApellido() + " " + v.getEstudiante().getNombre();
+                ctn++;
+            }
+            result.setEstudiantesIntegrantesInfo(arr);
+        }
+
+        if (result.getDocentesApoyo() != null) {
+            int indice = 0;
+            String docentesApoyoInfo[][] = new String[2][result.getDocentesApoyo().size()];
+            for (DocenteApoyoIdea docenteApoyoIdea : result.getDocentesApoyo()) {
+                docentesApoyoInfo[0][indice] = docenteApoyoIdea.getDocente().getNombre();
+                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getCorreo();
+                indice++;
+            }
+            result.setDocentesApotoInfo(docentesApoyoInfo);
+        }
+
+        return result;
     }
 
-    public void eliminarIntegrante(Estudiante estudiante, String titulo, String JWT){
-        IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
-        if(ideaNegocio == null)
-            throw new RuntimeException("No existe la idea de negocio a la cuál se le desea eliminar un integrante estudiante");
-        if(ideaNegocio.getTutor() != null)
-            ideaNegocio.setCorreoTutor(ideaNegocio.getTutor().getCorreo());
-        if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getCorreoTutor()))
-            throw new RuntimeException("Solo el docente tutor de la idea de negocio puede eliminar integrantes.");
+    public void actualizar(String tituloActual, String tituloNuevo , String area, String jwt) {
+        if (tituloActual == null)
+            throw new RuntimeException("No se envio el titulo de la idea a modificar");
+        if (tituloNuevo == null)
+            throw new RuntimeException("No se envio el nuevo titulo de la idea");
+        if (area == null)
+            throw new RuntimeException("No se envio la nueva area de la idea");
 
-        this.ideaPlanteadaServices.eliminar(ideaNegocio, estudiante);
+        IdeaNegocio idea = this.ideaNegocioRepository.findByTitulo(tituloActual);
+        if (idea == null)
+            throw new RuntimeException("No existe la idea de negocio la cual desea modificar");
+
+        if (!tituloActual.equals(tituloNuevo)) {
+            IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(tituloNuevo);
+            if (resultado != null)
+                throw new RuntimeException("No se puede actualizar la idea, ya existe una idea con el titulo que desea cambiar.");
+            if (!areasConocimiento.getAreasConocimiento().contains(area))
+                throw new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+
+            String correo = this.encrypt.getJwt().getKey(jwt);
+            if (!correo.equals(idea.getEstudianteLider().getCorreo()))
+                throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
+
+            idea.setAreaEnfoque(area);
+            idea.setTitulo(tituloNuevo);
+            this.ideaNegocioRepository.save(idea);
+        }
     }
+    private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {
+        Set<String> conjuntoCorreos = new HashSet<>();
+        for(Estudiante estudiante : integrantes) {
+            conjuntoCorreos.add(estudiante.getCorreo());
+        }
+        return conjuntoCorreos.size() == integrantes.size() && !conjuntoCorreos.contains(lider);
+    }
+
+    public List<IdeaNegocio> listar() {
+        List<IdeaNegocio> ideasNegocio = this.ideaNegocioRepository.findAll();
+        for(IdeaNegocio ideaNegocio : ideasNegocio) {
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocio;
+    }
+
 }
