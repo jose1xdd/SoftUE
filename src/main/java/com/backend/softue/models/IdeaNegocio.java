@@ -65,6 +65,8 @@ public class IdeaNegocio {
 
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<IdeaPlanteada> estudiantesIntegrantes;
+    @Transient
+    private String [][] estudiantesIntegrantesInfo;
 
     @OneToMany(mappedBy = "ideaNegocioId", fetch = FetchType.LAZY)
     private Set<ObservacionIdea> observaciones;
