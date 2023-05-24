@@ -128,7 +128,6 @@ public class IdeaNegocioServices {
             }
             result.setEstudiantesIntegrantesInfo(arr);
         }
-
         if (result.getDocentesApoyo() != null) {
             int indice = 0;
             String docentesApoyoInfo[][] = new String[2][result.getDocentesApoyo().size()];
@@ -171,6 +170,7 @@ public class IdeaNegocioServices {
             this.ideaNegocioRepository.save(idea);
         }
     }
+
     private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {
         Set<String> conjuntoCorreos = new HashSet<>();
         for(Estudiante estudiante : integrantes) {
