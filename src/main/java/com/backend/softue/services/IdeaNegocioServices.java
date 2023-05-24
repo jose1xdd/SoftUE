@@ -181,7 +181,7 @@ public class IdeaNegocioServices {
 
 
     public List<IdeaNegocio> buscarIdeasPorFiltros(String estudianteEmail, String docenteEmail, String area,Character estado ,LocalDate fechaInicio, LocalDate fechaFin) {
-       if(fechaFin == null || fechaInicio == null) throw new RuntimeException("Una o las dos fechas del filtro son nulas");
+       if(fechaFin == null ^ fechaInicio == null) throw new RuntimeException("Una o las dos fechas del filtro son nulas");
         return ideaNegocioRepository.findByFilters(docenteEmail,estudianteEmail,area,estado,fechaInicio,fechaFin);
     }
 
