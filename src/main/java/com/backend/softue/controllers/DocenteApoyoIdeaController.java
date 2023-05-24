@@ -23,7 +23,18 @@ public class DocenteApoyoIdeaController {
             return ResponseEntity.ok(new ResponseConfirmation("El docente de apoyo se agrego correctamete a la idea de negocio"));
         }
         catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
 
+    @CheckSession(permitedRol = {"docente"})
+    @DeleteMapping()
+    public ResponseEntity<?> eliminarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
+        try {
+            this.docenteApoyoIdeaServices.eliminarDocenteApoyo(jwt, tituloIdea, correoDocente);
+            return ResponseEntity.ok(new ResponseConfirmation("El docente de apoyo se elimino correctamete de la idea de negocio"));
+        }
+        catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }

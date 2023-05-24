@@ -48,6 +48,8 @@ public class IdeaNegocio {
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
+    @Transient
+    private String [][] studianteLiderInfo;
 
     @OneToOne(mappedBy = "ideaNegocio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
