@@ -10,5 +10,5 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 public class EstadosCalificacion {
-    private final Set<String> estados = Set.of("aprobada", "rechazada", "pendiente", "vencida");
+    private final String[] estados = {"aprobada", "rechazada", "pendiente", "vencida"};
 }

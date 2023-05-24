@@ -20,7 +20,7 @@ public class CalificacionIdeaController {
     private CalificacionIdeaServices calificacionIdeaServices;
 
     @CheckSession(permitedRol ={"coordinador"})
-    @PostMapping()
+    @PostMapping("/{titulo}/{correo}")
     public ResponseEntity<?> crear(@PathVariable String titulo, @PathVariable String correo) {
         try {
             this.calificacionIdeaServices.crear(titulo, correo);

@@ -32,7 +32,8 @@ public class PeriodoController {
     @GetMapping()
     public ResponseEntity<?> obtener() {
         try {
-            return ResponseEntity.ok(this.periodoServices.obtener());
+            FormatoPeriodo formatoPeriodo = new FormatoPeriodo(this.periodoServices.obtener().getPeriodoIdeaNegocio().getDays(), this.periodoServices.obtener().getPeriodoPlanNegocio().getDays());
+            return ResponseEntity.ok(formatoPeriodo);
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));

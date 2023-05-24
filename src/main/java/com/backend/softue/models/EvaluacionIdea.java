@@ -1,6 +1,7 @@
 package com.backend.softue.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "Evaluacion_idea")
+@JsonIgnoreProperties({"calificaciones"})
 public class EvaluacionIdea {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

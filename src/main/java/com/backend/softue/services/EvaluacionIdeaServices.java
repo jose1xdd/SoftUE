@@ -5,6 +5,7 @@ import com.backend.softue.models.EvaluacionIdea;
 import com.backend.softue.models.IdeaNegocio;
 import com.backend.softue.repositories.EvaluacionIdeaRepository;
 import com.backend.softue.security.Hashing;
+import com.backend.softue.utils.beansAuxiliares.EstadosCalificacion;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class EvaluacionIdeaServices {
 
     private CalificacionIdeaServices calificacionIdeaServices;
 
+    @Autowired
+    private EstadosCalificacion estadosCalificacion;
+
     public void crearEvaluacion(String jwt, String titulo) {
         IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
         if (ideaNegocio.getTutor() == null || !this.encrypt.getJwt().getKey(jwt).equals(ideaNegocio.getTutor().getCorreo()))
@@ -43,12 +47,13 @@ public class EvaluacionIdeaServices {
         }
         if(evaluacionReciente != null) {
             List<CalificacionIdea> calificaciones = this.calificacionIdeaServices.obtenerCalificaciones(evaluacionReciente);
+            if(calificaciones == null || calificaciones.size() == 0)
+                throw new RuntimeException("No se puede crear una evaluación a una idea con una evaluación pendiente");
             for(CalificacionIdea calificacion : calificaciones) {
-                if(calificacion.getEstado().equals("P")) //P representa que la calificacion tiene un estado pendiente
-                    throw new RuntimeException("No se puede crear una evaluacion a una idea con otra evaluación pendiente");
+                if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[2]) || calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[3]))
+                    throw new RuntimeException("No se puede crear una evaluación a una idea con una evaluación pendiente");
             }
         }
-        //Hace falta cuadrar la fecha de presentación con respecto a las calificaciones
         this.evaluacionIdeaRepository.save(new EvaluacionIdea(null, LocalDate.now(), LocalDate.now().plusDays(periodoServices.obtener().getPeriodoIdeaNegocio().getDays()), ideaNegocio, null));
     }
 
