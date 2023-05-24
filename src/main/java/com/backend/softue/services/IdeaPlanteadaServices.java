@@ -68,7 +68,6 @@ public class IdeaPlanteadaServices {
         }
         this.ideaPlanteadaRepository.save(new IdeaPlanteada(new EstudianteIdeaKey(estudiante.getCodigo(), ideaNegocio.getId()), estudiante, ideaNegocio));
     }
-
     public void eliminarIntegrante(String JWT, String titulo, String correo) {
         IdeaNegocio ideaNegocio = null;
         Estudiante estudiante = null;

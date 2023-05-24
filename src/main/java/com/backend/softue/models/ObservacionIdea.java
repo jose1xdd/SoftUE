@@ -23,13 +23,11 @@ public class ObservacionIdea {
 
     @NotNull(message = "Error: El campo 'ideaNegocioId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la ideaNegocioId de la Observacion Idea.")
     @ManyToOne()
-    @MapsId("ideaNegocioId")
     @JoinColumn(name = "idea_negocio_Id")
     private IdeaNegocio ideaNegocioId;
 
     @NotNull(message = "Error: El campo 'docenteId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el docenteId de la Observacion Idea.")
     @ManyToOne()
-    @MapsId("docenteId")
     @JoinColumn(name = "docente_id")
     private Docente docenteId;
 

@@ -9,6 +9,8 @@ import com.backend.softue.security.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DocenteApoyoIdeaServices {
 
@@ -47,4 +49,10 @@ public class DocenteApoyoIdeaServices {
         DocenteApoyoIdea docenteApoyoIdea = this.docenteApoyoIdeaRepository.getReferenceById(new DocenteIdeaKey(docente.getCodigo(), ideaNegocio.getId()));
         this.docenteApoyoIdeaRepository.delete(docenteApoyoIdea);
     }
+
+    public List<DocenteApoyoIdea> listarDocentesApoyo(IdeaNegocio idea){
+        return this.docenteApoyoIdeaRepository.findByIdeaNegocio(idea);
+    }
+
+
 }

@@ -32,7 +32,7 @@ public class IdeaNegocioController {
     @PostMapping()
     public ResponseEntity<?> crear(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String[] integrantes, @RequestParam String area, @RequestParam MultipartFile documento) {
         try {
-            IdeaNegocio ideaNegocio = new IdeaNegocio(null, titulo, 'F', area, null, LocalDate.now(), null, null, null, null, null, null, null,null,null);
+            IdeaNegocio ideaNegocio = new IdeaNegocio(null, titulo, 'F', area, null, null,  LocalDate.now(),  null, null, null, null, null, null,null,null,null);
             this.ideaNegocioServices.crear(ideaNegocio, integrantes, documento.getBytes(), jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Idea de negocio creada correctamente"));
         } catch (Exception e) {
@@ -94,4 +94,6 @@ public class IdeaNegocioController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+
+
 }
