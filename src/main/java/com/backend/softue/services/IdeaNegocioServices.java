@@ -170,17 +170,8 @@ public class IdeaNegocioServices {
             idea.setTitulo(tituloNuevo);
             this.ideaNegocioRepository.save(idea);
         }
-<<<<<<< HEAD
     }
-    private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {
-        Set<String> conjuntoCorreos = new HashSet<>();
-        for(Estudiante estudiante : integrantes) {
-            conjuntoCorreos.add(estudiante.getCorreo());
-        }
-        return conjuntoCorreos.size() == integrantes.size() && !conjuntoCorreos.contains(lider);
-=======
->>>>>>> 6e8f9f401099b7d8cc0cbbd6a8ae05fc685451e7
-    }
+
     private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {
         Set<String> conjuntoCorreos = new HashSet<>();
         for(Estudiante estudiante : integrantes) {

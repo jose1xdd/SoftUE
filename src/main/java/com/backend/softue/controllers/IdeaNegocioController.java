@@ -94,4 +94,6 @@ public class IdeaNegocioController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+
+
 }

@@ -29,8 +29,6 @@ public class IdeaPlanteadaController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
-<<<<<<< HEAD
-=======
 
     @CheckSession(permitedRol ={"docente"})
     @PostMapping("/{titulo}/{correo}")
@@ -42,5 +40,4 @@ public class IdeaPlanteadaController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
->>>>>>> 6e8f9f401099b7d8cc0cbbd6a8ae05fc685451e7
 }
