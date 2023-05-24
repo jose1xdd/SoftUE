@@ -116,7 +116,7 @@ public class IdeaNegocioServices {
         if (result == null)
             throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
         if (result.getEstudianteLider() != null)
-            result.setStudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
+            result.setEstudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()},{result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
         if(result.getEstudiantesIntegrantes() != null){
             Integer ctn = 0;
             String arr [][] = new String[2][result.getEstudiantesIntegrantes().size()];
@@ -133,11 +133,15 @@ public class IdeaNegocioServices {
             int indice = 0;
             String docentesApoyoInfo[][] = new String[2][result.getDocentesApoyo().size()];
             for (DocenteApoyoIdea docenteApoyoIdea : result.getDocentesApoyo()) {
-                docentesApoyoInfo[0][indice] = docenteApoyoIdea.getDocente().getNombre();
-                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getCorreo();
+                docentesApoyoInfo[0][indice] = docenteApoyoIdea.getDocente().getCorreo();
+                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getApellido() + docenteApoyoIdea.getDocente().getNombre();
                 indice++;
             }
-            result.setDocentesApotoInfo(docentesApoyoInfo);
+            result.setDocentesApoyoInfo(docentesApoyoInfo);
+        }
+
+        if(result.getTutor() != null){
+            result.setTutorInfo(new String[][]{{result.getTutor().getCorreo()} , {result.getTutor().getApellido() + result.getTutor().getNombre()}});
         }
 
         return result;

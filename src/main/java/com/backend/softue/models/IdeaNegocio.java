@@ -39,6 +39,8 @@ public class IdeaNegocio {
     @ManyToOne
     @JoinColumn(name = "tutor_codigo")
     private Docente tutor;
+    @Transient
+    private String [][] tutorInfo;
 
     @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion de la Idea de Negocio.")
     @Column(nullable = false)
@@ -49,7 +51,7 @@ public class IdeaNegocio {
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
     @Transient
-    private String [][] studianteLiderInfo;
+    private String [][] estudianteLiderInfo;
 
     @OneToOne(mappedBy = "ideaNegocio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
@@ -61,7 +63,7 @@ public class IdeaNegocio {
     @OneToMany(mappedBy = "ideaNegocio", fetch = FetchType.LAZY)
     private Set<DocenteApoyoIdea> docentesApoyo;
     @Transient
-    private String [][] docentesApotoInfo;
+    private String [][] docentesApoyoInfo;
 
     @OneToMany(mappedBy = "ideaNegocio")
     private Set<IdeaPlanteada> estudiantesIntegrantes;
