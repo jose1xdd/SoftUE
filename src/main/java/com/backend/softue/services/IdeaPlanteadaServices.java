@@ -33,6 +33,7 @@ public class IdeaPlanteadaServices {
             agregarIntegrante(ideaNegocio, estudiante);
         }
     }
+
     public void agregarIntegrante(String JWT, String titulo, String correo) {
         IdeaNegocio ideaNegocio = null;
         Estudiante estudiante = null;
