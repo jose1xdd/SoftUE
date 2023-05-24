@@ -29,7 +29,7 @@ public class DocenteApoyoIdeaServices {
         if (correoDocente == null)
             throw new RuntimeException("No se envió un correo con el que buscar al docente");
         IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(tituloIdea);
-        if (!this.encrypt.getJwt().getKey(jwt).equals(ideaNegocio.getTutor().getCorreo()))
+        if (ideaNegocio.getTutor() == null || !this.encrypt.getJwt().getKey(jwt).equals(ideaNegocio.getTutor().getCorreo()))
             throw new RuntimeException("Solo el tutor de una idea de negocio puede gestionar los docentes de apoyo de la misma");
         Docente docente = this.docenteServices.obtenerDocente(correoDocente);
         this.docenteApoyoIdeaRepository.save(new DocenteApoyoIdea(new DocenteIdeaKey(docente.getCodigo(), ideaNegocio.getId()), docente, ideaNegocio));
