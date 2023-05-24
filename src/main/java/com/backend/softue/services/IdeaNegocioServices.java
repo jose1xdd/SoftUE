@@ -1,5 +1,6 @@
 package com.backend.softue.services;
 
+import com.backend.softue.models.DocenteApoyoIdea;
 import com.backend.softue.models.DocumentoIdea;
 import com.backend.softue.models.Estudiante;
 import com.backend.softue.models.IdeaNegocio;
@@ -126,6 +127,17 @@ public class IdeaNegocioServices {
                 ctn++;
             }
             result.setEstudiantesIntegrantesInfo(arr);
+        }
+
+        if (result.getDocentesApoyo() != null) {
+            int indice = 0;
+            String docentesApoyoInfo[][] = new String[2][result.getDocentesApoyo().size()];
+            for (DocenteApoyoIdea docenteApoyoIdea : result.getDocentesApoyo()) {
+                docentesApoyoInfo[0][indice] = docenteApoyoIdea.getDocente().getNombre();
+                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getCorreo();
+                indice++;
+            }
+            result.setDocentesApotoInfo(docentesApoyoInfo);
         }
 
         return result;
