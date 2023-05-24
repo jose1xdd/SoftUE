@@ -116,7 +116,7 @@ public class IdeaNegocioServices {
         if (result == null)
             throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
         if (result.getEstudianteLider() != null)
-            result.setStudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
+            result.setEstudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
         if(result.getEstudiantesIntegrantes() != null){
             Integer ctn = 0;
             String arr [][] = new String[2][result.getEstudiantesIntegrantes().size()];
@@ -137,7 +137,7 @@ public class IdeaNegocioServices {
                 docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getCorreo();
                 indice++;
             }
-            result.setDocentesApotoInfo(docentesApoyoInfo);
+            result.setDocentesApoyoInfo(docentesApoyoInfo);
         }
 
         return result;
