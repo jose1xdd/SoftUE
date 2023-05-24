@@ -3,6 +3,7 @@ package com.backend.softue.services;
 import com.backend.softue.models.DocumentoIdea;
 import com.backend.softue.models.Estudiante;
 import com.backend.softue.models.IdeaNegocio;
+import com.backend.softue.models.IdeaPlanteada;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
@@ -115,6 +116,18 @@ public class IdeaNegocioServices {
             throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
         if (result.getEstudianteLider() != null)
             result.setStudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
+        if(result.getEstudiantesIntegrantes() != null){
+            Integer ctn = 0;
+            String arr [][] = new String[2][result.getEstudiantesIntegrantes().size()];
+
+            for(IdeaPlanteada v : result.getEstudiantesIntegrantes()){
+                arr[0][ctn] = v.getEstudiante().getCorreo();
+                arr[1][ctn] = v.getEstudiante().getApellido() + " " + v.getEstudiante().getNombre();
+                ctn++;
+            }
+            result.setEstudiantesIntegrantesInfo(arr);
+        }
+
         return result;
     }
 

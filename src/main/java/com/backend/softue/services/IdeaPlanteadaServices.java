@@ -36,6 +36,7 @@ public class IdeaPlanteadaServices {
 
     public void agregarIntegrante(IdeaNegocio ideaNegocio, Estudiante estudiante) {
         try {
+            System.out.println(ideaNegocio.getTitulo());
             ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(ideaNegocio.getTitulo());
         }
         catch (Exception e) {
