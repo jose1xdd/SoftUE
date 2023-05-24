@@ -113,6 +113,8 @@ public class IdeaNegocioServices {
         IdeaNegocio result = this.ideaNegocioRepository.findByTitulo(titulo);
         if (result == null)
             throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
+        if (result.getEstudianteLider() != null)
+            result.setStudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
         return result;
     }
 
