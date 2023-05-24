@@ -34,6 +34,44 @@ public class IdeaPlanteadaServices {
         }
     }
 
+<<<<<<< HEAD
+    public void agregarIntegrante(IdeaNegocio ideaNegocio, Estudiante estudiante) {
+        try {
+            System.out.println(ideaNegocio.getTitulo());
+            ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        catch (Exception e) {
+            throw new RuntimeException("La idea de negocio no existe en la base de datos");
+        }
+        try {
+            estudiante = this.estudianteServices.obtenerEstudiante(estudiante.getCorreo());
+=======
+    public void agregarIntegrante(String JWT, String titulo, String correo) {
+        IdeaNegocio ideaNegocio = null;
+        Estudiante estudiante = null;
+        try {
+            estudiante = this.estudianteServices.obtenerEstudiante(correo);
+>>>>>>> 6e8f9f401099b7d8cc0cbbd6a8ae05fc685451e7
+        }
+        catch (Exception e) {
+            throw new RuntimeException("El estudiante no existe en la base de datos");
+        }
+<<<<<<< HEAD
+        this.ideaPlanteadaRepository.save(new IdeaPlanteada(new EstudianteIdeaKey(estudiante.getCodigo(), ideaNegocio.getId()), estudiante, ideaNegocio));
+    }
+
+=======
+        
+        ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
+
+        if(ideaNegocio.getTutor() == null)
+            throw new RuntimeException("La idea de negocio a eliminar no tiene un tutor asignado");
+        if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getTutor().getCorreo()))
+            throw new RuntimeException("Solo el tutor de una idea de negocio puede gestionar los integrantes de la misma");
+
+        agregarIntegrante(ideaNegocio, estudiante);
+    }
+
     public void agregarIntegrante(IdeaNegocio ideaNegocio, Estudiante estudiante) {
         try {
             System.out.println(ideaNegocio.getTitulo());
@@ -51,6 +89,7 @@ public class IdeaPlanteadaServices {
         this.ideaPlanteadaRepository.save(new IdeaPlanteada(new EstudianteIdeaKey(estudiante.getCodigo(), ideaNegocio.getId()), estudiante, ideaNegocio));
     }
 
+>>>>>>> 6e8f9f401099b7d8cc0cbbd6a8ae05fc685451e7
     public void eliminarIntegrante(String JWT, String titulo, String correo) {
         IdeaNegocio ideaNegocio = null;
         Estudiante estudiante = null;
