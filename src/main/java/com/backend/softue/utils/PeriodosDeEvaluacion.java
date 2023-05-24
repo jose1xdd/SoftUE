@@ -15,7 +15,7 @@ public class PeriodosDeEvaluacion {
     Period periodoPlanNegocio;
 
     public PeriodosDeEvaluacion() {
-        this.periodoIdeaNegocio = Period.ofMonths(1);
-        this.periodoPlanNegocio = Period.ofMonths(1);
+        this.periodoIdeaNegocio = Period.ofDays(30);
+        this.periodoPlanNegocio = Period.ofDays(30);
     }
 }
