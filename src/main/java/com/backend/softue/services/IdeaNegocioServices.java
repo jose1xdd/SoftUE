@@ -11,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -150,5 +151,12 @@ public class IdeaNegocioServices {
             conjuntoCorreos.add(estudiante.getCorreo());
         }
         return conjuntoCorreos.size() == integrantes.size() && !conjuntoCorreos.contains(lider);
+    }
+
+    public List<IdeaNegocio> buscarIdeasPorFiltros(String estudianteEmail, String docenteEmail, String area,Character estado ,LocalDate fechaInicio, LocalDate fechaFin) {
+        System.out.println(estudianteEmail);
+        System.out.println(docenteEmail);
+        System.out.println(area);
+        return ideaNegocioRepository.findByFilters(docenteEmail,estudianteEmail,area,estado,fechaInicio,fechaFin);
     }
 }
