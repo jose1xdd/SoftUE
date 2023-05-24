@@ -2,15 +2,12 @@ package com.backend.softue.services;
 
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.DocenteRepository;
-import com.backend.softue.repositories.EstudianteRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
-import com.backend.softue.utils.AreasConocimiento;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.backend.softue.utils.beansAuxiliares.AreasConocimiento;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service

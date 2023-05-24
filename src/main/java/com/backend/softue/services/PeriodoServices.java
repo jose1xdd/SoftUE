@@ -1,7 +1,7 @@
 package com.backend.softue.services;
 
-import com.backend.softue.utils.PeriodosDeEvaluacion;
-import com.backend.softue.utils.response.FormatoPeriodo;
+import com.backend.softue.utils.beansAuxiliares.PeriodosDeEvaluacion;
+import com.backend.softue.utils.FormatoPeriodo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class PeriodoServices {
         this.periodos.setPeriodoPlanNegocio(Period.ofDays(periodos.getDiasPeriodoPlan()));
     }
 
-    public FormatoPeriodo obtener() {
-        return new FormatoPeriodo(periodos.getPeriodoIdeaNegocio().getDays(), periodos.getPeriodoPlanNegocio().getDays());
+    public PeriodosDeEvaluacion obtener() {
+        return periodos;
     }
 }

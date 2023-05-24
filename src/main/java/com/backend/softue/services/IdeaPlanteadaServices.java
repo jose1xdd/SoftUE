@@ -52,26 +52,6 @@ public class IdeaPlanteadaServices {
         agregarIntegrante(ideaNegocio, estudiante);
     }
 
-    public void agregarIntegrante(String JWT, String titulo, String correo) {
-        IdeaNegocio ideaNegocio = null;
-        Estudiante estudiante = null;
-        try {
-            estudiante = this.estudianteServices.obtenerEstudiante(correo);
-        }
-        catch (Exception e) {
-            throw new RuntimeException("El estudiante no existe en la base de datos");
-        }
-        
-        ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
-
-        if(ideaNegocio.getTutor() == null)
-            throw new RuntimeException("La idea de negocio a eliminar no tiene un tutor asignado");
-        if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getTutor().getCorreo()))
-            throw new RuntimeException("Solo el tutor de una idea de negocio puede gestionar los integrantes de la misma");
-
-        agregarIntegrante(ideaNegocio, estudiante);
-    }
-
     public void agregarIntegrante(IdeaNegocio ideaNegocio, Estudiante estudiante) {
         try {
             System.out.println(ideaNegocio.getTitulo());

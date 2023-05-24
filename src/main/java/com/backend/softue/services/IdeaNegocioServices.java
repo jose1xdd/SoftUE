@@ -8,7 +8,7 @@ import com.backend.softue.models.IdeaPlanteada;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
-import com.backend.softue.utils.AreasConocimiento;
+import com.backend.softue.utils.beansAuxiliares.AreasConocimiento;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
