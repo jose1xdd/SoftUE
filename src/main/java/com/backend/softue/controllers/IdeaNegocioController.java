@@ -94,7 +94,7 @@ public class IdeaNegocioController {
         }
     }
 
-    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @GetMapping("/filtrar")
     public ResponseEntity<List<IdeaNegocio>> buscarIdeasPorFiltros(
             @RequestParam(required = false) String estudianteEmail,
