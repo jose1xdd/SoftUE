@@ -1,5 +1,6 @@
 package com.backend.softue.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties({"tutor", "estudianteLider", "documentoPlan", "evaluaciones", "estudiantesIntegrantes", "observaciones", "docentesApoyo"})
 @Table(name = "Plan_negocio")
 public class PlanNegocio {
     @Id
@@ -38,6 +40,8 @@ public class PlanNegocio {
     @ManyToOne
     @JoinColumn(nullable = false, name = "tutor_codigo")
     private Docente tutor;
+    @Transient
+    private String [][] tutorInfo;
 
     @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion del Plan de Negocio.")
     @Column(nullable = false)
@@ -47,6 +51,8 @@ public class PlanNegocio {
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
+    @Transient
+    private String [][] estudianteLiderInfo;
 
     @OneToOne(mappedBy = "planNegocio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
@@ -57,9 +63,13 @@ public class PlanNegocio {
 
     @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
     private Set<DocenteApoyoPlan> docentesApoyo;
+    @Transient
+    private String [][] docentesApoyoInfo;
 
     @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
     private Set<PlanPresentado> estudiantesIntegrantes;
+    @Transient
+    private String [][] estudiantesIntegrantesInfo;
 
     @OneToMany(mappedBy = "planNegocioId", fetch = FetchType.LAZY)
     private Set<ObservacionPlan> observaciones;

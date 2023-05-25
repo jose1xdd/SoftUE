@@ -129,7 +129,7 @@ public class IdeaNegocioServices {
 
             for(IdeaPlanteada v : result.getEstudiantesIntegrantes()){
                 arr[0][ctn] = v.getEstudiante().getCorreo();
-                arr[1][ctn] = v.getEstudiante().getApellido() + " " + v.getEstudiante().getNombre();
+                arr[1][ctn] = v.getEstudiante().getNombre() + " " + v.getEstudiante().getApellido();
                 ctn++;
             }
             result.setEstudiantesIntegrantesInfo(arr);
@@ -139,13 +139,13 @@ public class IdeaNegocioServices {
             String docentesApoyoInfo[][] = new String[2][result.getDocentesApoyo().size()];
             for (DocenteApoyoIdea docenteApoyoIdea : result.getDocentesApoyo()) {
                 docentesApoyoInfo[0][indice] = docenteApoyoIdea.getDocente().getCorreo();
-                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getApellido() + docenteApoyoIdea.getDocente().getNombre();
+                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getNombre() + " " + docenteApoyoIdea.getDocente().getApellido();
                 indice++;
             }
             result.setDocentesApoyoInfo(docentesApoyoInfo);
         }
         if(result.getTutor() != null){
-            result.setTutorInfo(new String[][]{{result.getTutor().getCorreo()} , {result.getTutor().getApellido() + result.getTutor().getNombre()}});
+            result.setTutorInfo(new String[][]{{result.getTutor().getCorreo()} , {result.getTutor().getNombre() + " " + result.getTutor().getApellido()}});
         }
         return result;
     }
