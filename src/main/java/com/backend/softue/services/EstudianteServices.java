@@ -6,6 +6,7 @@ import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UserRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
 import com.backend.softue.utils.GradosPermitidos;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Getter
 @Service
 public class EstudianteServices {
     @Autowired

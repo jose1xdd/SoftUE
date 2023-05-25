@@ -2,17 +2,16 @@ package com.backend.softue.services;
 
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.DocenteRepository;
-import com.backend.softue.repositories.EstudianteRepository;
+import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
+import com.backend.softue.security.Hashing;
 import com.backend.softue.utils.AreasConocimiento;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
-
 @Service
 public class DocenteServices {
     @Autowired
@@ -29,6 +28,10 @@ public class DocenteServices {
 
     @Autowired
     private AreasConocimiento areasConocimiento;
+    @Autowired
+    private Hashing encrypth;
+    @Autowired
+    private IdeaNegocioRepository ideaNegocioRepository;
     public void registrarDocente(Docente docente) {
         docente.setArea(docente.getArea().toLowerCase());
         if(!areasConocimiento.getAreasConocimiento().contains(docente.getArea())) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
@@ -80,5 +83,16 @@ public class DocenteServices {
         area=area.toLowerCase();
         if(!areasConocimiento.getAreasConocimiento().contains(area)) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         return this.docenteRepository.findByArea(area);
+    }
+
+    public String confirmarTutoria (Boolean respuesta,String titulo, String jwt){
+        if(respuesta){
+            IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
+            if(ideaNegocio == null ) throw  new RuntimeException("se mandó mal el titulo de la idea de negocio");
+            ideaNegocio.setTutor(this.obtenerDocente(this.encrypth.getJwt().getKey(jwt)));
+            this.ideaNegocioRepository.save(ideaNegocio);
+            return "Docente Asignado";
+        }
+        return "El docente rechazo";
     }
 }

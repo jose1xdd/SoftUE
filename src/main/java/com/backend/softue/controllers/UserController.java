@@ -129,4 +129,15 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+
+    @GetMapping("/asignar/{idea}/{docente}")
+    public ResponseEntity<?> asignarTutor(@PathVariable String idea , @PathVariable String docente) {
+        try {
+            this.userServices.solicitarDocente(idea,docente);
+            return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
+
+        }
+    }
 }
