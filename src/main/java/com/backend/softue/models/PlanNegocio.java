@@ -24,7 +24,6 @@ public class PlanNegocio {
     @Column(nullable = false, unique = true)
     private String titulo;
 
-    @NotBlank(message = "Error: El campo 'resumen' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el resumen del Plan de Negocio.")
     private String resumen;
 
     @NotNull(message = "Error: El campo 'estado' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estado del Plan de Negocio.")
@@ -49,11 +48,9 @@ public class PlanNegocio {
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")
     private Estudiante estudianteLider;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "documento_plan_id", referencedColumnName = "documento_plan_id")
+    @OneToOne(mappedBy = "planNegocio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
     private DocumentoPlan documentoPlan;
-    @Transient
-    private Integer idDocumentoPlan;
 
     @OneToMany(mappedBy = "planNegocio", fetch = FetchType.LAZY)
     private Set<EvaluacionPlan> evaluaciones;

@@ -25,6 +25,13 @@ public class DocumentoPlan {
     @Column(nullable = false, columnDefinition = "LONGBLOB")
     private Blob documento;
 
-    @OneToOne(mappedBy = "documentoPlan")
+    @OneToOne()
+    @MapsId
+    @JoinColumn(name = "documentoPlan")
     private PlanNegocio planNegocio;
+
+    @NotNull
+    @NotBlank
+    @Column(nullable = false)
+    private String nombreArchivo;
 }

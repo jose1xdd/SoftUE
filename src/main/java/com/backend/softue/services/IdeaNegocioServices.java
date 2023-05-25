@@ -55,7 +55,7 @@ public class IdeaNegocioServices {
         if (!this.encrypt.getJwt().getValue(JWT).toLowerCase().equals("estudiante"))
             throw new RuntimeException("No se puede crear una idea de negocio si no se es un estudiante");
         if (!areasConocimiento.getAreasConocimiento().contains(ideaNegocio.getAreaEnfoque()))
-            throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+            throw  new RuntimeException("No se puede crear esta idea de negocio, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         List<Estudiante> estudiantesIntegrantes = new LinkedList<Estudiante>();
         try {
             for (String correo : integrantes) {
