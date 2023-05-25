@@ -80,7 +80,7 @@ public class IdeaNegocioServices {
 
         this.ideaNegocioRepository.save(ideaNegocio);
         this.ideaPlanteadaServices.agregarIntegrantes(ideaNegocio, estudiantesIntegrantes);
-        if (documento != null)
+        if (nombreArchivo != null)
             agregarDocumento(ideaNegocio.getTitulo(), documento, nombreArchivo);
     }
 
@@ -88,7 +88,7 @@ public class IdeaNegocioServices {
         if (titulo == null)
             throw new RuntimeException("No se proporciono un titulo para buscar la idea de negocio que se le quiere agregar el documento");
         if (documento == null)
-            throw new RuntimeException("No se envió un documento agregar la idea de negocio");
+            throw new RuntimeException("No se envió un documento que agregar a la idea de negocio");
         IdeaNegocio ideaNegocio = this.obtenerIdeaNegocio(titulo);
         if (ideaNegocio == null)
             throw new RuntimeException("No existe una idea de negocio con ese nombre");
@@ -162,21 +162,16 @@ public class IdeaNegocioServices {
         if (idea == null)
             throw new RuntimeException("No existe la idea de negocio la cual desea modificar");
 
-        if (!tituloActual.equals(tituloNuevo)) {
-            IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(tituloNuevo);
-            if (resultado != null)
-                throw new RuntimeException("No se puede actualizar la idea, ya existe una idea con el titulo que desea cambiar.");
-            if (!areasConocimiento.getAreasConocimiento().contains(area))
-                throw new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        String correo = this.encrypt.getJwt().getKey(jwt);
+        if (!correo.equals(idea.getEstudianteLider().getCorreo()))
+            throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
 
-            String correo = this.encrypt.getJwt().getKey(jwt);
-            if (!correo.equals(idea.getEstudianteLider().getCorreo()))
-                throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
+        if (!areasConocimiento.getAreasConocimiento().contains(area))
+            throw new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
 
-            idea.setAreaEnfoque(area);
-            idea.setTitulo(tituloNuevo);
-            this.ideaNegocioRepository.save(idea);
-        }
+        idea.setAreaEnfoque(area);
+        idea.setTitulo(tituloNuevo);
+        this.ideaNegocioRepository.save(idea);
     }
 
     private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {
