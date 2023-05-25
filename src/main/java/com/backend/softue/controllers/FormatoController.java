@@ -28,17 +28,17 @@ public class FormatoController {
     public ResponseEntity<?> recuperarFormato(@PathVariable String id) {
         try {
             String nombreArchivo = this.formatoServices.obtenerNombre(id);
-            String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf("."));
+            Formato formato = this.formatoServices.obtenerFormato(id);
             HttpHeaders headers = new HttpHeaders();
-            if (extension.equals(".docx")) {
+            if (formato.getExtension().equals(".docx")) {
                 headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             }
-            else if (extension.equals(".pdf")) {
+            else if (formato.getExtension().equals(".pdf")) {
                 headers.setContentType(MediaType.APPLICATION_PDF);
             }
             else throw new RuntimeException("El formato del archivo no es apto para retornarse");
             headers.setContentDisposition(ContentDisposition.attachment().filename(nombreArchivo).build());
-            return new ResponseEntity<>(this.formatoServices.obtenerFormato(id), headers, HttpStatus.OK);
+            return new ResponseEntity<>(formato.getDocumento(), headers, HttpStatus.OK);
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
@@ -47,10 +47,10 @@ public class FormatoController {
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @PostMapping()
-    public ResponseEntity<?> crearFormato(@RequestParam Integer id, @RequestParam String modulo, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate fechaCreacion, @RequestParam MultipartFile documento, @RequestParam String extension) {
+    public ResponseEntity<?> crearFormato(@RequestParam String modulo, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate fechaCreacion, @RequestParam MultipartFile documento) {
         try {
-
-            Formato formato = new Formato(id, modulo, fechaCreacion, documento.getBytes(), extension);
+            String extension = documento.getOriginalFilename().substring(documento.getOriginalFilename().lastIndexOf("."));
+            Formato formato = new Formato(null, modulo, fechaCreacion, documento.getBytes(), extension);
             this.formatoServices.guardarFormato(formato);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El formato se guardo correctamente"), HttpStatus.OK);
         }

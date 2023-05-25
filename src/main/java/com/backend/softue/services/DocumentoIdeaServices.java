@@ -18,7 +18,7 @@ public class DocumentoIdeaServices {
 
     private IdeaNegocioServices ideaNegocioServices;
 
-    public void agregarDocumentoIdea(String titulo, byte[] documento) {
+    public void agregarDocumentoIdea(String titulo, byte[] documento, String nombreArchivo) {
         IdeaNegocio ideaNegocio;
         try {
             ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
@@ -28,7 +28,10 @@ public class DocumentoIdeaServices {
         }
         if (documento == null)
             throw new RuntimeException("No se envio ningún documento para ser agregado");
-        this.documentoIdeaRepository.save(new DocumentoIdea(null, documento, ideaNegocio));
+        String extension = nombreArchivo.substring(nombreArchivo.lastIndexOf("."));
+        if (!extension.equals(".pdf") && !extension.equals(".docx"))
+            throw new RuntimeException("La extensión del archivo no es permitida, por favor subir documentos .docx o .pdf");
+        this.documentoIdeaRepository.save(new DocumentoIdea(null, documento, ideaNegocio, nombreArchivo));
     }
 
     public void eliminarDocumentoIdea(Integer id) {

@@ -49,7 +49,7 @@ public class IdeaNegocioServices {
         this.documentoIdeaServices.setIdeaNegocioServices(this);
     }
 
-    public void crear(IdeaNegocio ideaNegocio, String integrantes[], byte[] documento, String JWT) {
+    public void crear(IdeaNegocio ideaNegocio, String integrantes[], byte[] documento, String nombreArchivo, String JWT) {
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
         if (resultado != null)
             throw new RuntimeException("Existe otra idea de negocio con el mismo título");
@@ -82,10 +82,10 @@ public class IdeaNegocioServices {
         this.ideaNegocioRepository.save(ideaNegocio);
         this.ideaPlanteadaServices.agregarIntegrantes(ideaNegocio, estudiantesIntegrantes);
         if (documento != null)
-            agregarDocumento(ideaNegocio.getTitulo(), documento);
+            agregarDocumento(ideaNegocio.getTitulo(), documento, nombreArchivo);
     }
 
-    public void agregarDocumento(String titulo, byte[] documento) {
+    public void agregarDocumento(String titulo, byte[] documento, String nombreArchivo) {
         if (titulo == null)
             throw new RuntimeException("No se proporciono un titulo para buscar la idea de negocio que se le quiere agregar el documento");
         if (documento == null)
@@ -95,7 +95,7 @@ public class IdeaNegocioServices {
             throw new RuntimeException("No existe una idea de negocio con ese nombre");
         if (ideaNegocio.getDocumentoIdea() != null)
             eliminarDocumento(titulo);
-        this.documentoIdeaServices.agregarDocumentoIdea(titulo, documento);
+        this.documentoIdeaServices.agregarDocumentoIdea(titulo, documento, nombreArchivo);
         DocumentoIdea result = this.documentoIdeaServices.obtenerDocumento(titulo);
         ideaNegocio.setDocumentoIdea(result);
         this.ideaNegocioRepository.save(ideaNegocio);
@@ -110,6 +110,12 @@ public class IdeaNegocioServices {
         this.documentoIdeaServices.eliminarDocumentoIdea(ideaNegocio.getId());
     }
 
+    public DocumentoIdea recuperarDocumento(String titulo) {
+        if (titulo == null)
+            throw new RuntimeException("No se proporciono informacion para buscar el documento correspondiente a la idea con el titulo proporcionado");
+        return this.documentoIdeaServices.obtenerDocumento(titulo);
+    }
+
     public IdeaNegocio obtenerIdeaNegocio(String titulo) {
         if (titulo == null)
             throw new RuntimeException("No se enviaron datos para buscar la idea de negocio");
@@ -117,7 +123,7 @@ public class IdeaNegocioServices {
         if (result == null)
             throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
         if (result.getEstudianteLider() != null)
-            result.setEstudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
+        result.setEstudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
         if(result.getEstudiantesIntegrantes() != null){
             Integer ctn = 0;
             String arr [][] = new String[2][result.getEstudiantesIntegrantes().size()];
@@ -133,11 +139,14 @@ public class IdeaNegocioServices {
             int indice = 0;
             String docentesApoyoInfo[][] = new String[2][result.getDocentesApoyo().size()];
             for (DocenteApoyoIdea docenteApoyoIdea : result.getDocentesApoyo()) {
-                docentesApoyoInfo[0][indice] = docenteApoyoIdea.getDocente().getNombre();
-                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getCorreo();
+                docentesApoyoInfo[0][indice] = docenteApoyoIdea.getDocente().getCorreo();
+                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getApellido() + docenteApoyoIdea.getDocente().getNombre();
                 indice++;
             }
             result.setDocentesApoyoInfo(docentesApoyoInfo);
+        }
+        if(result.getTutor() != null){
+            result.setTutorInfo(new String[][]{{result.getTutor().getCorreo()} , {result.getTutor().getApellido() + result.getTutor().getNombre()}});
         }
         return result;
     }
