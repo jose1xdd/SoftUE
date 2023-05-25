@@ -51,4 +51,15 @@ public class PlanNegocioController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/{titulo}")
+    public ResponseEntity<?> visualizar(@PathVariable String titulo) {
+        try {
+            return ResponseEntity.ok(this.planNegocioServices.obtenerPlanNegocio(titulo));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
 }

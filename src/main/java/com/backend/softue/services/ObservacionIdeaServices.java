@@ -64,7 +64,7 @@ public class ObservacionIdeaServices {
         if(result != null){
             for(ObservacionIdea v : result){
                 v.setTitulo(v.getIdeaNegocioId().getTitulo());
-                v.setDocenteInfo(new String[][]{{v.getDocenteId().getCorreo()},{v.getDocenteId().getApellido() + v.getDocenteId().getNombre()}});
+                v.setDocenteInfo(new String[][]{{v.getDocenteId().getCorreo()},{v.getDocenteId().getNombre() + " " + v.getDocenteId().getApellido()}});
             }
         }
         return result;
@@ -101,6 +101,5 @@ public class ObservacionIdeaServices {
             }
         }
     return permisos || idea.getTutor().getCorreo().equals(correoDocente);
-
     }
 }
