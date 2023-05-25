@@ -41,6 +41,16 @@ public class DocenteController {
         }
     }
 
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/visualizarConId/{id}")
+    public ResponseEntity<?> visualizar(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(this.docenteServices.obtenerDocente(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
     @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @GetMapping("/deshabilitarDocente/{email}")
     public ResponseEntity<?> deshabilitarDocente(@PathVariable String email) {

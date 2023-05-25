@@ -46,7 +46,7 @@ public class EvaluacionIdeaServices {
         catch (Exception e) {
         }
         if(evaluacionReciente != null) {
-            List<CalificacionIdea> calificaciones = this.calificacionIdeaServices.obtenerCalificaciones(evaluacionReciente);
+            List<CalificacionIdea> calificaciones = this.calificacionIdeaServices.obtenerCalificacionesDeEvaluacion(evaluacionReciente);
             if(calificaciones == null || calificaciones.size() == 0)
                 throw new RuntimeException("No se puede crear una evaluación a una idea con una evaluación pendiente");
             for(CalificacionIdea calificacion : calificaciones) {
@@ -54,12 +54,12 @@ public class EvaluacionIdeaServices {
                     throw new RuntimeException("No se puede crear una evaluación a una idea con una evaluación pendiente");
             }
         }
-        this.evaluacionIdeaRepository.save(new EvaluacionIdea(null, LocalDate.now(), LocalDate.now().plusDays(periodoServices.obtener().getPeriodoIdeaNegocio().getDays()), ideaNegocio, null));
+        this.evaluacionIdeaRepository.save(new EvaluacionIdea(null, LocalDate.now(), LocalDate.now().plusDays(periodoServices.obtener().getPeriodoIdeaNegocio().getDays()), ideaNegocio, null, null));
     }
 
     public EvaluacionIdea obtenerEvaluacionReciente(String titulo) {
         IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
-        Optional<EvaluacionIdea> resultado = this.evaluacionIdeaRepository.evaluacionReciente(titulo);
+        Optional<EvaluacionIdea> resultado = this.evaluacionIdeaRepository.evaluacionReciente(ideaNegocio.getTitulo());
         if(!resultado.isPresent())
             throw new RuntimeException("La idea de negocio no presenta ninguna evaluación.");
         return resultado.get();
@@ -69,6 +69,22 @@ public class EvaluacionIdeaServices {
         Optional<EvaluacionIdea> resultado = this.evaluacionIdeaRepository.findById(id);
         if(!resultado.isPresent())
             throw new RuntimeException("La evaluación consultada no existe");
-        return resultado.get();
+        EvaluacionIdea evaluacionIdea = resultado.get();
+        return evaluacionIdea;
+    }
+
+    public List<EvaluacionIdea> listar (){
+        List<EvaluacionIdea> evaluaciones = this.evaluacionIdeaRepository.findAll();
+        for(int i = 0; i < evaluaciones.size(); i++) {
+            EvaluacionIdea evaluacionIdea = evaluaciones.get(i);
+            evaluacionIdea.setCalificacionesInfo(this.calificacionIdeaServices.obtenerCalificacionesDeEvaluacion(evaluacionIdea));
+            evaluaciones.set(i, evaluacionIdea);
+        }
+        return evaluaciones;
+    }
+
+    public void actualizar(EvaluacionIdea evaluacionIdea) {
+        EvaluacionIdea resultado = this.obtener(evaluacionIdea.getId());
+        this.evaluacionIdeaRepository.save(resultado);
     }
 }

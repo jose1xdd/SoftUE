@@ -29,4 +29,14 @@ public class EvaluacionIdeaController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+
+    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping()
+    public ResponseEntity<?> listar() {
+        try {
+            return ResponseEntity.ok(this.evaluacionIdeaServices.listar());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
 }

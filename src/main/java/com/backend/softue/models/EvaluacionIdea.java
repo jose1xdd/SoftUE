@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -16,7 +17,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "Evaluacion_idea")
-@JsonIgnoreProperties({"calificaciones"})
+@JsonIgnoreProperties({"calificaciones", "ideaNegocio"})
 public class EvaluacionIdea {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,4 +38,6 @@ public class EvaluacionIdea {
 
     @OneToMany(mappedBy = "evaluacionIdeaId", fetch = FetchType.LAZY)
     private Set<CalificacionIdea> calificaciones;
+    @Transient
+    private List<CalificacionIdea> calificacionesInfo;
 }

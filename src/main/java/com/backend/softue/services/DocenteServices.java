@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DocenteServices {
@@ -51,9 +52,19 @@ public class DocenteServices {
             if(result.getFoto_usuario() != null) result.setFotoUsuarioId(result.getFoto_usuario().getId());
             return result;
         }
-        throw new RuntimeException("No se envió información con la que buscar al usuario");
+        throw new RuntimeException("No se envió información con la que buscar al docente");
     }
 
+    public Docente obtenerDocente(Integer id) {
+        if(id == null)
+            throw new RuntimeException("No se envió información con la que buscar al docente");
+        Optional<Docente> resultado = this.docenteRepository.findById(id);
+        if(!resultado.isPresent())
+            throw new RuntimeException("El docente solicitado no existe");
+        if(resultado.get().getFoto_usuario() != null)
+            resultado.get().setFotoUsuarioId(resultado.get().getFoto_usuario().getId());
+        return resultado.get();
+    }
 
     public void deshabilitarDocente(String email) {
         if (email != null) {

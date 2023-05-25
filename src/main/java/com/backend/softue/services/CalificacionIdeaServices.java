@@ -34,7 +34,7 @@ public class CalificacionIdeaServices {
         this.evaluacionIdeaServices.setCalificacionIdeaServices(this);
     }
 
-    public void crear(String titulo, String correo) {
+    public void crear(String titulo, String correo, LocalDate fechaCorte) {
         IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
         Docente docente = this.docenteServices.obtenerDocente(correo);
         if(docente.getCorreo().equals(ideaNegocio.getTutorInfo()[0][0]))
@@ -53,12 +53,21 @@ public class CalificacionIdeaServices {
             throw new RuntimeException("No se puede crear una calificación si no existe una evaluación pendiente");
         }
 
-        if(this.obtenerCalificaciones(evaluacionIdea).size() >= 3)
+        if(this.obtenerCalificacionesDeEvaluacion(evaluacionIdea).size() >= 3)
             throw new RuntimeException("No se puede asignar más de 3 evaluadores a una evaluación.");
+
+        if(fechaCorte != null) {
+            if(LocalDate.now().isAfter(fechaCorte))
+                throw new RuntimeException("No se puede asignar una fecha corte ya vencida a una calificación.");
+            if(LocalDate.now().isBefore(evaluacionIdea.getFechaCorte()))
+                throw new RuntimeException("No se puede crear una calificación con fecha corte, si la fecha corte de la evaluación no ha vencido.");
+            evaluacionIdea.setFechaCorte(fechaCorte);
+            this.evaluacionIdeaServices.actualizar(evaluacionIdea);
+        }
         this.calificacionIdeaRepository.save(new CalificacionIdea(new CalificacionIdeaKey(docente.getCodigo(), evaluacionIdea.getId()), docente, evaluacionIdea, this.estadosCalificacion.getEstados()[2], null, LocalDate.now(), evaluacionIdea.getFechaCorte()));
     }
 
-    public List<CalificacionIdea> obtenerCalificaciones(EvaluacionIdea evaluacionIdea) {
+    public List<CalificacionIdea> obtenerCalificacionesDeEvaluacion(EvaluacionIdea evaluacionIdea) {
         try {
             if(evaluacionIdea == null)
                 throw new RuntimeException();
@@ -68,14 +77,37 @@ public class CalificacionIdeaServices {
             throw new RuntimeException("No se pueden obtener calificaciones de una evaluación que no existe");
         }
         List<CalificacionIdea> calificaciones = this.calificacionIdeaRepository.findByEvaluacion(evaluacionIdea.getId());
-        for(CalificacionIdea calificacion : calificaciones) {
-            if(LocalDate.now().isAfter(calificacion.getFechaCorte()) && !calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[4])) {
-                //La calificación se establece como vencida si aun no lo es
-                calificacion.setEstado(this.estadosCalificacion.getEstados()[4]);
-                this.actualizar(calificacion);
-            }
+        for(int i = 0; i < calificaciones.size(); i++) {
+            calificaciones.set(i, this.obtener(calificaciones.get(i).getId()));
         }
         return calificaciones;
+    }
+
+    public CalificacionIdea obtener(CalificacionIdeaKey id) {
+        if(id == null)
+            throw new RuntimeException("Información incompleta para obtener una calificación");
+        try {
+            Docente docente = this.docenteServices.obtenerDocente(id.getCodigoDocente());
+        }
+        catch(Exception e) {
+            throw new RuntimeException("No se puede obtener una calificación que tiene asignada un docente que no existe.");
+        }
+        try {
+            EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtener(id.getEvaluacionIdeaId());
+        }
+        catch(Exception e) {
+            throw new RuntimeException("No se puede obtener una calificación de una evaluacion que no existe.");
+        }
+        Optional<CalificacionIdea> resultado = this.calificacionIdeaRepository.findById(id);
+        if(!resultado.isPresent())
+            throw new RuntimeException("La calificación que se desea obtener no existe.");
+        CalificacionIdea calificacion = resultado.get();
+        if(LocalDate.now().isAfter(calificacion.getFechaCorte()) && calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[2])) {
+            //La calificación se establece como vencida si se cumplió la fecha corte y tiene un estado pendiente
+            calificacion.setEstado(this.estadosCalificacion.getEstados()[3]);
+            this.actualizar(calificacion);
+        }
+        return resultado.get();
     }
 
     public void actualizar(CalificacionIdea calificacionIdea) {
@@ -85,5 +117,26 @@ public class CalificacionIdeaServices {
         if(!resultado.isPresent())
             throw new RuntimeException("No se puede actualizar una calificación que no existe");
         this.calificacionIdeaRepository.save(calificacionIdea);
+    }
+
+    public void eliminar(CalificacionIdeaKey calificacionIdeaKey) {
+        CalificacionIdea calificacionIdea = this.obtener(calificacionIdeaKey);
+        //No se puede eliminar una idea que tenga el estado "aprobada" ni el estado "rechazada"
+        if(calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
+            throw new RuntimeException("No se puede eliminar una calificación que ya este evaluada.");
+        if(calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[2]))
+            throw new RuntimeException("No se puede eliminar una calificación pendiente");
+        EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtener(calificacionIdeaKey.getEvaluacionIdeaId());
+        List<CalificacionIdea> calificaciones = this.obtenerCalificacionesDeEvaluacion(evaluacionIdea);
+        int cnt = 0;
+        for(CalificacionIdea calificacion : calificaciones) {
+            if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[0]))
+                cnt++;
+            if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
+                cnt--;
+        }
+        if (cnt != 0)
+            throw new RuntimeException("No se puede eliminar una calificación cuando la evaluación ya esta calificada.");
+        this.calificacionIdeaRepository.delete(calificacionIdea);
     }
 }

@@ -1,5 +1,6 @@
 package com.backend.softue.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @Table(name = "Calificacion_idea")
+@JsonIgnoreProperties({"docente", "evaluacionIdeaId"})
 public class CalificacionIdea {
     @EmbeddedId
     private CalificacionIdeaKey id;
