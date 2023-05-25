@@ -2,6 +2,7 @@ package com.backend.softue.services;
 
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.CalificacionIdeaRepository;
+import com.backend.softue.security.Hashing;
 import com.backend.softue.utils.beansAuxiliares.EstadosCalificacion;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class CalificacionIdeaServices {
 
     @Autowired
     private EstadosCalificacion estadosCalificacion;
+
+    @Autowired
+    private Hashing encrypt;
 
     @PostConstruct
     public void init() {
@@ -108,6 +112,23 @@ public class CalificacionIdeaServices {
             this.actualizar(calificacion);
         }
         return resultado.get();
+    }
+
+    public void actualizar(String titulo, String nota, String observacion, String JWT) {
+        Docente docente = this.docenteServices.obtenerDocente(this.encrypt.getJwt().getKey(JWT));
+        EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtenerEvaluacionReciente(titulo);
+        CalificacionIdeaKey id = new CalificacionIdeaKey(docente.getCodigo(), evaluacionIdea.getId());
+        Optional<CalificacionIdea> resultado = this.calificacionIdeaRepository.findById(id);
+        if(!resultado.isPresent())
+            throw new RuntimeException("El docente no está asignado a la evaluación de la idea de negocio consultada");
+        CalificacionIdea calificacion = resultado.get();
+        if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || nota.equals(this.estadosCalificacion.getEstados()[1]))
+            throw new RuntimeException("No se puede dar una nota a una calificación con un estado de 'aprobada' o 'rechazada'");
+        if(!(nota.equals(this.estadosCalificacion.getEstados()[0]) || nota.equals(this.estadosCalificacion.getEstados()[1])))
+            throw new RuntimeException("La nota de la calificación solo puede ser 'aprobada' o 'rechazada'");
+        calificacion.setObservacion(observacion);
+        calificacion.setEstado(nota);
+        actualizar(calificacion);
     }
 
     public void actualizar(CalificacionIdea calificacionIdea) {

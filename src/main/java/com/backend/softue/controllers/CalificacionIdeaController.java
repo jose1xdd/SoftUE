@@ -63,4 +63,15 @@ public class CalificacionIdeaController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+
+    @CheckSession(permitedRol ={"docente"})
+    @PatchMapping()
+    public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String nota, @RequestParam String observacion) {
+        try {
+            this.calificacionIdeaServices.actualizar(titulo, nota, observacion, jwt);
+            return ResponseEntity.ok(new ResponseConfirmation("Se ha actualizado con éxito la calificación del docente."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
 }
