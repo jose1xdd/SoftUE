@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
+@Setter
 @Service
 public class IdeaNegocioServices {
 
@@ -42,7 +42,7 @@ public class IdeaNegocioServices {
     @Autowired
     private AreasConocimiento areasConocimiento;
 
-    @Autowired
+
     private DocenteServices docenteServices;
 
     @Autowired
@@ -193,7 +193,7 @@ public class IdeaNegocioServices {
     }
 
 
-    public List<IdeaNegocio> buscarIdeasPorFiltros(String estudianteEmail, String docenteEmail, String area, Character estado, LocalDate fechaInicio, LocalDate fechaFin) {
+    public List<IdeaNegocio> buscarIdeasPorFiltros(String estudianteEmail, String docenteEmail, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
         if (fechaFin == null ^ fechaInicio == null)
             throw new RuntimeException("Una o las dos fechas del filtro son nulas");
         return ideaNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
@@ -208,17 +208,16 @@ public class IdeaNegocioServices {
     }
 
     public void asignarTutor(String titulo, String docenteEmail) {
-        System.out.println(titulo);
-        System.out.println(docenteEmail);
         if (this.obtenerIdeaNegocio(titulo) == null)
             throw new RuntimeException("No se encontro una idea de negocio con ese titulo");
         Docente docente = this.docenteServices.obtenerDocente(docenteEmail);
         if (docente == null) throw new RuntimeException("No se encontro un docente con ese email");
         this.emailService.enviarEmailTutor(docenteEmail, titulo, docente.getNombre() + " " + docente.getApellido(), docente.getArea());
     }
-    public boolean confirmarTutor(IdeaNegocio ideaNegocio){
-        this.ideaNegocioRepository.save(ideaNegocio);
-        return  true;
+    public IdeaNegocio confirmarTutor(IdeaNegocio ideaNegocio){
+
+        return ideaNegocioRepository.save(ideaNegocio);
+
     }
 
 }

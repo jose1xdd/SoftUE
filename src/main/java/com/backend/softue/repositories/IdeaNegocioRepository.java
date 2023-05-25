@@ -29,7 +29,7 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             @Param("docenteEmail") String docenteEmail,
             @Param("estudianteEmail") String estudianteEmail,
             @Param("minera") String minera,
-            @Param("estado") Character estado,
+            @Param("estado") String estado,
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
 

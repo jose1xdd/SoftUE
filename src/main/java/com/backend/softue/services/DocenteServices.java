@@ -7,6 +7,7 @@ import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.utils.AreasConocimiento;
+import jakarta.annotation.PostConstruct;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,11 @@ public class DocenteServices {
     @Autowired
     private Hashing encrypth;
     @Autowired
-    private IdeaNegocioRepository ideaNegocioRepository;
+    private IdeaNegocioServices ideaNegocioServices;
+    @PostConstruct
+    public void init() {
+    this.ideaNegocioServices.setDocenteServices(this);
+    }
     public void registrarDocente(Docente docente) {
         docente.setArea(docente.getArea().toLowerCase());
         if(!areasConocimiento.getAreasConocimiento().contains(docente.getArea())) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
@@ -87,11 +92,10 @@ public class DocenteServices {
 
     public String confirmarTutoria (Boolean respuesta,String titulo, String jwt){
         if(respuesta){
-            IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
+            IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
             if(ideaNegocio == null ) throw  new RuntimeException("se mandó mal el titulo de la idea de negocio");
             ideaNegocio.setTutor(this.obtenerDocente(this.encrypth.getJwt().getKey(jwt)));
-            this.ideaNegocioRepository.save(ideaNegocio);
-            return "Docente Asignado";
+            if(this.ideaNegocioServices.confirmarTutor(ideaNegocio) != null);return "Docente Asignado";
         }
         return "El docente rechazo";
     }

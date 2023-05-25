@@ -100,7 +100,7 @@ public class IdeaNegocioController {
             @RequestParam(required = false) String estudianteEmail,
             @RequestParam(required = false) String docenteEmail,
             @RequestParam(required = false) String area,
-            @RequestParam(required = false) Character estado,
+            @RequestParam(required = false) String estado,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
         List<IdeaNegocio> ideasNegocio = ideaNegocioServices.buscarIdeasPorFiltros(estudianteEmail, docenteEmail, area, estado, fechaInicio, fechaFin);

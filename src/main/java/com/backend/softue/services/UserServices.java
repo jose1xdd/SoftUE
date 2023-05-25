@@ -138,7 +138,7 @@ public class UserServices {
         resetToken.setFecha_caducidad(newDateTime);
         resetToken.setUsuario_codigo(user);
         this.resetTokenRepository.save(resetToken);
-        this.emailGenericMessages.enviarEmailRegistro(email);
+        this.emailGenericMessages.enviarEmailRecuperacion(email,user.getNombre()+" "+user.getApellido());
         return token;
     }
 
