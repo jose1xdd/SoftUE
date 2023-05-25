@@ -46,7 +46,7 @@ public class DocumentoIdeaServices {
     public DocumentoIdea obtenerDocumento(String titulo) {
         if (titulo == null)
             throw new RuntimeException("No se envió un titulo con el que buscar la idea de negocio");
-        IdeaNegocio ideaNegocio = ideaNegocioServices.obtenerIdeaNegocio(titulo);
+        IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
         Optional<DocumentoIdea> result = this.documentoIdeaRepository.findById(ideaNegocio.getId());
         if (!result.isPresent())
             throw new RuntimeException("La idea de negocio no tiene un documento asignado");

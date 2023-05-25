@@ -5,6 +5,7 @@ import com.backend.softue.models.PlanNegocio;
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.PlanNegocioRepository;
 import com.backend.softue.security.Hashing;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,16 @@ public class PlanNegocioServices {
     private IdeaNegocioServices ideaNegocioServices;
 
     @Autowired
+    private DocumentoPlanServices documentoPlanServices;
+
+    @Autowired
     private Hashing encrypt;
+
+    @PostConstruct
+    public void init() {
+        this.documentoPlanServices.setPlanNegocioServices(this);
+    }
+
     public void crear(String jwt, String titulo) {
         if (titulo == null)
             throw new RuntimeException("No se envio el titulo de la idea de negocio del que se va crear el plan");
@@ -87,7 +97,7 @@ public class PlanNegocioServices {
         this.planNegocioRepository.save(resultado.get());
     }
 
-    /*public void agregarDocumento(String titulo, byte[] documento, String nombreArchivo) {
+    public void agregarDocumento(String titulo, byte[] documento, String nombreArchivo) {
         if (titulo == null)
             throw new RuntimeException("No se proporciono un titulo para buscar el plan de negocio que se le quiere agregar el documento");
         if (documento == null)
@@ -95,11 +105,26 @@ public class PlanNegocioServices {
         PlanNegocio planNegocio = this.obtenerPlanNegocio(titulo);
         if (planNegocio == null)
             throw new RuntimeException("No existe un plan de negocio con ese nombre");
-        //if (planNegocio.getDocumentoIdea() != null)
-        //    eliminarDocumento(titulo);
-        this.documentoIdeaServices.agregarDocumentoIdea(titulo, documento, nombreArchivo);
-        DocumentoIdea result = this.documentoIdeaServices.obtenerDocumento(titulo);
-        ideaNegocio.setDocumentoIdea(result);
-        this.ideaNegocioRepository.save(ideaNegocio);
-    }*/
+        if (planNegocio.getDocumentoPlan() != null)
+            eliminarDocumento(titulo);
+        this.documentoPlanServices.agregarDocumentoPlan(titulo, documento, nombreArchivo);
+        DocumentoPlan result = this.documentoPlanServices.obtenerDocumentoPlan(titulo);
+        planNegocio.setDocumentoPlan(result);
+        this.planNegocioRepository.save(planNegocio);
+    }
+
+    public  void eliminarDocumento(String titulo) {
+        if (titulo == null)
+            throw new RuntimeException("No se proporciono un titulo para buscar el plan de negocio que se le quiere eliminar el documento");
+        PlanNegocio planNegocio = this.obtenerPlanNegocio(titulo);
+        planNegocio.setDocumentoPlan(null);
+        this.planNegocioRepository.save(planNegocio);
+        this.documentoPlanServices.eliminarDocumentoPlan(planNegocio.getId());
+    }
+
+    public DocumentoPlan recuperarDocumento(String titulo) {
+        if (titulo == null)
+            throw new RuntimeException("No se proporciono informacion para buscar el documento correspondiente al plan con el titulo proporcionado");
+        return this.documentoPlanServices.obtenerDocumentoPlan(titulo);
+    }
 }

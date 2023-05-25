@@ -23,7 +23,7 @@ public class DocumentoPlan {
 
     @Lob
     @Column(nullable = false, columnDefinition = "LONGBLOB")
-    private Blob documento;
+    private byte[] documento;
 
     @OneToOne()
     @MapsId
