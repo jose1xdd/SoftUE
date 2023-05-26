@@ -8,7 +8,7 @@ import com.backend.softue.models.IdeaPlanteada;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
-import com.backend.softue.utils.AreasConocimiento;
+import com.backend.softue.utils.beansAuxiliares.AreasConocimiento;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -122,7 +122,7 @@ public class IdeaNegocioServices {
         if (result == null)
             throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
         if (result.getEstudianteLider() != null)
-        result.setEstudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
+            result.setEstudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
         if(result.getEstudiantesIntegrantes() != null){
             Integer ctn = 0;
             String arr [][] = new String[2][result.getEstudiantesIntegrantes().size()];
