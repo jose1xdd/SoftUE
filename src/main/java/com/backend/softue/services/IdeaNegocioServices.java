@@ -150,13 +150,15 @@ public class IdeaNegocioServices {
         return result;
     }
 
-    public void actualizar(String tituloActual, String tituloNuevo , String area, String jwt) {
+    public void actualizar(String tituloActual, String tituloNuevo , String area, String estado, String jwt) {
         if (tituloActual == null)
             throw new RuntimeException("No se envio el titulo de la idea a modificar");
         if (tituloNuevo == null)
             throw new RuntimeException("No se envio el nuevo titulo de la idea");
         if (area == null)
             throw new RuntimeException("No se envio la nueva area de la idea");
+        if(estado == null)
+            throw new RuntimeException("No se el estado de la idea");
 
         IdeaNegocio idea = this.ideaNegocioRepository.findByTitulo(tituloActual);
         if (idea == null)
@@ -171,6 +173,7 @@ public class IdeaNegocioServices {
 
         idea.setAreaEnfoque(area);
         idea.setTitulo(tituloNuevo);
+        idea.setEstado(estado);
         this.ideaNegocioRepository.save(idea);
     }
 

@@ -30,9 +30,9 @@ public class PlanNegocioController {
 
     @CheckSession(permitedRol = {"estudiante"})
     @PatchMapping()
-    public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String resumen) {
+    public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String resumen, @RequestParam String estado) {
         try {
-            this.planNegocioServices.actualizarResumen(titulo, resumen, jwt);
+            this.planNegocioServices.actualizarPlan(titulo, resumen, estado, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El resumen del plan de negocio ha sido actualizado correctamente"));
         }
         catch (Exception e) {
