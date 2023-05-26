@@ -31,10 +31,10 @@ public class EvaluacionIdeaController {
     }
 
     @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping()
-    public ResponseEntity<?> listar() {
+    @GetMapping("/{titulo}")
+    public ResponseEntity<?> listar(@PathVariable String titulo) {
         try {
-            return ResponseEntity.ok(this.evaluacionIdeaServices.listar());
+            return ResponseEntity.ok(this.evaluacionIdeaServices.listar(titulo));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }

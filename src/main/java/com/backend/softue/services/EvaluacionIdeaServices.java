@@ -62,7 +62,9 @@ public class EvaluacionIdeaServices {
         Optional<EvaluacionIdea> resultado = this.evaluacionIdeaRepository.evaluacionReciente(ideaNegocio.getTitulo());
         if(!resultado.isPresent())
             throw new RuntimeException("La idea de negocio no presenta ninguna evaluación.");
-        return resultado.get();
+        EvaluacionIdea evaluacion = resultado.get();
+        evaluacion.setCalificacionesInfo(this.calificacionIdeaServices.obtenerCalificacionesDeEvaluacion(evaluacion));
+        return evaluacion;
     }
 
     public EvaluacionIdea obtener(Integer id) {
@@ -73,8 +75,9 @@ public class EvaluacionIdeaServices {
         return evaluacionIdea;
     }
 
-    public List<EvaluacionIdea> listar (){
-        List<EvaluacionIdea> evaluaciones = this.evaluacionIdeaRepository.findAll();
+    public List<EvaluacionIdea> listar (String titulo){
+        IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
+        List<EvaluacionIdea> evaluaciones = this.evaluacionIdeaRepository.findByIdeaNegocio(ideaNegocio.getId());
         for(int i = 0; i < evaluaciones.size(); i++) {
             EvaluacionIdea evaluacionIdea = evaluaciones.get(i);
             evaluacionIdea.setCalificacionesInfo(this.calificacionIdeaServices.obtenerCalificacionesDeEvaluacion(evaluacionIdea));
@@ -85,6 +88,6 @@ public class EvaluacionIdeaServices {
 
     public void actualizar(EvaluacionIdea evaluacionIdea) {
         EvaluacionIdea resultado = this.obtener(evaluacionIdea.getId());
-        this.evaluacionIdeaRepository.save(resultado);
+        this.evaluacionIdeaRepository.save(evaluacionIdea);
     }
 }

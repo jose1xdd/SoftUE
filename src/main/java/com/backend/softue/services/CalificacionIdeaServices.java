@@ -84,6 +84,12 @@ public class CalificacionIdeaServices {
         for(int i = 0; i < calificaciones.size(); i++) {
             calificaciones.set(i, this.obtener(calificaciones.get(i).getId()));
         }
+        String estado = this.estadoSegunCalificaciones(calificaciones);
+        IdeaNegocio ideaNegocio = evaluacionIdea.getIdeaNegocio();
+        if(!estado.equals(ideaNegocio.getEstado())) {
+            //Me falta actualizar el estado de la idea de negocio
+            //this.ideaNegocioServices.actualizarEstado(ideaNegocio.getTitulo(), estado);
+        }
         return calificaciones;
     }
 
@@ -122,16 +128,18 @@ public class CalificacionIdeaServices {
         if(!resultado.isPresent())
             throw new RuntimeException("El docente no está asignado a la evaluación de la idea de negocio consultada");
         CalificacionIdea calificacion = resultado.get();
-        if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || nota.equals(this.estadosCalificacion.getEstados()[1]))
+        if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || calificacion.equals(this.estadosCalificacion.getEstados()[1]))
             throw new RuntimeException("No se puede dar una nota a una calificación con un estado de 'aprobada' o 'rechazada'");
         if(!(nota.equals(this.estadosCalificacion.getEstados()[0]) || nota.equals(this.estadosCalificacion.getEstados()[1])))
             throw new RuntimeException("La nota de la calificación solo puede ser 'aprobada' o 'rechazada'");
+        if(observacion == null || observacion.isEmpty() || observacion.isBlank())
+            throw new RuntimeException("Para calificar una idea se debe agregar una observación.");
         calificacion.setObservacion(observacion);
         calificacion.setEstado(nota);
         actualizar(calificacion);
     }
 
-    public void actualizar(CalificacionIdea calificacionIdea) {
+    private void actualizar(CalificacionIdea calificacionIdea) {
         if(calificacionIdea == null || calificacionIdea.getId() == null)
             throw new RuntimeException("Información incompleta para actualizar una calificación.");
         Optional<CalificacionIdea> resultado = this.calificacionIdeaRepository.findById(calificacionIdea.getId());
@@ -141,14 +149,25 @@ public class CalificacionIdeaServices {
     }
 
     public void eliminar(CalificacionIdeaKey calificacionIdeaKey) {
+        //Al obtener la calificación se actualiza el estado para abordar el caso de que se superó la fecha corte
         CalificacionIdea calificacionIdea = this.obtener(calificacionIdeaKey);
         //No se puede eliminar una idea que tenga el estado "aprobada" ni el estado "rechazada"
         if(calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
             throw new RuntimeException("No se puede eliminar una calificación que ya este evaluada.");
+        //No se puede eliminar una calificacion que se encuentre pendiente
         if(calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[2]))
             throw new RuntimeException("No se puede eliminar una calificación pendiente");
+        //En esta sección se verifica que la evaluación aún no este calificada
         EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtener(calificacionIdeaKey.getEvaluacionIdeaId());
         List<CalificacionIdea> calificaciones = this.obtenerCalificacionesDeEvaluacion(evaluacionIdea);
+        String estadoEvaluacion = this.estadoSegunCalificaciones(calificaciones);
+        if (!estadoEvaluacion.equals(this.estadosCalificacion.getEstados()[2]))
+            throw new RuntimeException("No se puede eliminar una calificación cuando la evaluación ya esta calificada.");
+
+        this.calificacionIdeaRepository.delete(calificacionIdea);
+    }
+
+    private String estadoSegunCalificaciones(List<CalificacionIdea> calificaciones) {
         int cnt = 0;
         for(CalificacionIdea calificacion : calificaciones) {
             if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[0]))
@@ -156,8 +175,10 @@ public class CalificacionIdeaServices {
             if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
                 cnt--;
         }
-        if (cnt != 0)
-            throw new RuntimeException("No se puede eliminar una calificación cuando la evaluación ya esta calificada.");
-        this.calificacionIdeaRepository.delete(calificacionIdea);
+        if(cnt == 2)
+            return this.estadosCalificacion.getEstados()[0];
+        if(cnt == -2)
+            return this.estadosCalificacion.getEstados()[1];
+        return this.estadosCalificacion.getEstados()[2];
     }
 }
