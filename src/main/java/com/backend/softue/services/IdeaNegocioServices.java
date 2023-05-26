@@ -157,7 +157,8 @@ public class IdeaNegocioServices {
             throw new RuntimeException("No se envio el nuevo titulo de la idea");
         if (area == null)
             throw new RuntimeException("No se envio la nueva area de la idea");
-
+        if (!tituloActual.equals(tituloNuevo) && this.ideaNegocioRepository.findByTitulo(tituloNuevo) != null)
+            throw new RuntimeException("Existe ya una idea con ese mismo nombre");
         IdeaNegocio idea = this.ideaNegocioRepository.findByTitulo(tituloActual);
         if (idea == null)
             throw new RuntimeException("No existe la idea de negocio la cual desea modificar");
