@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class PlanNegocioServices {
@@ -40,18 +41,27 @@ public class PlanNegocioServices {
         IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
         if (ideaNegocio == null)
             throw new RuntimeException("No existe una idea de negocio con ese titulo");
-        //if (!ideaNegocio.getEstado().equals("aprobada"))
-            //throw new RuntimeException("No se puede un plan a partir de una idea de negocio no aprobada");
-        this.planNegocioRepository.save(new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, 'F', ideaNegocio.getAreaEnfoque(), ideaNegocio.getTutor(), null, LocalDate.now(), ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null));
+        if (!ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede un plan a partir de una idea de negocio no aprobada");
+        this.planNegocioRepository.save(new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "Formulado", ideaNegocio.getAreaEnfoque(), ideaNegocio.getTutor(), null, LocalDate.now(), ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null));
+
+        if(ideaNegocio.getDocentesApoyo() != null){
+            Set<DocenteApoyoIdea> docentes = ideaNegocio.getDocentesApoyo();
+            for(DocenteApoyoIdea docente : docentes){
+
+            }
+
+        }
     }
 
     public PlanNegocio obtenerPlanNegocio(String titulo){
         if(titulo == null)
             throw new RuntimeException("No se enviaron datos para buscar el plan de negocio");
+        Optional<PlanNegocio> result = this.planNegocioRepository.findByTitulo(titulo);
 
-        PlanNegocio planNegocio = this.planNegocioRepository.findByTitulo(titulo).get();
-        if(planNegocio == null)
+        if(!result.isPresent())
             throw new RuntimeException("No se encontro un plan de negocio correspondiente a ese titulo");
+        PlanNegocio planNegocio = result.get();
 
         if (planNegocio.getEstudianteLider() != null)
             planNegocio.setEstudianteLiderInfo(new String[][]{{planNegocio.getEstudianteLider().getCorreo()} , {planNegocio.getEstudianteLider().getNombre()+ " " + planNegocio.getEstudianteLider().getApellido()}});
@@ -83,7 +93,7 @@ public class PlanNegocioServices {
         return planNegocio;
     }
 
-    public void actualizarResumen(String titulo, String resumen, String jwt) {
+    public void actualizarPlan(String titulo, String resumen, String estado,  String jwt) {
         if (titulo == null)
             throw new RuntimeException("No se envio el titulo del plan de negocio que se desea actulizar el resumen");
         if (resumen == null || resumen.equals(""))
@@ -93,7 +103,13 @@ public class PlanNegocioServices {
             throw new RuntimeException("No existe un plan de negocio con ese titulo");
         if (!this.encrypt.getJwt().getKey(jwt).equals(resultado.get().getEstudianteLider().getCorreo()))
             throw new RuntimeException("Solo el estudiante lider puede actualizar el resumen del plan de negocio");
+        if(resumen == null)
+            resumen = resultado.get().getResumen();
+        if(estado == null)
+            estado = resultado.get().getAreaEnfoque();
+
         resultado.get().setResumen(resumen);
+        resultado.get().setEstado(estado);
         this.planNegocioRepository.save(resultado.get());
     }
 

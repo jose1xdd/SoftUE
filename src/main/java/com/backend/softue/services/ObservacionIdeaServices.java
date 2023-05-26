@@ -6,9 +6,7 @@ import com.backend.softue.security.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 
@@ -30,18 +28,15 @@ public class ObservacionIdeaServices {
     private Hashing encrypt;
     public void crearObservacion(String jwt, String ideaTitulo, String observacion){
         String correoDocente = this.encrypt.getJwt().getKey(jwt);
+
         if(ideaTitulo == null)
             throw new RuntimeException("No se suministro un titulo de la idea de negocio");
+
         if(observacion == null)
             throw new RuntimeException("No se suministro una observacion");
 
         IdeaNegocio idea = this.ideaNegocioServices.obtenerIdeaNegocio(ideaTitulo);
-        if(idea == null)
-            throw new RuntimeException("No existe una idea de negocio asignada a ese titulo");
-
         Docente docente = this.docenteServices.obtenerDocente(correoDocente);
-        if(docente == null)
-            throw new RuntimeException("No existe un docente asignado a ese correo");
 
         if(!permisosCrear(idea,correoDocente))
             throw new RuntimeException("El docente no tiene permisos para realizar la observacion");
@@ -54,9 +49,6 @@ public class ObservacionIdeaServices {
             throw new RuntimeException("No se suministro un titulo de idea de negocio");
 
         IdeaNegocio idea = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
-        if(idea == null)
-            throw new RuntimeException("No existe una idea de negocio con ese titulo");
-
         if(!this.permisosObtener(jwt, idea))
             throw new RuntimeException("No se cuentan con los permisos necesarios");
 
@@ -71,35 +63,34 @@ public class ObservacionIdeaServices {
     }
 
     private boolean permisosObtener(String jwt, IdeaNegocio idea){
-        boolean permisos = false;
         String correo = this.encrypt.getJwt().getKey(jwt);
         String rol =  this.encrypt.getJwt().getValue(jwt);
 
-        if(idea.getEstudianteLider().getCorreo().equals(correo)) permisos = true;
-        if(!permisos && idea.getTutor().getCorreo().equals(correo)) permisos = true;
-        if(!permisos && (rol.equals("administrativo") || rol.equals("coordinador"))) permisos = true;
+        if(idea.getEstudianteLider().getCorreo().equals(correo)) return true;
+        if(idea.getTutor().getCorreo().equals(correo)) return true;
+        if((rol.equals("administrativo") || rol.equals("coordinador"))) return true;
 
-        if(!permisos && idea.getDocentesApoyo() != null){
+        if(idea.getDocentesApoyo() != null){
             for(DocenteApoyoIdea v : idea.getDocentesApoyo()){
-                if(v.getDocente().getCorreo().equals(correo)) permisos = true;
+                if(v.getDocente().getCorreo().equals(correo))  return true;
             }
         }
 
-        if(!permisos && idea.getEstudiantesIntegrantes() != null){
+        if(idea.getEstudiantesIntegrantes() != null){
             for(IdeaPlanteada v : idea.getEstudiantesIntegrantes()){
-                if(v.getEstudiante().equals(correo)) permisos = true;
+                if(v.getEstudiante().equals(correo))  return true;
             }
         }
-        return permisos;
+        return false;
     }
 
     private boolean permisosCrear(IdeaNegocio idea, String correoDocente) {
-        boolean permisos = false;
+        boolean permisos = idea.getTutor().getCorreo().equals(correoDocente);
         if (idea.getDocentesApoyo() != null){
             for (DocenteApoyoIdea v : idea.getDocentesApoyo()) {
                 if (v.getDocente().getCorreo().equals(correoDocente)) permisos = true;
             }
         }
-    return permisos || idea.getTutor().getCorreo().equals(correoDocente);
+        return permisos;
     }
 }
