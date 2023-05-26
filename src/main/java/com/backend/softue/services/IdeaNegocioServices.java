@@ -48,14 +48,14 @@ public class IdeaNegocioServices {
         this.documentoIdeaServices.setIdeaNegocioServices(this);
     }
 
-    public void crear(IdeaNegocio ideaNegocio, String integrantes[], byte[] documento, String JWT) {
+    public void crear(IdeaNegocio ideaNegocio, String integrantes[], byte[] documento, String nombreArchivo, String JWT) {
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
         if (resultado != null)
             throw new RuntimeException("Existe otra idea de negocio con el mismo título");
         if (!this.encrypt.getJwt().getValue(JWT).toLowerCase().equals("estudiante"))
             throw new RuntimeException("No se puede crear una idea de negocio si no se es un estudiante");
         if (!areasConocimiento.getAreasConocimiento().contains(ideaNegocio.getAreaEnfoque()))
-            throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+            throw  new RuntimeException("No se puede crear esta idea de negocio, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         List<Estudiante> estudiantesIntegrantes = new LinkedList<Estudiante>();
         try {
             for (String correo : integrantes) {
@@ -80,21 +80,21 @@ public class IdeaNegocioServices {
 
         this.ideaNegocioRepository.save(ideaNegocio);
         this.ideaPlanteadaServices.agregarIntegrantes(ideaNegocio, estudiantesIntegrantes);
-        if (documento != null)
-            agregarDocumento(ideaNegocio.getTitulo(), documento);
+        if (nombreArchivo != null)
+            agregarDocumento(ideaNegocio.getTitulo(), documento, nombreArchivo);
     }
 
-    public void agregarDocumento(String titulo, byte[] documento) {
+    public void agregarDocumento(String titulo, byte[] documento, String nombreArchivo) {
         if (titulo == null)
             throw new RuntimeException("No se proporciono un titulo para buscar la idea de negocio que se le quiere agregar el documento");
         if (documento == null)
-            throw new RuntimeException("No se envió un documento agregar la idea de negocio");
+            throw new RuntimeException("No se envió un documento que agregar a la idea de negocio");
         IdeaNegocio ideaNegocio = this.obtenerIdeaNegocio(titulo);
         if (ideaNegocio == null)
             throw new RuntimeException("No existe una idea de negocio con ese nombre");
         if (ideaNegocio.getDocumentoIdea() != null)
             eliminarDocumento(titulo);
-        this.documentoIdeaServices.agregarDocumentoIdea(titulo, documento);
+        this.documentoIdeaServices.agregarDocumentoIdea(titulo, documento, nombreArchivo);
         DocumentoIdea result = this.documentoIdeaServices.obtenerDocumento(titulo);
         ideaNegocio.setDocumentoIdea(result);
         this.ideaNegocioRepository.save(ideaNegocio);
@@ -109,6 +109,12 @@ public class IdeaNegocioServices {
         this.documentoIdeaServices.eliminarDocumentoIdea(ideaNegocio.getId());
     }
 
+    public DocumentoIdea recuperarDocumento(String titulo) {
+        if (titulo == null)
+            throw new RuntimeException("No se proporciono informacion para buscar el documento correspondiente a la idea con el titulo proporcionado");
+        return this.documentoIdeaServices.obtenerDocumento(titulo);
+    }
+
     public IdeaNegocio obtenerIdeaNegocio(String titulo) {
         if (titulo == null)
             throw new RuntimeException("No se enviaron datos para buscar la idea de negocio");
@@ -116,14 +122,14 @@ public class IdeaNegocioServices {
         if (result == null)
             throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
         if (result.getEstudianteLider() != null)
-            result.setEstudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()},{result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
+            result.setEstudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
         if(result.getEstudiantesIntegrantes() != null){
             Integer ctn = 0;
             String arr [][] = new String[2][result.getEstudiantesIntegrantes().size()];
 
             for(IdeaPlanteada v : result.getEstudiantesIntegrantes()){
                 arr[0][ctn] = v.getEstudiante().getCorreo();
-                arr[1][ctn] = v.getEstudiante().getApellido() + " " + v.getEstudiante().getNombre();
+                arr[1][ctn] = v.getEstudiante().getNombre() + " " + v.getEstudiante().getApellido();
                 ctn++;
             }
             result.setEstudiantesIntegrantesInfo(arr);
@@ -133,16 +139,14 @@ public class IdeaNegocioServices {
             String docentesApoyoInfo[][] = new String[2][result.getDocentesApoyo().size()];
             for (DocenteApoyoIdea docenteApoyoIdea : result.getDocentesApoyo()) {
                 docentesApoyoInfo[0][indice] = docenteApoyoIdea.getDocente().getCorreo();
-                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getApellido() + docenteApoyoIdea.getDocente().getNombre();
+                docentesApoyoInfo[1][indice] = docenteApoyoIdea.getDocente().getNombre() + " " + docenteApoyoIdea.getDocente().getApellido();
                 indice++;
             }
             result.setDocentesApoyoInfo(docentesApoyoInfo);
         }
-
         if(result.getTutor() != null){
-            result.setTutorInfo(new String[][]{{result.getTutor().getCorreo()} , {result.getTutor().getApellido() + result.getTutor().getNombre()}});
+            result.setTutorInfo(new String[][]{{result.getTutor().getCorreo()} , {result.getTutor().getNombre() + " " + result.getTutor().getApellido()}});
         }
-
         return result;
     }
 
@@ -153,26 +157,22 @@ public class IdeaNegocioServices {
             throw new RuntimeException("No se envio el nuevo titulo de la idea");
         if (area == null)
             throw new RuntimeException("No se envio la nueva area de la idea");
-
+        if (!tituloActual.equals(tituloNuevo) && this.ideaNegocioRepository.findByTitulo(tituloNuevo) != null)
+            throw new RuntimeException("Existe ya una idea con ese mismo nombre");
         IdeaNegocio idea = this.ideaNegocioRepository.findByTitulo(tituloActual);
         if (idea == null)
             throw new RuntimeException("No existe la idea de negocio la cual desea modificar");
 
-        if (!tituloActual.equals(tituloNuevo)) {
-            IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(tituloNuevo);
-            if (resultado != null)
-                throw new RuntimeException("No se puede actualizar la idea, ya existe una idea con el titulo que desea cambiar.");
-            if (!areasConocimiento.getAreasConocimiento().contains(area))
-                throw new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        String correo = this.encrypt.getJwt().getKey(jwt);
+        if (!correo.equals(idea.getEstudianteLider().getCorreo()))
+            throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
 
-            String correo = this.encrypt.getJwt().getKey(jwt);
-            if (!correo.equals(idea.getEstudianteLider().getCorreo()))
-                throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
+        if (!areasConocimiento.getAreasConocimiento().contains(area))
+            throw new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
 
-            idea.setAreaEnfoque(area);
-            idea.setTitulo(tituloNuevo);
-            this.ideaNegocioRepository.save(idea);
-        }
+        idea.setAreaEnfoque(area);
+        idea.setTitulo(tituloNuevo);
+        this.ideaNegocioRepository.save(idea);
     }
 
     private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {

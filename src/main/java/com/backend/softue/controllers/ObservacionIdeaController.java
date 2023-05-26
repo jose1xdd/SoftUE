@@ -25,5 +25,16 @@ public class ObservacionIdeaController {
         }
     }
 
+    @CheckSession(permitedRol = {"docente","estudiante","coordinador","administrativo"})
+    @GetMapping("/{titulo}")
+    public ResponseEntity<?> listarObservaciones(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable("titulo") String titulo){
+        try {
+            return ResponseEntity.ok(this.observacionIdeaServices.obtenerObservaciones(jwt, titulo));
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
+
 
 }
