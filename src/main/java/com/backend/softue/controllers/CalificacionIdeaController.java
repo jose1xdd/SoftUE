@@ -43,7 +43,7 @@ public class CalificacionIdeaController {
     public ResponseEntity<?> crearConFechaCorte(@RequestParam String titulo, @RequestParam String correo, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate fechaCorte) {
         try {
             this.calificacionIdeaServices.crear(titulo, correo, fechaCorte);
-            return ResponseEntity.ok(new ResponseConfirmation("Se ha asignado un docente a una evaluación de idea de negocio con éxito."));
+            return ResponseEntity.ok(new ResponseConfirmation("Se ha asignado un docente a una evaluación de idea de negocio con éxito y se ha actualizado la fecha corte de la idea de negocio."));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }

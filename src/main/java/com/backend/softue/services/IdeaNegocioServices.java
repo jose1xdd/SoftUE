@@ -9,6 +9,7 @@ import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.beansAuxiliares.AreasConocimiento;
+import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,10 +43,17 @@ public class IdeaNegocioServices {
     @Autowired
     private AreasConocimiento areasConocimiento;
 
+    @Autowired
+    private EstadosIdeaPlanNegocio estadosIdeaPlanNegocio;
+
+    @Autowired
+    private EvaluacionIdeaServices evaluacionIdeaServices;
+
     @PostConstruct
     public void init() {
         this.ideaPlanteadaServices.setIdeaNegocioServices(this);
         this.documentoIdeaServices.setIdeaNegocioServices(this);
+        this.evaluacionIdeaServices.setIdeaNegocioServices(this);
     }
 
     public void crear(IdeaNegocio ideaNegocio, String integrantes[], byte[] documento, String nombreArchivo, String JWT) {
@@ -147,6 +155,11 @@ public class IdeaNegocioServices {
         if(result.getTutor() != null){
             result.setTutorInfo(new String[][]{{result.getTutor().getCorreo()} , {result.getTutor().getNombre() + " " + result.getTutor().getApellido()}});
         }
+        try{
+            this.evaluacionIdeaServices.obtenerEvaluacionReciente(result);
+        }
+        catch (Exception e) {
+        }
         return result;
     }
 
@@ -175,6 +188,14 @@ public class IdeaNegocioServices {
         idea.setTitulo(tituloNuevo);
         idea.setEstado(estado);
         this.ideaNegocioRepository.save(idea);
+    }
+
+    public void actualizarEstado(String titulo, String estado) {
+        if(!estadosIdeaPlanNegocio.getEstados().contains(estado))
+            throw new RuntimeException("No se puede actualizar un estado que no exista");
+        IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
+        ideaNegocio.setEstado(estado);
+        this.ideaNegocioRepository.save(ideaNegocio);
     }
 
     private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {

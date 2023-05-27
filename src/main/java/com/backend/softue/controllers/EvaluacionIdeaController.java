@@ -32,9 +32,9 @@ public class EvaluacionIdeaController {
 
     @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping("/{titulo}")
-    public ResponseEntity<?> listar(@PathVariable String titulo) {
+    public ResponseEntity<?> listar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String titulo) {
         try {
-            return ResponseEntity.ok(this.evaluacionIdeaServices.listar(titulo));
+            return ResponseEntity.ok(this.evaluacionIdeaServices.listar(titulo, jwt));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
