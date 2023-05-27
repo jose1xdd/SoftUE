@@ -87,8 +87,7 @@ public class CalificacionIdeaServices {
         String estado = this.estadoSegunCalificaciones(calificaciones);
         IdeaNegocio ideaNegocio = evaluacionIdea.getIdeaNegocio();
         if(!estado.equals(ideaNegocio.getEstado())) {
-            //Me falta actualizar el estado de la idea de negocio
-            //this.ideaNegocioServices.actualizarEstado(ideaNegocio.getTitulo(), estado);
+            //this.ideaNegocioServices.actualizar(ideaNegocio.getTitulo(), null, null, estado, null);
         }
         return calificaciones;
     }

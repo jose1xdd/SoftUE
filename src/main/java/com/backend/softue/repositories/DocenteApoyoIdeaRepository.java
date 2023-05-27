@@ -11,5 +11,4 @@ import java.util.List;
 
 @Repository
 public interface DocenteApoyoIdeaRepository extends JpaRepository<DocenteApoyoIdea, DocenteIdeaKey> {
-    List<DocenteApoyoIdea> findByIdeaNegocio(IdeaNegocio ideaNegocio);
 }

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @ToString
 @Entity
 @Table(name = "Observacion_idea")
-@JsonIgnoreProperties({"ideaNegocioId", "docenteId", "docentesApoyo", "estudiantesIntegrantes", "observaciones", "tutor", "estudianteLider"})
+@JsonIgnoreProperties({"ideaNegocioId", "docenteId"})
 public class ObservacionIdea {
 
     @Id

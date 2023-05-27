@@ -1,6 +1,6 @@
 package com.backend.softue.controllers;
 
-import com.backend.softue.services.DocenteApoyoIdeaServices;
+import com.backend.softue.services.DocenteApoyoPlanServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
@@ -9,17 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/docenteApoyoIdea")
-public class DocenteApoyoIdeaController {
-
+@RequestMapping("/docenteApoyoPlan")
+public class DocenteApoyoPlanController {
     @Autowired
-    private DocenteApoyoIdeaServices docenteApoyoIdeaServices;
+    private DocenteApoyoPlanServices docenteApoyoPlanServices;
 
     @CheckSession(permitedRol = {"docente"})
     @PostMapping()
-    public ResponseEntity<?> agregarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
+    public ResponseEntity<?> agregarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloPlan, @RequestParam String correoDocente) {
         try {
-            this.docenteApoyoIdeaServices.agregarDocenteApoyo(jwt, tituloIdea, correoDocente);
+            this.docenteApoyoPlanServices.agregarDocenteApoyo(jwt, tituloPlan, correoDocente);
             return ResponseEntity.ok(new ResponseConfirmation("El docente de apoyo se agrego correctamete a la idea de negocio"));
         }
         catch (Exception e) {
@@ -29,13 +28,14 @@ public class DocenteApoyoIdeaController {
 
     @CheckSession(permitedRol = {"docente"})
     @DeleteMapping()
-    public ResponseEntity<?> eliminarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
+    public ResponseEntity<?> eliminarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloPlan, @RequestParam String correoDocente) {
         try {
-            this.docenteApoyoIdeaServices.eliminarDocenteApoyo(jwt, tituloIdea, correoDocente);
-            return ResponseEntity.ok(new ResponseConfirmation("El docente de apoyo se elimino correctamete de la idea de negocio"));
+            this.docenteApoyoPlanServices.eliminarDocenteApoyo(jwt, tituloPlan, correoDocente);
+            return ResponseEntity.ok(new ResponseConfirmation("El docente de apoyo se elimino correctamete del plan de negocio"));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+
 }

@@ -150,28 +150,30 @@ public class IdeaNegocioServices {
         return result;
     }
 
-    public void actualizar(String tituloActual, String tituloNuevo , String area, String jwt) {
+    public void actualizar(String tituloActual, String tituloNuevo , String area, String estado, String jwt) {
         if (tituloActual == null)
             throw new RuntimeException("No se envio el titulo de la idea a modificar");
-        if (tituloNuevo == null)
-            throw new RuntimeException("No se envio el nuevo titulo de la idea");
-        if (area == null)
-            throw new RuntimeException("No se envio la nueva area de la idea");
-        if (!tituloActual.equals(tituloNuevo) && this.ideaNegocioRepository.findByTitulo(tituloNuevo) != null)
+        if (tituloNuevo != null && !tituloActual.equals(tituloNuevo) && this.ideaNegocioRepository.findByTitulo(tituloNuevo) != null)
             throw new RuntimeException("Existe ya una idea con ese mismo nombre");
+
         IdeaNegocio idea = this.ideaNegocioRepository.findByTitulo(tituloActual);
         if (idea == null)
             throw new RuntimeException("No existe la idea de negocio la cual desea modificar");
-
         String correo = this.encrypt.getJwt().getKey(jwt);
         if (!correo.equals(idea.getEstudianteLider().getCorreo()))
             throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
-
+        if(estado == null)
+            estado = idea.getEstado();
+        if (tituloNuevo == null)
+            tituloNuevo = idea.getTitulo();
+        if (area == null)
+            area = idea.getAreaEnfoque();
         if (!areasConocimiento.getAreasConocimiento().contains(area))
             throw new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
 
         idea.setAreaEnfoque(area);
         idea.setTitulo(tituloNuevo);
+        idea.setEstado(estado);
         this.ideaNegocioRepository.save(idea);
     }
 
