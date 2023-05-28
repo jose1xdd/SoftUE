@@ -20,7 +20,7 @@ public class EvaluacionPlanController {
     public ResponseEntity<?> crear(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String titulo) {
         try {
             this.evaluacionPlanServices.crearEvaluacion(jwt, titulo);
-            return ResponseEntity.ok(new ResponseConfirmation("La evaluacion de la idea de negocio se creó correctamente"));
+            return ResponseEntity.ok(new ResponseConfirmation("La evaluacion del plan de negocio se creó correctamente"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }

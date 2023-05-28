@@ -81,6 +81,7 @@ public class CalificacionPlanServices {
         Optional<CalificacionPlan> resultado = this.calificacionPlanRepository.findById(id);
         if(resultado.isPresent())
             throw new RuntimeException("El docente seleccionado ya se encuentra asignado.");
+
         this.calificacionPlanRepository.save(new CalificacionPlan(id, docente, null, evaluacionPlan, this.estadosCalificacion.getEstados()[2], null, LocalDate.now(), evaluacionPlan.getFechaCorte()));
     }
 

@@ -39,8 +39,7 @@ public class CalificacionPlan {
     @Column(nullable = false)
     private String estado;
 
-    @NotBlank(message = "Error: El campo 'observacion' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la observacion de la calificacion del plan.")
-    @NotNull(message = "Error: El campo 'observacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la observacion de la calificacion del plan.")
+    @Column(columnDefinition = "varchar(1024)")
     private String observacion;
 
     @NotNull(message = "Error: El campo 'fecha_inicio' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha_inicio de la calificacion del plan.")
