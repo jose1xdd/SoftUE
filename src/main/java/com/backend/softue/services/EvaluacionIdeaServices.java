@@ -21,7 +21,6 @@ public class EvaluacionIdeaServices {
     @Autowired
     private EvaluacionIdeaRepository evaluacionIdeaRepository;
 
-
     private IdeaNegocioServices ideaNegocioServices;
 
     @Autowired
@@ -48,16 +47,16 @@ public class EvaluacionIdeaServices {
         if(evaluacionReciente != null) {
             List<CalificacionIdea> calificaciones = this.calificacionIdeaServices.obtenerCalificacionesDeEvaluacion(evaluacionReciente);
             if(calificaciones == null || calificaciones.size() == 0)
-                throw new RuntimeException("No se puede crear una evaluación a una idea con una evaluación pendiente");
+                throw new RuntimeException("No se puede crear una evaluación a una idea de negocio con una evaluación pendiente");
             for(CalificacionIdea calificacion : calificaciones) {
                 if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[2]) || calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[3]))
-                    throw new RuntimeException("No se puede crear una evaluación a una idea con una evaluación pendiente");
+                    throw new RuntimeException("No se puede crear una evaluación a un plan de negocio con una evaluación pendiente");
             }
         }
-        if(ideaNegocio.getEstado().equals("aprobada"))
+        if(ideaNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[0]))
             throw new RuntimeException("No se puede crear una evaluación nueva a una idea de negocio ya aprobada.");
-        this.ideaNegocioServices.actualizarEstado(ideaNegocio.getTitulo(), "pendiente");
-        this.evaluacionIdeaRepository.save(new EvaluacionIdea(null, LocalDate.now(), LocalDate.now().plusDays(periodoServices.obtener().getPeriodoIdeaNegocio().getDays()), ideaNegocio, null, null));
+        this.ideaNegocioServices.actualizarEstado(ideaNegocio.getTitulo(), this.estadosCalificacion.getEstados()[2]);
+        this.evaluacionIdeaRepository.save(new EvaluacionIdea(null, LocalDate.now(), LocalDate.now().plusDays(this.periodoServices.obtener().getPeriodoIdeaNegocio().getDays()), ideaNegocio, null, null));
     }
 
     public EvaluacionIdea obtenerEvaluacionReciente(String titulo) {

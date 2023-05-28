@@ -5,6 +5,7 @@ import com.backend.softue.models.PlanNegocio;
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.PlanNegocioRepository;
 import com.backend.softue.security.Hashing;
+import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,18 @@ public class PlanNegocioServices {
     private DocumentoPlanServices documentoPlanServices;
 
     @Autowired
+    private EstadosIdeaPlanNegocio estadosIdeaPlanNegocio;
+
+    @Autowired
     private Hashing encrypt;
+
+    @Autowired
+    private EvaluacionPlanServices evaluacionPlanServices;
 
     @PostConstruct
     public void init() {
         this.documentoPlanServices.setPlanNegocioServices(this);
+        this.evaluacionPlanServices.setPlanNegocioServices(this);
     }
 
     public void crear(String jwt, String titulo) {
@@ -90,6 +98,12 @@ public class PlanNegocioServices {
             }
             planNegocio.setDocentesApoyoInfo(docentesApoyoInfo);
         }
+
+        try{
+            this.evaluacionPlanServices.obtenerEvaluacionReciente(planNegocio);
+        }
+        catch (Exception e) {
+        }
         return planNegocio;
     }
 
@@ -111,6 +125,15 @@ public class PlanNegocioServices {
         resultado.get().setResumen(resumen);
         resultado.get().setEstado(estado);
         this.planNegocioRepository.save(resultado.get());
+    }
+
+    public void actualizarEstado(String titulo, String estado) {
+        if(!this.estadosIdeaPlanNegocio.getEstados().contains(estado))
+            throw new RuntimeException("No se puede actualizar un estado que no exista");
+        Optional<PlanNegocio> resultado = this.planNegocioRepository.findByTitulo(titulo);
+        PlanNegocio planNegocio = resultado.get();
+        planNegocio.setEstado(estado);
+        this.planNegocioRepository.save(planNegocio);
     }
 
     public void agregarDocumento(String titulo, byte[] documento, String nombreArchivo) {

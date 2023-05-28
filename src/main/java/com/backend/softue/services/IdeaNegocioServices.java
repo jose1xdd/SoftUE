@@ -191,7 +191,7 @@ public class IdeaNegocioServices {
     }
 
     public void actualizarEstado(String titulo, String estado) {
-        if(!estadosIdeaPlanNegocio.getEstados().contains(estado))
+        if(!this.estadosIdeaPlanNegocio.getEstados().contains(estado))
             throw new RuntimeException("No se puede actualizar un estado que no exista");
         IdeaNegocio ideaNegocio = this.ideaNegocioRepository.findByTitulo(titulo);
         ideaNegocio.setEstado(estado);
