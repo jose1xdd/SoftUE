@@ -45,13 +45,13 @@ public class PlanNegocioServices {
             throw new RuntimeException("No se puede un plan a partir de una idea de negocio no aprobada");
         this.planNegocioRepository.save(new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "Formulado", ideaNegocio.getAreaEnfoque(), ideaNegocio.getTutor(), null, LocalDate.now(), ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null));
 
-        if(ideaNegocio.getDocentesApoyo() != null){
+       /* if(ideaNegocio.getDocentesApoyo() != null){
             Set<DocenteApoyoIdea> docentes = ideaNegocio.getDocentesApoyo();
             for(DocenteApoyoIdea docente : docentes){
 
             }
 
-        }
+        }*/
     }
 
     public PlanNegocio obtenerPlanNegocio(String titulo){
