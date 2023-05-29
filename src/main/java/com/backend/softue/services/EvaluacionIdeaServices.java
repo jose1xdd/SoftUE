@@ -1,6 +1,7 @@
 package com.backend.softue.services;
 
 import com.backend.softue.models.CalificacionIdea;
+import com.backend.softue.models.CalificacionPlan;
 import com.backend.softue.models.EvaluacionIdea;
 import com.backend.softue.models.IdeaNegocio;
 import com.backend.softue.repositories.EvaluacionIdeaRepository;
@@ -44,15 +45,17 @@ public class EvaluacionIdeaServices {
         }
         catch (Exception e) {
         }
-        if(evaluacionReciente != null) {
-            List<CalificacionIdea> calificaciones = this.calificacionIdeaServices.obtenerCalificacionesDeEvaluacion(evaluacionReciente);
-            if(calificaciones == null || calificaciones.size() == 0)
-                throw new RuntimeException("No se puede crear una evaluación a una idea de negocio con una evaluación pendiente");
-            for(CalificacionIdea calificacion : calificaciones) {
-                if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[2]) || calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[3]))
-                    throw new RuntimeException("No se puede crear una evaluación a un plan de negocio con una evaluación pendiente");
-            }
+        List<CalificacionIdea> calificaciones = this.calificacionIdeaServices.obtenerCalificacionesDeEvaluacion(evaluacionReciente);
+        if(ideaNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[2]) ||
+           ideaNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[3]))
+            throw new RuntimeException("No se puede crear una nueva evaluación si existe una que se encuentre pendiente por calificaciones");
+        boolean pendiente = false;
+        for(CalificacionIdea calificacionIdea : calificaciones) {
+            pendiente |= calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[2]);
         }
+        if(pendiente)
+            throw new RuntimeException("No se puede crear una nueva evaluación si presenta una calificación pendiente por nota.");
+
         if(ideaNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[0]))
             throw new RuntimeException("No se puede crear una evaluación nueva a una idea de negocio ya aprobada.");
         this.ideaNegocioServices.actualizarEstado(ideaNegocio.getTitulo(), this.estadosCalificacion.getEstados()[2]);

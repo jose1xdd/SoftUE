@@ -45,15 +45,16 @@ public class EvaluacionPlanServices {
         }
         catch (Exception e) {
         }
-        if(evaluacionReciente != null) {
-            List<CalificacionPlan> calificaciones = this.calificacionPlanServices.obtenerCalificacionesDeEvaluacion(evaluacionReciente);
-            if(calificaciones == null || calificaciones.size() == 0)
-                throw new RuntimeException("No se puede crear una evaluación a un plan de negocio con una evaluación pendiente");
-            for(CalificacionPlan calificacion : calificaciones) {
-                if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[2]) || calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[3]))
-                    throw new RuntimeException("No se puede crear una evaluación a un plan de negocio con una evaluación pendiente");
-            }
+        List<CalificacionPlan> calificaciones = this.calificacionPlanServices.obtenerCalificacionesDeEvaluacion(evaluacionReciente);
+        if(planNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[2]) ||
+           planNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[3]))
+            throw new RuntimeException("No se puede crear una nueva evaluación si existe una que se encuentre pendiente por calificaciones");
+        boolean pendiente = false;
+        for(CalificacionPlan calificacionPlan : calificaciones) {
+            pendiente |= calificacionPlan.getEstado().equals(this.estadosCalificacion.getEstados()[2]);
         }
+        if(pendiente)
+            throw new RuntimeException("No se puede crear una nueva evaluación si presenta una calificación pendiente por nota.");
 
         if(planNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[0]))
             throw new RuntimeException("No se puede crear una evaluación nueva a un plan de negocio ya aprobado.");
