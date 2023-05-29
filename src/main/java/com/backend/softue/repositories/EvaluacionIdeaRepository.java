@@ -16,7 +16,7 @@ public interface EvaluacionIdeaRepository extends JpaRepository<EvaluacionIdea, 
     @Query(value =  "SELECT e.* " +
                     "FROM evaluacion_idea e JOIN idea_negocio i ON(e.idea_negocio = i.id) " +
                     "WHERE i.titulo = :titulo " +
-                    "ORDER BY e.fecha_presentacion DESC LIMIT 1", nativeQuery = true)
+                    "ORDER BY e.fecha_presentacion, e.id DESC LIMIT 1", nativeQuery = true)
     Optional<EvaluacionIdea> evaluacionReciente(@Param("titulo") String titulo);
 
     @Query(value =  "SELECT * " +

@@ -1,7 +1,7 @@
 package com.backend.softue.services;
 
 import com.backend.softue.models.*;
-import com.backend.softue.repositories.CalificacionIdeaRepository;
+import com.backend.softue.repositories.CalificacionPlanRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.utils.beansAuxiliares.EstadosCalificacion;
 import jakarta.annotation.PostConstruct;
@@ -13,19 +13,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CalificacionIdeaServices {
+public class CalificacionPlanServices {
 
     @Autowired
-    private CalificacionIdeaRepository calificacionIdeaRepository;
+    private EvaluacionPlanServices evaluacionPlanServices;
 
     @Autowired
-    private  IdeaNegocioServices ideaNegocioServices;
+    private CalificacionPlanRepository calificacionPlanRepository;
 
     @Autowired
-    private  DocenteServices docenteServices;
-
-    @Autowired
-    private EvaluacionIdeaServices evaluacionIdeaServices;
+    private DocenteServices docenteServices;
 
     @Autowired
     private EstadosCalificacion estadosCalificacion;
@@ -33,79 +30,83 @@ public class CalificacionIdeaServices {
     @Autowired
     private Hashing encrypt;
 
+    @Autowired
+    private PlanNegocioServices planNegocioServices;
+
     @PostConstruct
     public void init() {
-        this.evaluacionIdeaServices.setCalificacionIdeaServices(this);
+        this.evaluacionPlanServices.setCalificacionPlanServices(this);
     }
 
     public void crear(String titulo, String correo, LocalDate fechaCorte) {
-        IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
+        PlanNegocio planNegocio = this.planNegocioServices.obtenerPlanNegocio(titulo);
         Docente docente = this.docenteServices.obtenerDocente(correo);
-        if(docente.getCorreo().equals(ideaNegocio.getTutorInfo()[0][0]))
-            throw new RuntimeException("El tutor de la idea de negocio no puede ser evaluador.");
+        if(docente.getCorreo().equals(planNegocio.getTutorInfo()[0][0]))
+            throw new RuntimeException("El tutor del plan de negocio no puede ser evaluador.");
 
-        for(String docenteApoyo : ideaNegocio.getDocentesApoyoInfo()[0]) {
+        for(String docenteApoyo : planNegocio.getDocentesApoyoInfo()[0]) {
             if(docente.getCorreo().equals(docenteApoyo))
-                throw new RuntimeException("Un docente de apoyo de la idea de negocio no puede ser evaluador.");
+                throw new RuntimeException("Un docente de apoyo del plan de negocio no puede ser evaluador.");
         }
 
-        EvaluacionIdea evaluacionIdea = null;
+        EvaluacionPlan evaluacionPlan = null;
         try {
-            evaluacionIdea = this.evaluacionIdeaServices.obtenerEvaluacionReciente(ideaNegocio.getTitulo());
+            evaluacionPlan = this.evaluacionPlanServices.obtenerEvaluacionReciente(planNegocio.getTitulo());
         }
         catch (Exception e) {
             throw new RuntimeException("No se puede crear una calificación si no existe una evaluación pendiente.");
         }
 
-        if(this.obtenerCalificacionesDeEvaluacion(evaluacionIdea).size() >= 3)
+        if(this.obtenerCalificacionesDeEvaluacion(evaluacionPlan).size() >= 3)
             throw new RuntimeException("No se puede asignar más de 3 evaluadores a una evaluación.");
 
-        if(LocalDate.now().isAfter(evaluacionIdea.getFechaCorte())
-                && (ideaNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[0]) ||
-                ideaNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[1]))) {
+        if(LocalDate.now().isAfter(evaluacionPlan.getFechaCorte())
+                && (planNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[0]) ||
+                planNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[1]))) {
             throw new RuntimeException("No se pueden asignar docentes evaluadores a una evaluación con fecha corte vencida y que ya se encuentre calificada.");
         }
 
         if(fechaCorte != null) {
             if(LocalDate.now().isAfter(fechaCorte))
                 throw new RuntimeException("No se puede asignar una fecha corte ya vencida a una calificación.");
-            if(LocalDate.now().isBefore(evaluacionIdea.getFechaCorte()) || LocalDate.now().isEqual(evaluacionIdea.getFechaCorte()))
+            if(LocalDate.now().isBefore(evaluacionPlan.getFechaCorte()) || LocalDate.now().isEqual(evaluacionPlan.getFechaCorte()))
                 throw new RuntimeException("No se puede crear una calificación con fecha corte, si la fecha corte de la evaluación no ha vencido.");
-            evaluacionIdea.setFechaCorte(fechaCorte);
-            this.evaluacionIdeaServices.actualizar(evaluacionIdea);
+            evaluacionPlan.setFechaCorte(fechaCorte);
+            this.evaluacionPlanServices.actualizar(evaluacionPlan);
         }
-        else if(ideaNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[3]))
+        else if(planNegocio.getEstado().equals(this.estadosCalificacion.getEstados()[3]))
             throw new RuntimeException("No se pueden asignar docentes evaluadores a una evaluación vencida sin establecer una nueva fecha Corte");
 
-        CalificacionIdeaKey id = new CalificacionIdeaKey(docente.getCodigo(), evaluacionIdea.getId());
-        Optional<CalificacionIdea> resultado = this.calificacionIdeaRepository.findById(id);
+        CalificacionPlanKey id = new CalificacionPlanKey(docente.getCodigo(), evaluacionPlan.getId());
+        Optional<CalificacionPlan> resultado = this.calificacionPlanRepository.findById(id);
         if(resultado.isPresent())
             throw new RuntimeException("El docente seleccionado ya se encuentra asignado.");
-        this.calificacionIdeaRepository.save(new CalificacionIdea(id, docente, null, evaluacionIdea, this.estadosCalificacion.getEstados()[2], null, LocalDate.now(), evaluacionIdea.getFechaCorte()));
+
+        this.calificacionPlanRepository.save(new CalificacionPlan(id, docente, null, evaluacionPlan, this.estadosCalificacion.getEstados()[2], null, LocalDate.now(), evaluacionPlan.getFechaCorte()));
     }
 
-    public List<CalificacionIdea> obtenerCalificacionesDeEvaluacion(EvaluacionIdea evaluacionIdea) {
+    public List<CalificacionPlan> obtenerCalificacionesDeEvaluacion(EvaluacionPlan evaluacionPlan) {
         try {
-            if(evaluacionIdea == null)
+            if(evaluacionPlan == null)
                 throw new RuntimeException();
-            evaluacionIdea = this.evaluacionIdeaServices.obtener(evaluacionIdea.getId());
+            evaluacionPlan = this.evaluacionPlanServices.obtener(evaluacionPlan.getId());
         }
         catch (Exception e) {
             throw new RuntimeException("No se pueden obtener calificaciones de una evaluación que no existe");
         }
-        List<CalificacionIdea> calificaciones = this.calificacionIdeaRepository.findByEvaluacion(evaluacionIdea.getId());
+        List<CalificacionPlan> calificaciones = this.calificacionPlanRepository.findByEvaluacion(evaluacionPlan.getId());
         for(int i = 0; i < calificaciones.size(); i++) {
             calificaciones.set(i, this.obtener(calificaciones.get(i).getId()));
         }
-        String estado = this.estadoSegunCalificaciones(calificaciones, evaluacionIdea.getFechaCorte());
-        IdeaNegocio ideaNegocio = evaluacionIdea.getIdeaNegocio();
-        if(!estado.equals(ideaNegocio.getEstado())) {
-            this.ideaNegocioServices.actualizarEstado(ideaNegocio.getTitulo(), estado);
+        String estado = this.estadoSegunCalificaciones(calificaciones, evaluacionPlan.getFechaCorte());
+        PlanNegocio planNegocio = evaluacionPlan.getPlanNegocio();
+        if(!estado.equals(planNegocio.getEstado())) {
+            this.planNegocioServices.actualizarEstado(planNegocio.getTitulo(), estado);
         }
         return calificaciones;
     }
 
-    public CalificacionIdea obtener(CalificacionIdeaKey id) {
+    public CalificacionPlan obtener(CalificacionPlanKey id) {
         if(id == null)
             throw new RuntimeException("Información incompleta para obtener una calificación");
         try {
@@ -115,15 +116,15 @@ public class CalificacionIdeaServices {
             throw new RuntimeException("No se puede obtener una calificación que tiene asignada un docente que no existe.");
         }
         try {
-            EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtener(id.getEvaluacionIdeaId());
+            EvaluacionPlan evaluacionPlan = this.evaluacionPlanServices.obtener(id.getEvaluacionPlanId());
         }
         catch(Exception e) {
             throw new RuntimeException("No se puede obtener una calificación de una evaluacion que no existe.");
         }
-        Optional<CalificacionIdea> resultado = this.calificacionIdeaRepository.findById(id);
+        Optional<CalificacionPlan> resultado = this.calificacionPlanRepository.findById(id);
         if(!resultado.isPresent())
             throw new RuntimeException("La calificación que se desea obtener no existe.");
-        CalificacionIdea calificacion = resultado.get();
+        CalificacionPlan calificacion = resultado.get();
         if(LocalDate.now().isAfter(calificacion.getFechaCorte()) && calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[2])) {
             //La calificación se establece como vencida si se cumplió la fecha corte y tiene un estado pendiente
             calificacion.setEstado(this.estadosCalificacion.getEstados()[3]);
@@ -135,61 +136,61 @@ public class CalificacionIdeaServices {
 
     public void actualizar(String titulo, String nota, String observacion, String JWT) {
         Docente docente = this.docenteServices.obtenerDocente(this.encrypt.getJwt().getKey(JWT));
-        EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtenerEvaluacionReciente(titulo);
-        CalificacionIdeaKey id = new CalificacionIdeaKey(docente.getCodigo(), evaluacionIdea.getId());
-        Optional<CalificacionIdea> resultado = this.calificacionIdeaRepository.findById(id);
+        EvaluacionPlan evaluacionPlan = this.evaluacionPlanServices.obtenerEvaluacionReciente(titulo);
+        CalificacionPlanKey id = new CalificacionPlanKey(docente.getCodigo(), evaluacionPlan.getId());
+        Optional<CalificacionPlan> resultado = this.calificacionPlanRepository.findById(id);
         if(!resultado.isPresent())
-            throw new RuntimeException("El docente no está asignado a la evaluación de la idea de negocio consultada");
+            throw new RuntimeException("El docente no está asignado a la evaluación del plan de negocio consultada");
 
-        CalificacionIdea calificacion = resultado.get();
+        CalificacionPlan calificacion = resultado.get();
         if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
             throw new RuntimeException("No se puede dar una nota a una calificación con un estado de 'aprobada' o 'rechazada'");
         if(!(nota.equals(this.estadosCalificacion.getEstados()[0]) || nota.equals(this.estadosCalificacion.getEstados()[1])))
             throw new RuntimeException("La nota de la calificación solo puede ser 'aprobada' o 'rechazada'");
         if(observacion == null || observacion.isEmpty() || observacion.isBlank())
-            throw new RuntimeException("Para calificar una idea de negocio se debe agregar una observación.");
+            throw new RuntimeException("Para calificar un plan de negocio se debe agregar una observación.");
 
         calificacion.setObservacion(observacion);
         calificacion.setEstado(nota);
         this.actualizar(calificacion);
         //Actualiza estado de la idea de negocio
-        this.obtenerCalificacionesDeEvaluacion(evaluacionIdea);
+        this.obtenerCalificacionesDeEvaluacion(evaluacionPlan);
     }
 
-    private void actualizar(CalificacionIdea calificacionIdea) {
-        if(calificacionIdea == null || calificacionIdea.getId() == null)
+    private void actualizar(CalificacionPlan calificacionPlan) {
+        if(calificacionPlan == null || calificacionPlan.getId() == null)
             throw new RuntimeException("Información incompleta para actualizar una calificación.");
-        Optional<CalificacionIdea> resultado = this.calificacionIdeaRepository.findById(calificacionIdea.getId());
+        Optional<CalificacionPlan> resultado = this.calificacionPlanRepository.findById(calificacionPlan.getId());
         if(!resultado.isPresent())
             throw new RuntimeException("No se puede actualizar una calificación que no existe");
-        this.calificacionIdeaRepository.save(calificacionIdea);
+        this.calificacionPlanRepository.save(calificacionPlan);
     }
 
-    public void eliminar(CalificacionIdeaKey calificacionIdeaKey) {
+    public void eliminar(CalificacionPlanKey calificacionPlanKey) {
         //Al obtener la calificación se actualiza el estado para abordar el caso de que se superó la fecha corte
-        CalificacionIdea calificacionIdea = this.obtener(calificacionIdeaKey);
+        CalificacionPlan calificacionPlan = this.obtener(calificacionPlanKey);
 
-        //No se puede eliminar una idea que tenga el estado "aprobada" ni el estado "rechazada"
-        if(calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
+        //No se puede eliminar un plan que tenga el estado "aprobada" ni el estado "rechazada"
+        if(calificacionPlan.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || calificacionPlan.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
             throw new RuntimeException("No se puede eliminar una calificación que ya este evaluada.");
 
         //No se puede eliminar una calificacion que se encuentre pendiente
-        if(calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[2]))
+        if(calificacionPlan.getEstado().equals(this.estadosCalificacion.getEstados()[2]))
             throw new RuntimeException("No se puede eliminar una calificación pendiente");
 
         //En esta sección se verifica que la evaluación aún no este calificada
-        EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtener(calificacionIdeaKey.getEvaluacionIdeaId());
-        List<CalificacionIdea> calificaciones = this.obtenerCalificacionesDeEvaluacion(evaluacionIdea);
-        String estadoEvaluacion = this.estadoSegunCalificaciones(calificaciones, evaluacionIdea.getFechaCorte());
+        EvaluacionPlan evaluacionPlan = this.evaluacionPlanServices.obtener(calificacionPlanKey.getEvaluacionPlanId());
+        List<CalificacionPlan> calificaciones = this.obtenerCalificacionesDeEvaluacion(evaluacionPlan);
+        String estadoEvaluacion = this.estadoSegunCalificaciones(calificaciones, evaluacionPlan.getFechaCorte());
         if (!(estadoEvaluacion.equals(this.estadosCalificacion.getEstados()[2]) || estadoEvaluacion.equals(this.estadosCalificacion.getEstados()[3])))
             throw new RuntimeException("No se puede eliminar una calificación cuando la evaluación ya esta calificada.");
 
-        this.calificacionIdeaRepository.delete(calificacionIdea);
+        this.calificacionPlanRepository.delete(calificacionPlan);
     }
 
-    private String estadoSegunCalificaciones(List<CalificacionIdea> calificaciones, LocalDate fechaCorte) {
+    private String estadoSegunCalificaciones(List<CalificacionPlan> calificaciones, LocalDate fechaCorte) {
         int cnt = 0;
-        for(CalificacionIdea calificacion : calificaciones) {
+        for(CalificacionPlan calificacion : calificaciones) {
             if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[0]))
                 cnt++;
             if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[1]))

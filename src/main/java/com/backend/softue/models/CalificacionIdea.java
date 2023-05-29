@@ -25,6 +25,8 @@ public class CalificacionIdea {
     @MapsId("codigoDocente")
     @JoinColumn(nullable = false, name = "docente_codigo")
     private Docente docente;
+    @Transient
+    private String nombreDocente;
 
     @NotNull(message = "Error: El campo 'evaluacionIdeaId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el evaluacionIdeaId de la calificacion de la idea.")
     @ManyToOne

@@ -1,10 +1,12 @@
 package com.backend.softue.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -14,6 +16,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "Evaluacion_plan")
+@JsonIgnoreProperties({"calificaciones", "planNegocio"})
 public class EvaluacionPlan {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,4 +37,6 @@ public class EvaluacionPlan {
 
     @OneToMany(mappedBy = "evaluacionPlanId", fetch = FetchType.LAZY)
     private Set<CalificacionPlan> calificaciones;
+    @Transient
+    private List<CalificacionPlan> calificacionesInfo;
 }
