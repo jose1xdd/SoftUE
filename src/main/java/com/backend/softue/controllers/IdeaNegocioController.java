@@ -90,7 +90,7 @@ public class IdeaNegocioController {
     @PatchMapping ("/Actualizar")
     public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt,@RequestParam String tituloActual, @RequestParam String tituloNuevo, @RequestParam String area, @RequestParam String estado){
         try{
-            this.ideaNegocioServices.actualizar(tituloActual,tituloNuevo, area.toLowerCase(), estado, jwt);
+            this.ideaNegocioServices.actualizar(tituloActual,tituloNuevo, area.toLowerCase(), jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Idea de negocio ha sido actualizada correctamente"));
         }catch (Exception e){
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
@@ -118,6 +118,4 @@ public class IdeaNegocioController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
-
-
 }

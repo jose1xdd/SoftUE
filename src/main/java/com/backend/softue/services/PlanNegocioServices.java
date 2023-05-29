@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,10 +36,17 @@ public class PlanNegocioServices {
     @Autowired
     private EvaluacionPlanServices evaluacionPlanServices;
 
+    @Autowired
+    private DocenteApoyoPlanServices docenteApoyoPlanServices;
+
+    @Autowired
+    private PlanPresentadoServices planPresentadoServices;
+
     @PostConstruct
     public void init() {
         this.documentoPlanServices.setPlanNegocioServices(this);
         this.evaluacionPlanServices.setPlanNegocioServices(this);
+        this.docenteApoyoPlanServices.setPlanNegocioServices(this);
     }
 
     public void crear(String jwt, String titulo) {
@@ -51,14 +59,21 @@ public class PlanNegocioServices {
             throw new RuntimeException("No existe una idea de negocio con ese titulo");
         if (!ideaNegocio.getEstado().equals("aprobada"))
             throw new RuntimeException("No se puede un plan a partir de una idea de negocio no aprobada");
-        this.planNegocioRepository.save(new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "Formulado", ideaNegocio.getAreaEnfoque(), ideaNegocio.getTutor(), null, LocalDate.now(), ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null));
+        PlanNegocio planNegocio = new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "formulado", ideaNegocio.getAreaEnfoque(), ideaNegocio.getTutor(), null, LocalDate.now(), ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null);
+        this.planNegocioRepository.save(planNegocio);
 
         if(ideaNegocio.getDocentesApoyo() != null){
             Set<DocenteApoyoIdea> docentes = ideaNegocio.getDocentesApoyo();
             for(DocenteApoyoIdea docente : docentes){
-
+                this.docenteApoyoPlanServices.agregarDocenteApoyo(planNegocio, docente.getDocente().getCorreo());
             }
+        }
 
+        if(ideaNegocio.getEstudiantesIntegrantes() != null){
+            Set<IdeaPlanteada> integrantes = ideaNegocio.getEstudiantesIntegrantes();
+            for(IdeaPlanteada integrante : integrantes){
+                this.planPresentadoServices.agregarIntegrante(planNegocio,integrante.getEstudiante());
+            }
         }
     }
 
@@ -107,7 +122,7 @@ public class PlanNegocioServices {
         return planNegocio;
     }
 
-    public void actualizarPlan(String titulo, String resumen, String estado,  String jwt) {
+    public void actualizarPlan(String titulo, String resumen, String jwt) {
         if (titulo == null)
             throw new RuntimeException("No se envio el titulo del plan de negocio que se desea actulizar el resumen");
         if (resumen == null || resumen.equals(""))
@@ -117,13 +132,8 @@ public class PlanNegocioServices {
             throw new RuntimeException("No existe un plan de negocio con ese titulo");
         if (!this.encrypt.getJwt().getKey(jwt).equals(resultado.get().getEstudianteLider().getCorreo()))
             throw new RuntimeException("Solo el estudiante lider puede actualizar el resumen del plan de negocio");
-        if(resumen == null)
-            resumen = resultado.get().getResumen();
-        if(estado == null)
-            estado = resultado.get().getAreaEnfoque();
 
         resultado.get().setResumen(resumen);
-        resultado.get().setEstado(estado);
         this.planNegocioRepository.save(resultado.get());
     }
 
@@ -165,5 +175,13 @@ public class PlanNegocioServices {
         if (titulo == null)
             throw new RuntimeException("No se proporciono informacion para buscar el documento correspondiente al plan con el titulo proporcionado");
         return this.documentoPlanServices.obtenerDocumentoPlan(titulo);
+    }
+
+    public List<PlanNegocio> listar(){
+        List<PlanNegocio> planes = this.planNegocioRepository.findAll();
+        for(PlanNegocio planNegocio : planes){
+            planNegocio = this.obtenerPlanNegocio(planNegocio.getTitulo());
+        }
+        return planes;
     }
 }

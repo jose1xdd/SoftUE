@@ -163,7 +163,7 @@ public class IdeaNegocioServices {
         return result;
     }
 
-    public void actualizar(String tituloActual, String tituloNuevo , String area, String estado, String jwt) {
+    public void actualizar(String tituloActual, String tituloNuevo , String area, String jwt) {
         if (tituloActual == null)
             throw new RuntimeException("No se envio el titulo de la idea a modificar");
         if (tituloNuevo != null && !tituloActual.equals(tituloNuevo) && this.ideaNegocioRepository.findByTitulo(tituloNuevo) != null)
@@ -175,8 +175,7 @@ public class IdeaNegocioServices {
         String correo = this.encrypt.getJwt().getKey(jwt);
         if (!correo.equals(idea.getEstudianteLider().getCorreo()))
             throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
-        if(estado == null)
-            estado = idea.getEstado();
+
         if (tituloNuevo == null)
             tituloNuevo = idea.getTitulo();
         if (area == null)
@@ -186,7 +185,6 @@ public class IdeaNegocioServices {
 
         idea.setAreaEnfoque(area);
         idea.setTitulo(tituloNuevo);
-        idea.setEstado(estado);
         this.ideaNegocioRepository.save(idea);
     }
 

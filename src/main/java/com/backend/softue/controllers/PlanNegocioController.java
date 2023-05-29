@@ -34,7 +34,7 @@ public class PlanNegocioController {
     @PatchMapping()
     public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String resumen, @RequestParam String estado) {
         try {
-            this.planNegocioServices.actualizarPlan(titulo, resumen, estado, jwt);
+            this.planNegocioServices.actualizarPlan(titulo, resumen, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El resumen del plan de negocio ha sido actualizado correctamente"));
         }
         catch (Exception e) {
@@ -93,6 +93,17 @@ public class PlanNegocioController {
     public ResponseEntity<?> visualizar(@PathVariable String titulo) {
         try {
             return ResponseEntity.ok(this.planNegocioServices.obtenerPlanNegocio(titulo));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping()
+    public ResponseEntity<?> listar() {
+        try {
+            return ResponseEntity.ok(this.planNegocioServices.listar());
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
