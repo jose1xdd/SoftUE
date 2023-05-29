@@ -81,4 +81,15 @@ public class DocenteController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+    @CheckSession(permitedRol = {"docente"})
+    @GetMapping("/acceptarTutor/{titulo}/{confirmacion}")
+    public  ResponseEntity<?>acceptarTutor(@PathVariable String titulo ,@PathVariable boolean confirmacion, @RequestHeader("X-Softue-JWT") String jwt ){
+        try {
+            return ResponseEntity.ok(this.docenteServices.confirmarTutoria(confirmacion,titulo,jwt));
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+
+        }
+    }
 }

@@ -30,7 +30,7 @@ public class UserController {
 
     @Autowired
     private Hashing encryp;
-
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @PostMapping("/saveFoto/{userId}")
     public ResponseEntity<?> saveFoto(@RequestParam("photo") MultipartFile file,
                                       @PathVariable("userId") String userId) {
@@ -85,7 +85,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
-
+    @CheckSession(permitedRol = {"coordinador", "administrativo", "docente"})
     @PatchMapping("/resetPassword")
     public ResponseEntity resetPassword(@RequestHeader("X-Softue-Reset") String token, @RequestBody RequestPassword password) {
         try {
@@ -127,6 +127,18 @@ public class UserController {
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
+    @GetMapping("/asignar/{idea}/{docente}")
+    public ResponseEntity<?> asignarTutor(@PathVariable String idea , @PathVariable String docente) {
+        try {
+            this.userServices.solicitarDocente(idea,docente);
+            return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
+
         }
     }
 }

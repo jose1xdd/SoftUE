@@ -1,24 +1,23 @@
 package com.backend.softue.services;
 
-import com.backend.softue.models.DocenteApoyoIdea;
-import com.backend.softue.models.DocumentoIdea;
-import com.backend.softue.models.Estudiante;
-import com.backend.softue.models.IdeaNegocio;
-import com.backend.softue.models.IdeaPlanteada;
+import com.backend.softue.models.*;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.beansAuxiliares.AreasConocimiento;
 import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
+import com.backend.softue.utils.emailModule.EmailService;
 import jakarta.annotation.PostConstruct;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+@Setter
 @Service
 public class IdeaNegocioServices {
 
@@ -49,11 +48,17 @@ public class IdeaNegocioServices {
     @Autowired
     private EvaluacionIdeaServices evaluacionIdeaServices;
 
+    private DocenteServices docenteServices;
+
+    @Autowired
+    private EmailService emailService;
+
     @PostConstruct
     public void init() {
         this.ideaPlanteadaServices.setIdeaNegocioServices(this);
         this.documentoIdeaServices.setIdeaNegocioServices(this);
         this.evaluacionIdeaServices.setIdeaNegocioServices(this);
+        this.estudianteServices.getUsuarioServices().setIdeaNegocioServices(this);
     }
 
     public void crear(IdeaNegocio ideaNegocio, String integrantes[], byte[] documento, String nombreArchivo, String JWT) {
@@ -69,8 +74,7 @@ public class IdeaNegocioServices {
             for (String correo : integrantes) {
                 estudiantesIntegrantes.add(this.estudianteServices.obtenerEstudiante(correo));
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Los integrantes de la idea de negocio no son validos");
         }
 
@@ -78,12 +82,11 @@ public class IdeaNegocioServices {
         try {
             Estudiante estudiante = this.estudianteServices.obtenerEstudiante(correo);
             ideaNegocio.setEstudianteLider(estudiante);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("El estudiante lider de la idea no existe");
         }
 
-        if(!this.validarIntegrantes(estudiantesIntegrantes, correo))
+        if (!this.validarIntegrantes(estudiantesIntegrantes, correo))
             throw new RuntimeException("Los integrantes seleccionados son invalidos");
 
         this.ideaNegocioRepository.save(ideaNegocio);
@@ -108,7 +111,7 @@ public class IdeaNegocioServices {
         this.ideaNegocioRepository.save(ideaNegocio);
     }
 
-    public  void eliminarDocumento(String titulo) {
+    public void eliminarDocumento(String titulo) {
         if (titulo == null)
             throw new RuntimeException("No se proporciono un titulo para buscar la idea de negocio que se le quiere eliminar el documento");
         IdeaNegocio ideaNegocio = this.obtenerIdeaNegocio(titulo);
@@ -131,11 +134,11 @@ public class IdeaNegocioServices {
             throw new RuntimeException("No exite ninguna idea de negocio con ese titulo");
         if (result.getEstudianteLider() != null)
             result.setEstudianteLiderInfo(new String[][] {{result.getEstudianteLider().getCorreo()}, {result.getEstudianteLider().getNombre() + " " + result.getEstudianteLider().getApellido()}});
-        if(result.getEstudiantesIntegrantes() != null){
+        if(result.getEstudiantesIntegrantes() != null) {
             Integer ctn = 0;
-            String arr [][] = new String[2][result.getEstudiantesIntegrantes().size()];
+            String arr[][] = new String[2][result.getEstudiantesIntegrantes().size()];
 
-            for(IdeaPlanteada v : result.getEstudiantesIntegrantes()){
+            for (IdeaPlanteada v : result.getEstudiantesIntegrantes()) {
                 arr[0][ctn] = v.getEstudiante().getCorreo();
                 arr[1][ctn] = v.getEstudiante().getNombre() + " " + v.getEstudiante().getApellido();
                 ctn++;
@@ -152,18 +155,18 @@ public class IdeaNegocioServices {
             }
             result.setDocentesApoyoInfo(docentesApoyoInfo);
         }
+
         if(result.getTutor() != null){
             result.setTutorInfo(new String[][]{{result.getTutor().getCorreo()} , {result.getTutor().getNombre() + " " + result.getTutor().getApellido()}});
         }
         try{
             this.evaluacionIdeaServices.obtenerEvaluacionReciente(result);
         }
-        catch (Exception e) {
-        }
+        catch (Exception e) {}
         return result;
     }
 
-    public void actualizar(String tituloActual, String tituloNuevo , String area, String jwt) {
+    public void actualizar(String tituloActual, String tituloNuevo, String area, String jwt) {
         if (tituloActual == null)
             throw new RuntimeException("No se envio el titulo de la idea a modificar");
         if (tituloNuevo != null && !tituloActual.equals(tituloNuevo) && this.ideaNegocioRepository.findByTitulo(tituloNuevo) != null)
@@ -198,18 +201,37 @@ public class IdeaNegocioServices {
 
     private boolean validarIntegrantes(List<Estudiante> integrantes, String lider) {
         Set<String> conjuntoCorreos = new HashSet<>();
-        for(Estudiante estudiante : integrantes) {
+        for (Estudiante estudiante : integrantes) {
             conjuntoCorreos.add(estudiante.getCorreo());
         }
         return conjuntoCorreos.size() == integrantes.size() && !conjuntoCorreos.contains(lider);
     }
 
+
+    public List<IdeaNegocio> buscarIdeasPorFiltros(String estudianteEmail, String docenteEmail, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
+        if (fechaFin == null ^ fechaInicio == null)
+            throw new RuntimeException("Una o las dos fechas del filtro son nulas");
+        return ideaNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+    }
+
     public List<IdeaNegocio> listar() {
         List<IdeaNegocio> ideasNegocio = this.ideaNegocioRepository.findAll();
-        for(IdeaNegocio ideaNegocio : ideasNegocio) {
+        for (IdeaNegocio ideaNegocio : ideasNegocio) {
             ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
         }
         return ideasNegocio;
+    }
+
+    public void asignarTutor(String titulo, String docenteEmail) {
+        if (this.obtenerIdeaNegocio(titulo) == null)
+            throw new RuntimeException("No se encontro una idea de negocio con ese titulo");
+        Docente docente = this.docenteServices.obtenerDocente(docenteEmail);
+        if (docente == null) throw new RuntimeException("No se encontro un docente con ese email");
+        this.emailService.enviarEmailTutor(docenteEmail, titulo, docente.getNombre() + " " + docente.getApellido(), docente.getArea());
+    }
+
+    public IdeaNegocio confirmarTutor(IdeaNegocio ideaNegocio) {
+        return ideaNegocioRepository.save(ideaNegocio);
     }
 
 }

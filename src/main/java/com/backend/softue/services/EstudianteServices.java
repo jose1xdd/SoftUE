@@ -5,11 +5,13 @@ import com.backend.softue.repositories.EstudianteRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
 import com.backend.softue.utils.beansAuxiliares.GradosPermitidos;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Getter
 @Service
 public class EstudianteServices {
     @Autowired
