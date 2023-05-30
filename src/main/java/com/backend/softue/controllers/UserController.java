@@ -1,5 +1,6 @@
 package com.backend.softue.controllers;
 
+import com.backend.softue.models.FotoUsuario;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.services.UserServices;
 import com.backend.softue.utils.checkSession.CheckSession;
@@ -12,8 +13,7 @@ import com.backend.softue.utils.response.ResponseError;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -86,7 +86,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
-    @CheckSession(permitedRol = {"coordinador", "administrativo", "docente"})
+
     @PatchMapping("/resetPassword")
     public ResponseEntity resetPassword(@Valid @RequestHeader("X-Softue-Reset") String token, @RequestBody RequestPassword password) {
         try {
@@ -99,12 +99,19 @@ public class UserController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping(value = "/foto/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/foto/{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<?> obtenerFoto(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String id) {
         try {
-            return ResponseEntity.ok(this.userServices.obtenerFoto(id));
+            FotoUsuario fotoUsuario = this.userServices.obtenerFoto(id);
+            HttpHeaders headers = new HttpHeaders();
+            if (fotoUsuario.getExtension().equals(".jpg")) {
+                headers.setContentType(MediaType.IMAGE_JPEG);
+            } else if (fotoUsuario.getExtension().equals(".png")) {
+                headers.setContentType(MediaType.IMAGE_PNG);
+            } else throw new RuntimeException("El formato del archivo no es apto para retornarse");
+            headers.setContentDisposition(ContentDisposition.attachment().filename("Foto usuario " + id).build());
+            return new ResponseEntity<>(fotoUsuario.getFoto(), headers, HttpStatus.OK);
         } catch (Exception e) {
-
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }

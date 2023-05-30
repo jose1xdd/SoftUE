@@ -20,7 +20,7 @@ public class EstudianteController {
     private EstudianteServices estudianteServices;
 
     @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo"})
-    @PatchMapping("/update")
+    @PatchMapping("/actualizar")
     public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @Valid @RequestBody Estudiante estudiante, BindingResult bindingResult) {
         try {
             this.estudianteServices.actualizarEstudiante(estudiante, jwt);
