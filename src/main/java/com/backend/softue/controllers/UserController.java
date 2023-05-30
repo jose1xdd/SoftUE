@@ -49,7 +49,7 @@ public class UserController {
             this.userServices.logout(jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Cierre de Sesion Exitoso"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -58,7 +58,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(new ResponseToken(this.userServices.forgotPassword(email)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -73,7 +73,7 @@ public class UserController {
             this.userServices.actualizarUsuario(user, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido actualizado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -83,7 +83,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(this.userServices.obtenerUsuario(email));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
     @CheckSession(permitedRol = {"coordinador", "administrativo", "docente"})
@@ -94,7 +94,7 @@ public class UserController {
             return ResponseEntity.ok(new ResponseConfirmation("Contraseña Restablecida"));
         } catch (Exception e) {
 
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -105,7 +105,7 @@ public class UserController {
             return ResponseEntity.ok(this.userServices.obtenerFoto(id));
         } catch (Exception e) {
 
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -116,7 +116,7 @@ public class UserController {
             this.userServices.deshabilitarUsuario(email);
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido deshabilitado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -127,7 +127,7 @@ public class UserController {
             return ResponseEntity.ok(this.userServices.listarUsuariosRol(rol));
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -138,7 +138,7 @@ public class UserController {
             this.userServices.solicitarDocente(idea,docente);
             return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
 
         }
     }

@@ -19,6 +19,6 @@ public class ResponseError{
     public ResponseError(Exception e) {
         this.errorType = e.getClass().toString();
         this.errorMessage = e.getMessage();
-        this.cause = (e.getCause() == null) ? "NULL" : e.getCause().toString();
+        this.cause = e.getStackTrace()[0].toString();
     }
 }
