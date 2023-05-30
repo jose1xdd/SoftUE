@@ -32,7 +32,7 @@ public class PlanNegocioController {
 
     @CheckSession(permitedRol = {"estudiante"})
     @PatchMapping()
-    public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String resumen, @RequestParam String estado) {
+    public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String resumen) {
         try {
             this.planNegocioServices.actualizarPlan(titulo, resumen, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El resumen del plan de negocio ha sido actualizado correctamente"));
@@ -44,7 +44,7 @@ public class PlanNegocioController {
 
     @CheckSession(permitedRol ={"estudiante"})
     @PostMapping("/agregarDocumento")
-    public ResponseEntity<?> agregarFormato(@RequestParam String titulo, @RequestParam MultipartFile documento) {
+    public ResponseEntity<?> agregarDocumento(@RequestParam String titulo, @RequestParam MultipartFile documento) {
         try {
             this.planNegocioServices.agregarDocumento(titulo, documento.getBytes(), documento.getOriginalFilename());
             return ResponseEntity.ok(new ResponseConfirmation("El formato del plan de negocio se agrego correctamete"));
