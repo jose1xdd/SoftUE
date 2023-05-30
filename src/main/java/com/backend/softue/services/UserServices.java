@@ -22,6 +22,8 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+
 @Setter
 @Service
 public class UserServices {
@@ -45,6 +47,7 @@ public class UserServices {
 
     private IdeaNegocioServices ideaNegocioServices;
 
+    private DocenteServices docenteServices;
     public String login(LoginResponse user) {
         SingInToken token = singInTokenRepository.findTokenByEmail(user.getEmail());
         if (token != null) this.singInTokenRepository.delete(token);
@@ -182,5 +185,4 @@ public class UserServices {
         this.ideaNegocioServices.asignarTutor(ideaNegocio, docenteEmail);
 
     }
-
 }

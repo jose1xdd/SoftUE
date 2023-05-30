@@ -12,10 +12,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Setter
 @Service
@@ -223,10 +220,12 @@ public class IdeaNegocioServices {
     }
 
     public void asignarTutor(String titulo, String docenteEmail) {
-        if (this.obtenerIdeaNegocio(titulo) == null)
+        IdeaNegocio idea = this.obtenerIdeaNegocio(titulo);
+        if (idea == null)
             throw new RuntimeException("No se encontro una idea de negocio con ese titulo");
         Docente docente = this.docenteServices.obtenerDocente(docenteEmail);
         if (docente == null) throw new RuntimeException("No se encontro un docente con ese email");
+
         this.emailService.enviarEmailTutor(docenteEmail, titulo, docente.getNombre() + " " + docente.getApellido(), docente.getArea());
     }
 
