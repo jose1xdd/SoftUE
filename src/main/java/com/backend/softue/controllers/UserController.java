@@ -88,7 +88,7 @@ public class UserController {
     }
     @CheckSession(permitedRol = {"coordinador", "administrativo", "docente"})
     @PatchMapping("/resetPassword")
-    public ResponseEntity resetPassword(@RequestHeader("X-Softue-Reset") String token, @RequestBody RequestPassword password) {
+    public ResponseEntity resetPassword(@Valid @RequestHeader("X-Softue-Reset") String token, @RequestBody RequestPassword password) {
         try {
             this.userServices.resetPassword(token, password.getPassword());
             return ResponseEntity.ok(new ResponseConfirmation("Contraseña Restablecida"));
