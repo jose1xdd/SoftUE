@@ -1,5 +1,6 @@
 package com.backend.softue.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ import java.sql.Blob;
 @Setter
 @ToString
 @Entity
+@JsonIgnoreProperties("entidadFinanciadoraId")
 @Table(name = "Foto_entidad_financiadora")
 public class FotoEntidadFinanciadora {
     @Id
@@ -21,9 +23,15 @@ public class FotoEntidadFinanciadora {
 
     @Lob
     @Column(nullable = false, columnDefinition = "LONGBLOB")
-    private Blob foto;
+    private byte[] foto;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "fotoEntidadFinanciadoraId")
+    @NotNull
+    @NotBlank
+    private String extension;
+
+    @OneToOne()
+    @MapsId
+    @JoinColumn(name = "entidad_fnanciadora_id")
     private EntidadFinanciadora entidadFinanciadoraId;
 
 }

@@ -150,14 +150,13 @@ public class UserServices {
     }
 
 
-    public byte[] obtenerFoto(String id) throws SQLException, IOException {
-        /*if (id != null) {
+    public FotoUsuario obtenerFoto(String id) throws SQLException, IOException {
+        if (id != null) {
             FotoUsuario result = this.fotoRepository.getReferenceById(Integer.parseInt(id));
             if (result == null) throw new RuntimeException("La foto no existe");
-            return result.getFoto().getBytes(1, (int) result.getFoto().length());
+            return result;
         }
-        throw new RuntimeException("No se envió información con la que buscar la foto");*/
-        return null;
+        throw new RuntimeException("No se envió información con la que buscar la foto");
     }
 
     public void deshabilitarUsuario(String email) {
@@ -173,8 +172,8 @@ public class UserServices {
     }
 
     public List<User> listarUsuariosRol(String rol) {
-        if (rol != "coordinador" || rol != "administrativo")
-            throw new RuntimeException("usa el metodo que corresponda para listar usuarios diferentes a coordiandor y administrativo");
+        if (!rol.equals("coordinador") && !rol.equals("administrativo"))
+            throw new RuntimeException("Usa el metodo que corresponda para listar usuarios diferentes a coordiandor y administrativo");
         List<User> users = this.userRepository.findByTipoUsuario(rol);
         return users;
     }

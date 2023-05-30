@@ -13,7 +13,6 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-@JsonIgnoreProperties({"fotoEntidadFinanciadoraId", "fotoEntidadId"})
 @Table(name = "Entidad_financiadora")
 public class EntidadFinanciadora {
 
@@ -46,11 +45,8 @@ public class EntidadFinanciadora {
     @Column(nullable = false)
     private String descripcion;
 
-    @OneToOne(cascade = CascadeType.ALL/*, fetch = FetchType.LAZY*/)
-    @JoinColumn(name = "foto_entidad_financiadora_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "entidadFinanciadoraId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @PrimaryKeyJoinColumn
     private FotoEntidadFinanciadora fotoEntidadFinanciadoraId;
-    @Transient
-    private Integer fotoEntidadId;
-    @Transient
-    private byte [] fotoByte;
+
 }

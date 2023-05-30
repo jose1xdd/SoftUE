@@ -41,7 +41,7 @@ public class EstudianteServices {
 
     public void actualizarEstudiante(Estudiante estudiante, String jwt) {
         if (!gradosPermitidos.getGrados().contains(estudiante.getCurso()))
-            throw new RuntimeException("No se puede registrar este usuario, ya que el curso diligenciado no es valido");
+            throw new RuntimeException("No se puede actualizar este usuario, ya que el curso diligenciado no es valido");
         if (!estudiante.getTipoUsuario().equals("estudiante"))
             throw new RuntimeException("No se puede actualizar este usuario, no se puede cambiar de rol");
         usuarioServices.actualizarUsuario((User) estudiante, jwt);

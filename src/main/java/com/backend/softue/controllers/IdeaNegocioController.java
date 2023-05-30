@@ -44,7 +44,7 @@ public class IdeaNegocioController {
 
     @CheckSession(permitedRol = {"estudiante"})
     @PostMapping("/agregarDocumento")
-    public ResponseEntity<?> agregarFormato(@RequestParam String titulo, @RequestParam MultipartFile documento) {
+    public ResponseEntity<?> agregarDocumento(@RequestParam String titulo, @RequestParam MultipartFile documento) {
         try {
             this.ideaNegocioServices.agregarDocumento(titulo, documento.getBytes(), documento.getOriginalFilename());
             return ResponseEntity.ok(new ResponseConfirmation("El formato de la idea de negocio se agrego correctamete"));
@@ -55,7 +55,7 @@ public class IdeaNegocioController {
 
     @CheckSession(permitedRol = {"estudiante"})
     @DeleteMapping("/{titulo}")
-    public ResponseEntity<?> eliminarFormato(@PathVariable String titulo) {
+    public ResponseEntity<?> eliminarDocumento(@PathVariable String titulo) {
         try {
             this.ideaNegocioServices.eliminarDocumento(titulo);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El formato de la idea se borro correctamente"), HttpStatus.OK);
@@ -65,8 +65,8 @@ public class IdeaNegocioController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping(value = "/recuperarFormato/{titulo}", produces = {"application/octet-stream", "application/pdf"})
-    public ResponseEntity<?> recuperarFormato(@PathVariable String titulo) {
+    @GetMapping(value = "/recuperarDocumento/{titulo}", produces = {"application/octet-stream", "application/pdf"})
+    public ResponseEntity<?> recuperarDocumento(@PathVariable String titulo) {
         try {
             DocumentoIdea documentoIdea = this.ideaNegocioServices.recuperarDocumento(titulo);
             String extension = documentoIdea.getNombreArchivo().substring(documentoIdea.getNombreArchivo().lastIndexOf("."));
