@@ -12,7 +12,6 @@ import com.backend.softue.utils.response.ResponseError;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -31,13 +30,15 @@ public class UserController {
     @Autowired
     private Hashing encryp;
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @PostMapping("/saveFoto/{userId}")
-    public ResponseEntity<?> saveFoto(@RequestParam("photo") MultipartFile file,
-                                      @PathVariable("userId") String userId) {
+    @PostMapping("/guardarFoto")
+    public ResponseEntity<?> guardarFoto(@RequestParam("foto") MultipartFile file, @RequestParam("correo") String correo) {
         try {
-            return ResponseEntity.ok(userServices.savePicture(file, userId));
+            String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            if (!extension.equals(".jpg") && !extension.equals(".png"))
+                throw new RuntimeException("Solo se permiten imagenes en formato .jpg o .png");
+            return ResponseEntity.ok(userServices.guardarFoto(file.getBytes(), correo, extension));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getCause().toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 

@@ -10,7 +10,6 @@ import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.emailModule.EmailService;
 import com.backend.softue.utils.response.LoginResponse;
-import jakarta.annotation.PostConstruct;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -98,8 +97,8 @@ public class UserServices {
         return this.roles.getNombreRoles().contains(rol.toLowerCase());
     }
 
-    public String savePicture(MultipartFile file, String id) throws IOException, SQLException {
-        User user = userRepository.findByCorreo(id);
+    public String guardarFoto(byte[] foto, String correo, String extension) throws IOException, SQLException {
+        User user = userRepository.findByCorreo(correo);
         if (user == null) {
             throw new RuntimeException("User not found");
         }
@@ -109,8 +108,7 @@ public class UserServices {
             existingPhoto.setUsuarioCodigo(null);
             fotoRepository.delete(existingPhoto);
         }
-        Blob blob = new SerialBlob(file.getBytes());
-        FotoUsuario newPhoto = new FotoUsuario(null, blob, user);
+        FotoUsuario newPhoto = new FotoUsuario(null, foto, extension, user);
         fotoRepository.save(newPhoto);
         user.setFoto_usuario(newPhoto);
         userRepository.save(user);
@@ -153,12 +151,13 @@ public class UserServices {
 
 
     public byte[] obtenerFoto(String id) throws SQLException, IOException {
-        if (id != null) {
+        /*if (id != null) {
             FotoUsuario result = this.fotoRepository.getReferenceById(Integer.parseInt(id));
             if (result == null) throw new RuntimeException("La foto no existe");
             return result.getFoto().getBytes(1, (int) result.getFoto().length());
         }
-        throw new RuntimeException("No se envió información con la que buscar la foto");
+        throw new RuntimeException("No se envió información con la que buscar la foto");*/
+        return null;
     }
 
     public void deshabilitarUsuario(String email) {

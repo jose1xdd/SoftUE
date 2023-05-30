@@ -15,4 +15,10 @@ public class ResponseError{
     private  String errorType;
     private  String errorMessage;
     private  String cause;
+
+    public ResponseError(Exception e) {
+        this.errorType = e.getClass().toString();
+        this.errorMessage = e.getMessage();
+        this.cause = (e.getCause() == null) ? "NULL" : e.getCause().toString();
+    }
 }
