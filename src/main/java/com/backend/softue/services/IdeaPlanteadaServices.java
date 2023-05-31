@@ -43,7 +43,8 @@ public class IdeaPlanteadaServices {
             throw new RuntimeException("El estudiante no existe en la base de datos");
         }
         ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
-
+        if(ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar una idea de negocio aprobada.");
         if(ideaNegocio.getTutor() == null)
             throw new RuntimeException("La idea de negocio a eliminar no tiene un tutor asignado");
         if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getTutor().getCorreo()))
@@ -59,6 +60,8 @@ public class IdeaPlanteadaServices {
         catch (Exception e) {
             throw new RuntimeException("La idea de negocio no existe en la base de datos");
         }
+        if(ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar una idea de negocio aprobada.");
         try {
             estudiante = this.estudianteServices.obtenerEstudiante(estudiante.getCorreo());
         }
@@ -76,6 +79,8 @@ public class IdeaPlanteadaServices {
         catch (Exception e) {
             throw new RuntimeException("La idea de negocio no existe en la base de datos");
         }
+        if(ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar una idea de negocio aprobada.");
         if(ideaNegocio.getTutor() == null)
             throw new RuntimeException("La idea de negocio a eliminar no tiene un tutor asignado");
         if(!this.encrypt.getJwt().getKey(JWT).equals(ideaNegocio.getTutor().getCorreo()))
