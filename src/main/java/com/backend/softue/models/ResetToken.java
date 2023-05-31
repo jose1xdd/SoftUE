@@ -9,12 +9,12 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@Entity
 @Table(name = "resetToken")
 @JsonIgnoreProperties({"usuario_codigo"})
 public class ResetToken {
