@@ -10,6 +10,7 @@ import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.emailModule.EmailService;
 import com.backend.softue.utils.response.LoginResponse;
+import com.backend.softue.utils.response.ResponseToken;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class UserServices {
 
     private IdeaNegocioServices ideaNegocioServices;
 
-    public String login(LoginResponse user) {
+    public ResponseToken login(LoginResponse user) {
         SingInToken token = singInTokenRepository.findTokenByEmail(user.getEmail());
         if (token != null) this.singInTokenRepository.delete(token);
         User userSaved = this.userRepository.findByCorreo(user.getEmail());
@@ -55,7 +56,8 @@ public class UserServices {
         String jwt = this.encrypt.generarJWT(userSaved.getCorreo(), userSaved.getTipoUsuario());
         LocalDateTime newDateTime = LocalDateTime.now().plus(Duration.ofHours(1));
         this.singInTokenRepository.save(new SingInToken(jwt, newDateTime, userSaved));
-        return jwt;
+        ResponseToken responseToken = new ResponseToken(jwt, this.encrypt.getJwt().getKey(jwt), this.encrypt.getJwt().getValue(jwt));
+        return responseToken;
     }
 
     public void registerUser(User user) {
@@ -120,7 +122,7 @@ public class UserServices {
         this.singInTokenRepository.delete(token);
     }
 
-    public String forgotPassword(String email) {
+    public ResponseToken forgotPassword(String email) {
         User user = this.userRepository.findByCorreo(email);
         if (user == null) throw new RuntimeException("No hay ningun usuario asignado a ese email");
         ResetToken resetToken = this.resetTokenRepository.findTokenByEmail(email);
@@ -137,7 +139,8 @@ public class UserServices {
         resetToken.setUsuario_codigo(user);
         this.resetTokenRepository.save(resetToken);
         this.emailGenericMessages.enviarEmailRecuperacion(email,user.getNombre()+" "+user.getApellido());
-        return token;
+        ResponseToken responseToken = new ResponseToken(token, this.encrypt.getJwt().getKey(token), this.encrypt.getJwt().getValue(token));
+        return responseToken;
     }
 
     public void resetPassword(String token, String password) {
