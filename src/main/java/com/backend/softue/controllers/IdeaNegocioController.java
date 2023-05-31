@@ -103,7 +103,7 @@ public class IdeaNegocioController {
             @RequestParam(required = false) String estado,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
-        List<IdeaNegocio> ideasNegocio = ideaNegocioServices.buscarIdeasPorFiltros(estudianteEmail, docenteEmail, area, estado, fechaInicio, fechaFin);
+        List<IdeaNegocio> ideasNegocio = this.ideaNegocioServices.buscarIdeasPorFiltros(estudianteEmail, docenteEmail, area, estado, fechaInicio, fechaFin);
         return ResponseEntity.ok(ideasNegocio);
     }
 
