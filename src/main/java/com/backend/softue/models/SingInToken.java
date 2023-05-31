@@ -10,12 +10,12 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-@Entity
 @Table(name = "SinginToken")
 @JsonIgnoreProperties({"usuario_codigo"})
 public class SingInToken {
