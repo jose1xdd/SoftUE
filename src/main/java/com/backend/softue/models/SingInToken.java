@@ -20,9 +20,7 @@ import java.time.LocalDateTime;
 @JsonIgnoreProperties({"usuario_codigo"})
 public class SingInToken {
     @Id
-    @Column(nullable = false)
-    @ColumnDefault(value="timberscode")
-
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT 'valor_predeterminado'")
     @NotBlank(message = "Error: El campo 'token' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el token del SingInToken.")
     @NotNull(message = "Error: El campo 'token' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el token del SingInToken.")
     private String token;
