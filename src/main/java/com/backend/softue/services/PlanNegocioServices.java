@@ -130,6 +130,8 @@ public class PlanNegocioServices {
         Optional<PlanNegocio> resultado = this.planNegocioRepository.findByTitulo(titulo);
         if (!resultado.isPresent())
             throw new RuntimeException("No existe un plan de negocio con ese titulo");
+        if(resultado.get().getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar un plan de negocio aprobado.");
         if (!this.encrypt.getJwt().getKey(jwt).equals(resultado.get().getEstudianteLider().getCorreo()))
             throw new RuntimeException("Solo el estudiante lider puede actualizar el resumen del plan de negocio");
 
@@ -154,6 +156,8 @@ public class PlanNegocioServices {
         PlanNegocio planNegocio = this.obtenerPlanNegocio(titulo);
         if (planNegocio == null)
             throw new RuntimeException("No existe un plan de negocio con ese nombre");
+        if(planNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar un plan de negocio aprobado.");
         if (planNegocio.getDocumentoPlan() != null)
             eliminarDocumento(titulo);
         this.documentoPlanServices.agregarDocumentoPlan(titulo, documento, nombreArchivo);
@@ -166,6 +170,8 @@ public class PlanNegocioServices {
         if (titulo == null)
             throw new RuntimeException("No se proporciono un titulo para buscar el plan de negocio que se le quiere eliminar el documento");
         PlanNegocio planNegocio = this.obtenerPlanNegocio(titulo);
+        if(planNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar un plan de negocio aprobado.");
         planNegocio.setDocumentoPlan(null);
         this.planNegocioRepository.save(planNegocio);
         this.documentoPlanServices.eliminarDocumentoPlan(planNegocio.getId());

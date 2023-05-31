@@ -31,6 +31,9 @@ public class ObservacionPlanServices {
             throw new RuntimeException("No se suministro una observacion");
 
         PlanNegocio planNegocio = this.planNegocioServices.obtenerPlanNegocio(planTitulo);
+        if(planNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar un plan de negocio aprobado.");
+
         Docente docente = this.docenteServices.obtenerDocente(correoDocente);
 
         if(!permisosCrear(planNegocio,correoDocente))

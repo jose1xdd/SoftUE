@@ -103,6 +103,8 @@ public class IdeaNegocioServices {
         IdeaNegocio ideaNegocio = this.obtenerIdeaNegocio(titulo);
         if (ideaNegocio == null)
             throw new RuntimeException("No existe una idea de negocio con ese nombre");
+        if(ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar el documento de una idea de negocio aprobada");
         if (ideaNegocio.getDocumentoIdea() != null)
             eliminarDocumento(titulo);
         this.documentoIdeaServices.agregarDocumentoIdea(titulo, documento, nombreArchivo);
@@ -115,6 +117,8 @@ public class IdeaNegocioServices {
         if (titulo == null)
             throw new RuntimeException("No se proporciono un titulo para buscar la idea de negocio que se le quiere eliminar el documento");
         IdeaNegocio ideaNegocio = this.obtenerIdeaNegocio(titulo);
+        if(ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar el documento de una idea de negocio aprobada");
         ideaNegocio.setDocumentoIdea(null);
         this.ideaNegocioRepository.save(ideaNegocio);
         this.documentoIdeaServices.eliminarDocumentoIdea(ideaNegocio.getId());
@@ -175,6 +179,8 @@ public class IdeaNegocioServices {
         IdeaNegocio idea = this.ideaNegocioRepository.findByTitulo(tituloActual);
         if (idea == null)
             throw new RuntimeException("No existe la idea de negocio la cual desea modificar");
+        if(idea.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar una idea de negocio aprobada");
         String correo = this.encrypt.getJwt().getKey(jwt);
         if (!correo.equals(idea.getEstudianteLider().getCorreo()))
             throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
@@ -223,8 +229,9 @@ public class IdeaNegocioServices {
     }
 
     public void asignarTutor(String titulo, String docenteEmail) {
-        if (this.obtenerIdeaNegocio(titulo) == null)
-            throw new RuntimeException("No se encontro una idea de negocio con ese titulo");
+        IdeaNegocio ideaNegocio = this.obtenerIdeaNegocio(titulo);
+        if(ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar una idea de negocio aprobada");
         Docente docente = this.docenteServices.obtenerDocente(docenteEmail);
         if (docente == null) throw new RuntimeException("No se encontro un docente con ese email");
         this.emailService.enviarEmailTutor(docenteEmail, titulo, docente.getNombre() + " " + docente.getApellido(), docente.getArea());
