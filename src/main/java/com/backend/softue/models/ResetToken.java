@@ -20,8 +20,7 @@ import java.time.LocalDateTime;
 public class ResetToken {
     @Id
     @Column(nullable = false)
-    @ColumnDefault(value="CURRENT_TIMESTAMP")
-
+    @ColumnDefault(value="timberscode")
     @NotBlank(message = "Error: El campo 'token' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el token del SingInToken.")
     @NotNull(message = "Error: El campo 'token' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el token del SingInToken.")
     private String token;
