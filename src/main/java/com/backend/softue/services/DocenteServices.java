@@ -2,16 +2,15 @@ package com.backend.softue.services;
 
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.DocenteRepository;
-import com.backend.softue.repositories.EstudianteRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
-import com.backend.softue.utils.AreasConocimiento;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.backend.softue.utils.beansAuxiliares.AreasConocimiento;
+import com.backend.softue.security.Hashing;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DocenteServices {
@@ -29,6 +28,14 @@ public class DocenteServices {
 
     @Autowired
     private AreasConocimiento areasConocimiento;
+    @Autowired
+    private Hashing encrypth;
+    @Autowired
+    private IdeaNegocioServices ideaNegocioServices;
+    @PostConstruct
+    public void init() {
+    this.ideaNegocioServices.setDocenteServices(this);
+    }
     public void registrarDocente(Docente docente) {
         docente.setArea(docente.getArea().toLowerCase());
         if(!areasConocimiento.getAreasConocimiento().contains(docente.getArea())) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
@@ -54,9 +61,19 @@ public class DocenteServices {
             if(result.getFoto_usuario() != null) result.setFotoUsuarioId(result.getFoto_usuario().getId());
             return result;
         }
-        throw new RuntimeException("No se envió información con la que buscar al usuario");
+        throw new RuntimeException("No se envió información con la que buscar al docente");
     }
 
+    public Docente obtenerDocente(Integer id) {
+        if(id == null)
+            throw new RuntimeException("No se envió información con la que buscar al docente");
+        Optional<Docente> resultado = this.docenteRepository.findById(id);
+        if(!resultado.isPresent())
+            throw new RuntimeException("El docente solicitado no existe");
+        if(resultado.get().getFoto_usuario() != null)
+            resultado.get().setFotoUsuarioId(resultado.get().getFoto_usuario().getId());
+        return resultado.get();
+    }
 
     public void deshabilitarDocente(String email) {
         if (email != null) {
@@ -80,5 +97,15 @@ public class DocenteServices {
         area=area.toLowerCase();
         if(!areasConocimiento.getAreasConocimiento().contains(area)) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         return this.docenteRepository.findByArea(area);
+    }
+
+    public String confirmarTutoria (Boolean respuesta,String titulo, String jwt){
+        if(respuesta){
+            IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
+            if(ideaNegocio == null ) throw  new RuntimeException("se mandó mal el titulo de la idea de negocio");
+            ideaNegocio.setTutor(this.obtenerDocente(this.encrypth.getJwt().getKey(jwt)));
+            if(this.ideaNegocioServices.confirmarTutor(ideaNegocio) != null);return "Docente Asignado";
+        }
+        return "El docente rechazo";
     }
 }

@@ -1,4 +1,4 @@
-package com.backend.softue.utils.response;
+package com.backend.softue.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

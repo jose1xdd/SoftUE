@@ -1,6 +1,8 @@
 package com.backend.softue.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.sql.Blob;
@@ -21,7 +23,11 @@ public class FotoUsuario {
 
     @Lob
     @Column(nullable = false, columnDefinition = "LONGBLOB")
-    private Blob foto;
+    private byte[] foto;
+
+    @NotNull
+    @NotBlank
+    private String extension;
 
     @OneToOne()
     @MapsId

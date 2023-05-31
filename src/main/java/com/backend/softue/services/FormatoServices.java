@@ -15,11 +15,11 @@ public class FormatoServices {
     @Autowired
     private FormatoRepository formatoRepository;
 
-    public byte[] obtenerFormato(String id) throws SQLException {
+    public Formato obtenerFormato(String id) {
         if (id != null) {
             Optional<Formato> result = this.formatoRepository.findById(Integer.parseInt(id));
             if (!result.isPresent()) throw new RuntimeException("El formato no existe");
-            return result.get().getDocumento();
+            return result.get();
         }
         throw new RuntimeException("No se envió información con la que buscar el formato");
     }
@@ -34,6 +34,12 @@ public class FormatoServices {
     }
 
     public void guardarFormato(Formato formato) {
+        if (formato == null)
+            throw new RuntimeException("No se envió ningún formato para guardar");
+        if (!formato.getExtension().equals(".pdf") && !formato.getExtension().equals(".docx"))
+            throw new RuntimeException("La extensión del archivo no es permitida, por favor subir documentos .docx o .pdf");
+        if (!formato.getModulo().equals("idea_de_negocio") && !formato.getModulo().equals("plan_de_negocio"))
+            throw new RuntimeException("El formato debe corresponder a idea_de_negocio o plan_de_negocio");
         this.formatoRepository.save(formato);
     }
 

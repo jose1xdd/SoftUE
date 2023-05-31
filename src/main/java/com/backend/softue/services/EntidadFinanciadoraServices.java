@@ -2,6 +2,7 @@ package com.backend.softue.services;
 
 import com.backend.softue.models.EntidadFinanciadora;
 import com.backend.softue.models.FotoEntidadFinanciadora;
+import com.backend.softue.models.FotoUsuario;
 import com.backend.softue.repositories.EntidadFinanciadoraRepository;
 import com.backend.softue.repositories.FotoEntidadFinanciadoraRepository;
 import com.backend.softue.security.Hashing;
@@ -38,71 +39,62 @@ public class EntidadFinanciadoraServices {
         this.entidadFinanciadoraRepository.save(entidadFinanciadora);
     }
 
-    public String guardarFoto(MultipartFile archivo, String correo) throws IOException, SQLException {
-        if(correo == null || archivo == null) throw new RuntimeException("Información insuficiente para guardar una foto de una entidad financiadora");
-
+    public void guardarFoto(String correo, MultipartFile file) throws IOException {
+        if (correo == null)
+            throw new RuntimeException("Información insuficiente para guardar una foto de una entidad financiadora");
+        if (file.isEmpty())
+            throw new RuntimeException("No se envió un archivo para almacenar como foto de la entidad financiadora");
+        String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        if (!extension.equals(".jpg") && !extension.equals(".png"))
+            throw new RuntimeException("Las imagenes deben ser de extension .jpg o .png");
         EntidadFinanciadora resultado = this.entidadFinanciadoraRepository.findByCorreo(correo);
-        if(resultado == null) throw new RuntimeException("La entidad financiadora a actualizar foto no existe");
+        if (resultado == null)
+            throw new RuntimeException("La entidad financiadora a actualizar foto no existe");
 
         FotoEntidadFinanciadora fotoActual = resultado.getFotoEntidadFinanciadoraId();
-        if(fotoActual != null) {
+        if (fotoActual != null) {
             resultado.setFotoEntidadFinanciadoraId(null);
-            fotoActual.setEntidadFinanciadoraId(null);
             this.fotoEntidadFinanciadoraRepository.delete(fotoActual);
         }
 
-        Blob blob = new SerialBlob(archivo.getBytes());
-        FotoEntidadFinanciadora fotoNueva = new FotoEntidadFinanciadora(null, blob, resultado);
+        FotoEntidadFinanciadora fotoNueva = new FotoEntidadFinanciadora(null, file.getBytes(), extension, resultado);
         this.fotoEntidadFinanciadoraRepository.save(fotoNueva);
-
-        resultado.setFotoEntidadFinanciadoraId(fotoNueva);
-        this.entidadFinanciadoraRepository.save(resultado);
-
-        return "Guardado";
     }
 
-    public void eliminar(Integer idEntidadFinanciadora) {
-        if(idEntidadFinanciadora == null) throw new RuntimeException("Información insuficiente para eliminar una entidad financiadora");
-
-        EntidadFinanciadora resultado = this.entidadFinanciadoraRepository.findById(idEntidadFinanciadora).get();
+    public void eliminar(String correo) {
+        if(correo == null)
+            throw new RuntimeException("Información insuficiente para eliminar una entidad financiadora");
+        EntidadFinanciadora resultado = this.entidadFinanciadoraRepository.findByCorreo(correo);
         if(resultado == null) throw new RuntimeException("La entidad financiadora a eliminar no existe");
         this.entidadFinanciadoraRepository.delete(resultado);
     }
 
-    public byte[] visualizarFoto(String correo) throws IOException, SQLException{
-        Integer idFoto = null;
-        if(correo == null) throw new RuntimeException("Información insuficiente para visualizar la foto una entidad financiadora");
+    public FotoEntidadFinanciadora visualizarFoto(String correo) {
+        if(correo == null)
+            throw new RuntimeException("Información insuficiente para visualizar la foto una entidad financiadora");
 
         EntidadFinanciadora entidadFinanciadora = this.entidadFinanciadoraRepository.findByCorreo(correo);
-        if(entidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no existe");
+        if(entidadFinanciadora == null)
+            throw new RuntimeException("La entidad financiadora consultada no existe");
 
-        idFoto = entidadFinanciadora.getFotoEntidadFinanciadoraId().getId();
-        FotoEntidadFinanciadora fotoEntidadFinanciadora = this.fotoEntidadFinanciadoraRepository.findById(idFoto).get();
-
-        if(fotoEntidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no tiene foto");
-        return fotoEntidadFinanciadora.getFoto().getBytes(1, (int) fotoEntidadFinanciadora.getFoto().length());
+        FotoEntidadFinanciadora fotoEntidadFinanciadora = this.fotoEntidadFinanciadoraRepository.findById(entidadFinanciadora.getId()).get();
+        if(fotoEntidadFinanciadora == null)
+            throw new RuntimeException("La entidad financiadora consultada no tiene foto");
+        return fotoEntidadFinanciadora;
     }
 
-    public List<EntidadFinanciadora> listar() throws IOException, SQLException{
-        int limite = 0;
+    public List<EntidadFinanciadora> listar() {
         List<EntidadFinanciadora> entidadesFinanciadoras = this.entidadFinanciadoraRepository.findAll();
         if(entidadesFinanciadoras.isEmpty()) throw new RuntimeException("No hay entidades financiadoras");
-
-        limite = entidadesFinanciadoras.size();
-        for(int i = 0; i < limite; i++) {
-            if(entidadesFinanciadoras.get(i).getFotoEntidadFinanciadoraId() != null)
-                entidadesFinanciadoras.get(i).setFotoByte(entidadesFinanciadoras.get(i).getFotoEntidadFinanciadoraId().getFoto().getBinaryStream().readAllBytes());
-        }
-
         return entidadesFinanciadoras;
     }
 
-    public EntidadFinanciadora visualizar(String correo) throws IOException, SQLException{
-        if(correo == null) throw new RuntimeException("Información insuficiente para visualizar una entidad financiadora");
+    public EntidadFinanciadora visualizar(String correo) {
+        if(correo == null)
+            throw new RuntimeException("Información insuficiente para visualizar una entidad financiadora");
         EntidadFinanciadora entidadFinanciadora = this.entidadFinanciadoraRepository.findByCorreo(correo);
-        if(entidadFinanciadora == null) throw new RuntimeException("La entidad financiadora consultada no existe");
-        if(entidadFinanciadora.getFotoEntidadFinanciadoraId() != null)
-            entidadFinanciadora.setFotoByte(entidadFinanciadora.getFotoEntidadFinanciadoraId().getFoto().getBinaryStream().readAllBytes());
+        if(entidadFinanciadora == null)
+            throw new RuntimeException("La entidad financiadora consultada no existe");
         return entidadFinanciadora;
     }
 

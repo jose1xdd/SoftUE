@@ -33,7 +33,6 @@ public class IdeaPlanteadaServices {
             agregarIntegrante(ideaNegocio, estudiante);
         }
     }
-
     public void agregarIntegrante(String JWT, String titulo, String correo) {
         IdeaNegocio ideaNegocio = null;
         Estudiante estudiante = null;
@@ -43,7 +42,6 @@ public class IdeaPlanteadaServices {
         catch (Exception e) {
             throw new RuntimeException("El estudiante no existe en la base de datos");
         }
-        
         ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
 
         if(ideaNegocio.getTutor() == null)
@@ -56,7 +54,6 @@ public class IdeaPlanteadaServices {
 
     public void agregarIntegrante(IdeaNegocio ideaNegocio, Estudiante estudiante) {
         try {
-            System.out.println(ideaNegocio.getTitulo());
             ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(ideaNegocio.getTitulo());
         }
         catch (Exception e) {
@@ -70,7 +67,6 @@ public class IdeaPlanteadaServices {
         }
         this.ideaPlanteadaRepository.save(new IdeaPlanteada(new EstudianteIdeaKey(estudiante.getCodigo(), ideaNegocio.getId()), estudiante, ideaNegocio));
     }
-
     public void eliminarIntegrante(String JWT, String titulo, String correo) {
         IdeaNegocio ideaNegocio = null;
         Estudiante estudiante = null;

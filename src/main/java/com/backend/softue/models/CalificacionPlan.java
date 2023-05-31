@@ -1,5 +1,6 @@
 package com.backend.softue.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,15 +15,18 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @Table(name = "Calificacion_plan")
+@JsonIgnoreProperties({"docente", "evaluacionPlanId"})
 public class CalificacionPlan {
     @EmbeddedId
-    private CalificacionIdeaKey id;
+    private CalificacionPlanKey id;
 
     @NotNull(message = "Error: El campo 'codigoDocente' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el codigoDocente de la calificacion del plan.")
     @ManyToOne
     @MapsId("codigoDocente")
     @JoinColumn(nullable = false, name = "docente_codigo")
     private Docente docente;
+    @Transient
+    private String nombreDocente;
 
     @NotNull(message = "Error: El campo 'evaluacionPlanId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la evaluacionPlanId de la calificacion del plan.")
     @ManyToOne
@@ -35,8 +39,7 @@ public class CalificacionPlan {
     @Column(nullable = false)
     private String estado;
 
-    @NotBlank(message = "Error: El campo 'observacion' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la observacion de la calificacion del plan.")
-    @NotNull(message = "Error: El campo 'observacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la observacion de la calificacion del plan.")
+    @Column(columnDefinition = "varchar(1024)")
     private String observacion;
 
     @NotNull(message = "Error: El campo 'fecha_inicio' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha_inicio de la calificacion del plan.")

@@ -3,18 +3,15 @@ package com.backend.softue.services;
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.EstudianteRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
-import com.backend.softue.repositories.UserRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
-import com.backend.softue.utils.GradosPermitidos;
+import com.backend.softue.utils.beansAuxiliares.GradosPermitidos;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+@Getter
 @Service
 public class EstudianteServices {
     @Autowired
@@ -44,7 +41,7 @@ public class EstudianteServices {
 
     public void actualizarEstudiante(Estudiante estudiante, String jwt) {
         if (!gradosPermitidos.getGrados().contains(estudiante.getCurso()))
-            throw new RuntimeException("No se puede registrar este usuario, ya que el curso diligenciado no es valido");
+            throw new RuntimeException("No se puede actualizar este usuario, ya que el curso diligenciado no es valido");
         if (!estudiante.getTipoUsuario().equals("estudiante"))
             throw new RuntimeException("No se puede actualizar este usuario, no se puede cambiar de rol");
         usuarioServices.actualizarUsuario((User) estudiante, jwt);

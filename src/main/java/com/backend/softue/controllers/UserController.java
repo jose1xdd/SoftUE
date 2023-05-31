@@ -1,5 +1,6 @@
 package com.backend.softue.controllers;
 
+import com.backend.softue.models.FotoUsuario;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.services.UserServices;
 import com.backend.softue.utils.checkSession.CheckSession;
@@ -12,9 +13,7 @@ import com.backend.softue.utils.response.ResponseError;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,14 +29,16 @@ public class UserController {
 
     @Autowired
     private Hashing encryp;
-
-    @PostMapping("/saveFoto/{userId}")
-    public ResponseEntity<?> saveFoto(@RequestParam("photo") MultipartFile file,
-                                      @PathVariable("userId") String userId) {
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @PostMapping("/guardarFoto")
+    public ResponseEntity<?> guardarFoto(@RequestParam("foto") MultipartFile file, @RequestParam("correo") String correo) {
         try {
-            return ResponseEntity.ok(userServices.savePicture(file, userId));
+            String extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+            if (!extension.equals(".jpg") && !extension.equals(".png"))
+                throw new RuntimeException("Solo se permiten imagenes en formato .jpg o .png");
+            return ResponseEntity.ok(userServices.guardarFoto(file.getBytes(), correo, extension));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getCause().toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -48,7 +49,7 @@ public class UserController {
             this.userServices.logout(jwt);
             return ResponseEntity.ok(new ResponseConfirmation("Cierre de Sesion Exitoso"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -57,7 +58,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(new ResponseToken(this.userServices.forgotPassword(email)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -72,7 +73,7 @@ public class UserController {
             this.userServices.actualizarUsuario(user, jwt);
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido actualizado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -82,29 +83,36 @@ public class UserController {
         try {
             return ResponseEntity.ok(this.userServices.obtenerUsuario(email));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
     @PatchMapping("/resetPassword")
-    public ResponseEntity resetPassword(@RequestHeader("X-Softue-Reset") String token, @RequestBody RequestPassword password) {
+    public ResponseEntity resetPassword(@Valid @RequestHeader("X-Softue-Reset") String token, @RequestBody RequestPassword password) {
         try {
             this.userServices.resetPassword(token, password.getPassword());
             return ResponseEntity.ok(new ResponseConfirmation("Contraseña Restablecida"));
         } catch (Exception e) {
 
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping(value = "/foto/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/foto/{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<?> obtenerFoto(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String id) {
         try {
-            return ResponseEntity.ok(this.userServices.obtenerFoto(id));
+            FotoUsuario fotoUsuario = this.userServices.obtenerFoto(id);
+            HttpHeaders headers = new HttpHeaders();
+            if (fotoUsuario.getExtension().equals(".jpg")) {
+                headers.setContentType(MediaType.IMAGE_JPEG);
+            } else if (fotoUsuario.getExtension().equals(".png")) {
+                headers.setContentType(MediaType.IMAGE_PNG);
+            } else throw new RuntimeException("El formato del archivo no es apto para retornarse");
+            headers.setContentDisposition(ContentDisposition.attachment().filename("Foto usuario " + id).build());
+            return new ResponseEntity<>(fotoUsuario.getFoto(), headers, HttpStatus.OK);
         } catch (Exception e) {
-
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -115,7 +123,7 @@ public class UserController {
             this.userServices.deshabilitarUsuario(email);
             return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido deshabilitado correctamente"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
@@ -126,7 +134,19 @@ public class UserController {
             return ResponseEntity.ok(this.userServices.listarUsuariosRol(rol));
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
+    @GetMapping("/asignar/{idea}/{docente}")
+    public ResponseEntity<?> asignarTutor(@PathVariable String idea , @PathVariable String docente) {
+        try {
+            this.userServices.solicitarDocente(idea,docente);
+            return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+
         }
     }
 }

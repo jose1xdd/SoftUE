@@ -21,7 +21,7 @@ public class DocenteController {
     private DocenteServices docenteServices;
 
     @CheckSession(permitedRol = {"docente", "coordinador", "administrativo"})
-    @PatchMapping("/update")
+    @PatchMapping("/actualizar")
     public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @Valid @RequestBody Docente docente, BindingResult bindingResult) {
         try {
             this.docenteServices.actualizarDocente(docente, jwt);
@@ -36,6 +36,16 @@ public class DocenteController {
     public ResponseEntity<?> visualizar(@PathVariable String email) {
         try {
             return ResponseEntity.ok(this.docenteServices.obtenerDocente(email));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/visualizarConId/{id}")
+    public ResponseEntity<?> visualizar(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(this.docenteServices.obtenerDocente(id));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
@@ -69,6 +79,17 @@ public class DocenteController {
             return ResponseEntity.ok(this.docenteServices.listarDocentesArea(area));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+    @CheckSession(permitedRol = {"docente"})
+    @GetMapping("/acceptarTutor/{titulo}/{confirmacion}")
+    public  ResponseEntity<?>acceptarTutor(@PathVariable String titulo ,@PathVariable boolean confirmacion, @RequestHeader("X-Softue-JWT") String jwt ){
+        try {
+            return ResponseEntity.ok(this.docenteServices.confirmarTutoria(confirmacion,titulo,jwt));
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+
         }
     }
 }

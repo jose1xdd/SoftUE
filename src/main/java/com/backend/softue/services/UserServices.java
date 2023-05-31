@@ -1,10 +1,6 @@
 package com.backend.softue.services;
 
-import com.backend.softue.models.FotoUsuario;
-import com.backend.softue.models.ResetToken;
-import com.backend.softue.models.SingInToken;
-import com.backend.softue.models.User;
-import com.backend.softue.models.UsuarioDeshabilitado;
+import com.backend.softue.models.*;
 import com.backend.softue.repositories.FotoRepository;
 import com.backend.softue.repositories.ResetTokenRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
@@ -14,6 +10,7 @@ import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.emailModule.EmailService;
 import com.backend.softue.utils.response.LoginResponse;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +22,7 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Setter
 @Service
 public class UserServices {
 
@@ -45,6 +42,8 @@ public class UserServices {
     private EmailService emailGenericMessages;
     @Autowired
     private UsuarioDeshabilitadoRepository usuarioDeshabilitadoRepository;
+
+    private IdeaNegocioServices ideaNegocioServices;
 
     public String login(LoginResponse user) {
         SingInToken token = singInTokenRepository.findTokenByEmail(user.getEmail());
@@ -87,8 +86,8 @@ public class UserServices {
     public User obtenerUsuario(String email) {
         if (email != null) {
             User result = this.userRepository.findByCorreo(email);
-            if(result == null) throw new RuntimeException("El usuario no existe");
-            if(result.getFoto_usuario() != null) result.setFotoUsuarioId(result.getFoto_usuario().getId());
+            if (result == null) throw new RuntimeException("El usuario no existe");
+            if (result.getFoto_usuario() != null) result.setFotoUsuarioId(result.getFoto_usuario().getId());
             return result;
         }
         throw new RuntimeException("No se envió información con la que buscar al usuario");
@@ -98,8 +97,8 @@ public class UserServices {
         return this.roles.getNombreRoles().contains(rol.toLowerCase());
     }
 
-    public String savePicture(MultipartFile file, String id) throws IOException, SQLException {
-        User user = userRepository.findByCorreo(id);
+    public String guardarFoto(byte[] foto, String correo, String extension) throws IOException, SQLException {
+        User user = userRepository.findByCorreo(correo);
         if (user == null) {
             throw new RuntimeException("User not found");
         }
@@ -109,8 +108,7 @@ public class UserServices {
             existingPhoto.setUsuarioCodigo(null);
             fotoRepository.delete(existingPhoto);
         }
-        Blob blob = new SerialBlob(file.getBytes());
-        FotoUsuario newPhoto = new FotoUsuario(null, blob, user);
+        FotoUsuario newPhoto = new FotoUsuario(null, foto, extension, user);
         fotoRepository.save(newPhoto);
         user.setFoto_usuario(newPhoto);
         userRepository.save(user);
@@ -138,10 +136,11 @@ public class UserServices {
         resetToken.setFecha_caducidad(newDateTime);
         resetToken.setUsuario_codigo(user);
         this.resetTokenRepository.save(resetToken);
-        this.emailGenericMessages.enviarEmailRegistro(email);
+        this.emailGenericMessages.enviarEmailRecuperacion(email,user.getNombre()+" "+user.getApellido());
         return token;
     }
-    public void resetPassword(String token,String password) {
+
+    public void resetPassword(String token, String password) {
         ResetToken resetToken = this.resetTokenRepository.findByToken(token);
         if (resetToken == null) throw new RuntimeException("El ResetToken no existe");
         User user = resetToken.getUsuario_codigo();
@@ -151,11 +150,11 @@ public class UserServices {
     }
 
 
-    public byte[] obtenerFoto(String id) throws SQLException, IOException {
-        if(id != null) {
+    public FotoUsuario obtenerFoto(String id) throws SQLException, IOException {
+        if (id != null) {
             FotoUsuario result = this.fotoRepository.getReferenceById(Integer.parseInt(id));
-            if(result == null) throw new RuntimeException("La foto no existe");
-            return result.getFoto().getBytes(1, (int) result.getFoto().length());
+            if (result == null) throw new RuntimeException("La foto no existe");
+            return result;
         }
         throw new RuntimeException("No se envió información con la que buscar la foto");
     }
@@ -163,22 +162,25 @@ public class UserServices {
     public void deshabilitarUsuario(String email) {
         if (email != null) {
             User result = this.userRepository.findByCorreo(email);
-            if(result == null) throw new RuntimeException("El usuario no existe");
+            if (result == null) throw new RuntimeException("El usuario no existe");
             this.usuarioDeshabilitadoRepository.save(new UsuarioDeshabilitado(result));
             SingInToken singInToken = this.singInTokenRepository.findTokenByEmail(email);
-            if(singInToken != null) this.singInTokenRepository.delete(singInToken);
+            if (singInToken != null) this.singInTokenRepository.delete(singInToken);
             this.userRepository.delete(result);
-        }
-        else throw new RuntimeException("No se envió información con la que buscar al usuario");
+        } else throw new RuntimeException("No se envió información con la que buscar al usuario");
 
     }
 
-    public List<User> listarUsuariosRol(String rol){
-        if(rol != "coordinador"|| rol != "administrativo") throw new RuntimeException("usa el metodo que corresponda para listar usuarios diferentes a coordiandor y administrativo");
-        List<User>users = this.userRepository.findByTipoUsuario(rol);
+    public List<User> listarUsuariosRol(String rol) {
+        if (!rol.equals("coordinador") && !rol.equals("administrativo"))
+            throw new RuntimeException("Usa el metodo que corresponda para listar usuarios diferentes a coordiandor y administrativo");
+        List<User> users = this.userRepository.findByTipoUsuario(rol);
         return users;
     }
 
+    public void solicitarDocente(String ideaNegocio, String docenteEmail) {
+        this.ideaNegocioServices.asignarTutor(ideaNegocio, docenteEmail);
 
+    }
 
 }

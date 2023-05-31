@@ -1,5 +1,6 @@
 package com.backend.softue.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @ToString
 @Entity
 @Table(name = "Observacion_idea")
+@JsonIgnoreProperties({"ideaNegocioId", "docenteId"})
 public class ObservacionIdea {
 
     @Id
@@ -23,15 +25,17 @@ public class ObservacionIdea {
 
     @NotNull(message = "Error: El campo 'ideaNegocioId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la ideaNegocioId de la Observacion Idea.")
     @ManyToOne()
-    @MapsId("ideaNegocioId")
     @JoinColumn(name = "idea_negocio_Id")
     private IdeaNegocio ideaNegocioId;
+    @Transient
+    private String titulo;
 
     @NotNull(message = "Error: El campo 'docenteId' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el docenteId de la Observacion Idea.")
     @ManyToOne()
-    @MapsId("docenteId")
     @JoinColumn(name = "docente_id")
     private Docente docenteId;
+    @Transient
+    private String [][] docenteInfo;
 
     @NotBlank(message = "Error: El campo 'retroalimentacion' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la retroalimentacion de la Observacion Idea.")
     @NotNull(message = "Error: El campo 'retroalimentacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la retroalimentacion de la Observacion Idea.")

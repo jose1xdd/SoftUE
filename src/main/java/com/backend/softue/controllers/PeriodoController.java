@@ -2,13 +2,12 @@ package com.backend.softue.controllers;
 
 import com.backend.softue.services.PeriodoServices;
 import com.backend.softue.utils.checkSession.CheckSession;
-import com.backend.softue.utils.response.FormatoPeriodo;
+import com.backend.softue.utils.FormatoPeriodo;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/periodo")
@@ -33,7 +32,8 @@ public class PeriodoController {
     @GetMapping()
     public ResponseEntity<?> obtener() {
         try {
-            return ResponseEntity.ok(this.periodoServices.obtener());
+            FormatoPeriodo formatoPeriodo = new FormatoPeriodo(this.periodoServices.obtener().getPeriodoIdeaNegocio().getDays(), this.periodoServices.obtener().getPeriodoPlanNegocio().getDays());
+            return ResponseEntity.ok(formatoPeriodo);
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));

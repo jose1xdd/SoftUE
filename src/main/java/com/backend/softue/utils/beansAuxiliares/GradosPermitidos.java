@@ -1,4 +1,4 @@
-package com.backend.softue.utils;
+package com.backend.softue.utils.beansAuxiliares;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -9,14 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/docenteApoyo")
+@RequestMapping("/docenteApoyoIdea")
 public class DocenteApoyoIdeaController {
 
     @Autowired
     private DocenteApoyoIdeaServices docenteApoyoIdeaServices;
 
     @CheckSession(permitedRol = {"docente"})
-    @GetMapping()
+    @PostMapping()
     public ResponseEntity<?> agregarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
         try {
             this.docenteApoyoIdeaServices.agregarDocenteApoyo(jwt, tituloIdea, correoDocente);

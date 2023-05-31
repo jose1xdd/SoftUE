@@ -9,6 +9,8 @@ import com.backend.softue.security.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class DocenteApoyoIdeaServices {
 
@@ -31,6 +33,8 @@ public class DocenteApoyoIdeaServices {
         IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(tituloIdea);
         if (ideaNegocio.getTutor() == null || !this.encrypt.getJwt().getKey(jwt).equals(ideaNegocio.getTutor().getCorreo()))
             throw new RuntimeException("Solo el tutor de una idea de negocio puede gestionar los docentes de apoyo de la misma");
+        if (ideaNegocio.getTutor().getCorreo().equals(correoDocente))
+            throw new RuntimeException("No se puede asignar al tutor como un docente de apoyo");
         Docente docente = this.docenteServices.obtenerDocente(correoDocente);
         this.docenteApoyoIdeaRepository.save(new DocenteApoyoIdea(new DocenteIdeaKey(docente.getCodigo(), ideaNegocio.getId()), docente, ideaNegocio));
     }
