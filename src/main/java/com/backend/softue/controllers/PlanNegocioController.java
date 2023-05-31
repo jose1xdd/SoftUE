@@ -47,7 +47,7 @@ public class PlanNegocioController {
     public ResponseEntity<?> agregarDocumento(@RequestParam String titulo, @RequestParam MultipartFile documento) {
         try {
             this.planNegocioServices.agregarDocumento(titulo, documento.getBytes(), documento.getOriginalFilename());
-            return ResponseEntity.ok(new ResponseConfirmation("El formato del plan de negocio se agrego correctamete"));
+            return ResponseEntity.ok(new ResponseConfirmation("El documento del plan de negocio se agregó correctamete"));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
@@ -56,10 +56,10 @@ public class PlanNegocioController {
 
     @CheckSession(permitedRol ={"estudiante"})
     @DeleteMapping("/{titulo}")
-    public ResponseEntity<?> eliminarFormato(@PathVariable String titulo) {
+    public ResponseEntity<?> eliminarDocumento(@PathVariable String titulo) {
         try {
             this.planNegocioServices.eliminarDocumento(titulo);
-            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El formato del plan se borro correctamente"), HttpStatus.OK);
+            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El documento del plan de negocio se borró correctamente"), HttpStatus.OK);
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
@@ -67,8 +67,8 @@ public class PlanNegocioController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping(value = "/recuperarFormato/{titulo}", produces = { "application/octet-stream", "application/pdf" })
-    public ResponseEntity<?> recuperarFormato(@PathVariable String titulo) {
+    @GetMapping(value = "/recuperarDocumento/{titulo}", produces = { "application/octet-stream", "application/pdf" })
+    public ResponseEntity<?> recuperarDocumento(@PathVariable String titulo) {
         try {
             DocumentoPlan documentoPlan = this.planNegocioServices.recuperarDocumento(titulo);
             String extension = documentoPlan.getNombreArchivo().substring(documentoPlan.getNombreArchivo().lastIndexOf("."));
