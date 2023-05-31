@@ -56,7 +56,7 @@ public class UserController {
     @GetMapping("/forgotPassword/{email}")
     public ResponseEntity<?> forgotPassword(@PathVariable("email") String email) {
         try {
-            return ResponseEntity.ok(new ResponseToken(this.userServices.forgotPassword(email)));
+            return ResponseEntity.ok(this.userServices.forgotPassword(email));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
