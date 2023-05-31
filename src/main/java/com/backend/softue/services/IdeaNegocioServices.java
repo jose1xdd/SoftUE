@@ -5,6 +5,7 @@ import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.beansAuxiliares.AreasConocimiento;
+import com.backend.softue.utils.beansAuxiliares.EstadosCalificacion;
 import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
 import com.backend.softue.utils.emailModule.EmailService;
 import jakarta.annotation.PostConstruct;
@@ -41,6 +42,9 @@ public class IdeaNegocioServices {
 
     @Autowired
     private AreasConocimiento areasConocimiento;
+
+    @Autowired
+    private EstadosCalificacion estadosCalificacion;
 
     @Autowired
     private EstadosIdeaPlanNegocio estadosIdeaPlanNegocio;
@@ -175,6 +179,8 @@ public class IdeaNegocioServices {
         IdeaNegocio idea = this.ideaNegocioRepository.findByTitulo(tituloActual);
         if (idea == null)
             throw new RuntimeException("No existe la idea de negocio la cual desea modificar");
+        if(idea.getEstado().equals(this.estadosCalificacion.getEstados()[0]))
+            throw new RuntimeException("No se puede modificar una idea de negocio aprobada");
         String correo = this.encrypt.getJwt().getKey(jwt);
         if (!correo.equals(idea.getEstudianteLider().getCorreo()))
             throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
