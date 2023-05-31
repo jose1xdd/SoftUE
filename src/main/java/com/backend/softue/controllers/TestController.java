@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/test")
 public class TestController {
     @GetMapping("/")
-    public ResponseEntity<?> logout(@RequestHeader("X-Softue-JWT") String jwt) {
+    public ResponseEntity<?> test() {
         return ResponseEntity.ok("pingpong");
     }
 }
