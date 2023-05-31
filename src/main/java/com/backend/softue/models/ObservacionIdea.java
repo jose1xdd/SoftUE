@@ -39,7 +39,7 @@ public class ObservacionIdea {
 
     @NotBlank(message = "Error: El campo 'retroalimentacion' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la retroalimentacion de la Observacion Idea.")
     @NotNull(message = "Error: El campo 'retroalimentacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la retroalimentacion de la Observacion Idea.")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(1024)")
     private String retroalimentacion;
 
     @NotNull(message = "Error: El campo 'fecha' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de la Observacion Idea.")
