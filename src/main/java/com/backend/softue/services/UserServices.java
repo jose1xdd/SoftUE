@@ -136,7 +136,7 @@ public class UserServices {
         resetToken.setFecha_caducidad(newDateTime);
         resetToken.setUsuario_codigo(user);
         this.resetTokenRepository.save(resetToken);
-        this.emailGenericMessages.enviarEmailRecuperacion(email,user.getNombre()+" "+user.getApellido());
+        this.emailGenericMessages.enviarEmailRecuperacion(email,user.getNombre()+" "+user.getApellido(),resetToken.getToken());
         ResponseToken responseToken = new ResponseToken(token, this.encrypt.getJwt().getKey(token), this.encrypt.getJwt().getValue(token));
         return responseToken;
     }
@@ -145,7 +145,7 @@ public class UserServices {
         ResetToken resetToken = this.resetTokenRepository.findByToken(token);
         if (resetToken == null) throw new RuntimeException("El ResetToken no existe");
         User user = resetToken.getUsuario_codigo();
-        String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\x21-\\x2F\\x3A-\\x40\\x5B-\\x60\\x7B-\\x7E]).{6,}$";
+        String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&+]).{6,}$";
         if (!password.matches(passwordPattern)) {
             throw new RuntimeException("La contraseña no cumple con los requisitos");
         }
@@ -154,6 +154,9 @@ public class UserServices {
         this.resetTokenRepository.delete(resetToken);
     }
 
+    public void deleteTutor(String email ){
+
+    }
 
 
     public FotoUsuario obtenerFoto(String id) throws SQLException, IOException {
@@ -187,5 +190,9 @@ public class UserServices {
     public void solicitarDocente(String ideaNegocio, String docenteEmail) {
         this.ideaNegocioServices.asignarTutor(ideaNegocio, docenteEmail);
 
+    }
+
+    public void borrarTutor(String idea){
+        this.ideaNegocioServices.eliminarTutor(idea);
     }
 }
