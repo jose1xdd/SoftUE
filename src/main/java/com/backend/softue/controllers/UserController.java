@@ -56,7 +56,7 @@ public class UserController {
     @GetMapping("/forgotPassword/{email}")
     public ResponseEntity<?> forgotPassword(@PathVariable("email") String email) {
         try {
-            return ResponseEntity.ok(new ResponseToken(this.userServices.forgotPassword(email)));
+            return ResponseEntity.ok(this.userServices.forgotPassword(email));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
@@ -94,6 +94,17 @@ public class UserController {
             return ResponseEntity.ok(new ResponseConfirmation("Contraseña Restablecida"));
         } catch (Exception e) {
 
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @PostMapping("/eliminarTutor/{idea}")
+    public ResponseEntity<?> eliminarTutor(@PathVariable String idea){
+        try {
+            this.userServices.borrarTutor(idea);
+            return ResponseEntity.ok(new ResponseConfirmation("Tutor Borrado"));
+        }
+        catch (Exception e){
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
@@ -146,7 +157,7 @@ public class UserController {
             return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
-
         }
     }
 }
+

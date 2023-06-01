@@ -30,7 +30,7 @@ public class LoginController {
                 String errorMessages = errorFactory.errorGenerator(bindingResult);
                 return ResponseEntity.badRequest().body(new ResponseError("Input Error",errorMessages,"Bad Request"));
             }
-            return new ResponseEntity<ResponseToken>(new ResponseToken(this.userServices.login(user)), HttpStatus.OK);
+            return new ResponseEntity<ResponseToken>(this.userServices.login(user), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
