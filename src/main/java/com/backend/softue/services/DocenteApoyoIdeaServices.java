@@ -31,6 +31,8 @@ public class DocenteApoyoIdeaServices {
         if (correoDocente == null)
             throw new RuntimeException("No se envió un correo con el que buscar al docente");
         IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(tituloIdea);
+        if(ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar una idea de negocio aprobada.");
         if (ideaNegocio.getTutor() == null || !this.encrypt.getJwt().getKey(jwt).equals(ideaNegocio.getTutor().getCorreo()))
             throw new RuntimeException("Solo el tutor de una idea de negocio puede gestionar los docentes de apoyo de la misma");
         if (ideaNegocio.getTutor().getCorreo().equals(correoDocente))
@@ -45,6 +47,8 @@ public class DocenteApoyoIdeaServices {
         if (correoDocente == null)
             throw new RuntimeException("No se envió un correo con el que buscar al docente");
         IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(tituloIdea);
+        if(ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar una idea de negocio aprobada.");
         if (!this.encrypt.getJwt().getKey(jwt).equals(ideaNegocio.getTutor().getCorreo()))
             throw new RuntimeException("Solo el tutor de una idea de negocio puede gestionar los docentes de apoyo de la misma");
         Docente docente = this.docenteServices.obtenerDocente(correoDocente);

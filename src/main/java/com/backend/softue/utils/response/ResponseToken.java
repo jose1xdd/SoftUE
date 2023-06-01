@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public class ResponseToken {
 
-private String token;
-
+    private String token;
+    private String email;
+    private String rol;
 }
