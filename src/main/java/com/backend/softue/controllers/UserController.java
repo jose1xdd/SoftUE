@@ -109,17 +109,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/eliminarTutor/{idea}")
-    public ResponseEntity<?> eliminarTutor(@PathVariable String idea){
-        try {
-            this.userServices.borrarTutor(idea);
-            return ResponseEntity.ok(new ResponseConfirmation("Tutor Borrado"));
-        }
-        catch (Exception e){
-            return ResponseEntity.badRequest().body(new ResponseError(e));
-        }
-    }
-
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping(value = "/foto/{id}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<?> obtenerFoto(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String id) {
