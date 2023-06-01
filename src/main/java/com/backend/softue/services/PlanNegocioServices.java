@@ -190,4 +190,11 @@ public class PlanNegocioServices {
         }
         return planes;
     }
+
+    public List<PlanNegocio> buscarPlanPorFiltros(String estudianteEmail, String docenteEmail, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
+        if (fechaFin == null ^ fechaInicio == null)
+            throw new RuntimeException("Una o las dos fechas del filtro son nulas");
+        return this.planNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+    }
+
 }
