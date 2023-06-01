@@ -97,7 +97,6 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
-
     @PostMapping("/eliminarTutor/{idea}")
     public ResponseEntity<?> eliminarTutor(@PathVariable String idea){
         try {
