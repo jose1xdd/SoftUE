@@ -26,6 +26,7 @@ public class PlanNegocio {
     @Column(nullable = false, unique = true)
     private String titulo;
 
+    @Column(columnDefinition = "varchar(1024)")
     private String resumen;
 
     @NotNull(message = "Error: El campo 'estado' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estado del Plan de Negocio.")

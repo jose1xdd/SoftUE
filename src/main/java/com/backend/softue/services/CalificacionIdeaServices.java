@@ -188,16 +188,16 @@ public class CalificacionIdeaServices {
     }
 
     private String estadoSegunCalificaciones(List<CalificacionIdea> calificaciones, LocalDate fechaCorte) {
-        int cnt = 0;
+        int aprobada = 0, rechazada = 0;
         for(CalificacionIdea calificacion : calificaciones) {
             if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[0]))
-                cnt++;
+                aprobada++;
             if(calificacion.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
-                cnt--;
+                rechazada++;
         }
-        if(cnt > 1)
+        if(aprobada > 1)
             return this.estadosCalificacion.getEstados()[0];
-        if(cnt < -1)
+        if(rechazada > 1)
             return this.estadosCalificacion.getEstados()[1];
         // Fecha hoy es después de la fecha corte
         if(LocalDate.now().isAfter(fechaCorte))

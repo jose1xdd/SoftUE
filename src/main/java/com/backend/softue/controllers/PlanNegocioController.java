@@ -2,15 +2,20 @@ package com.backend.softue.controllers;
 
 
 import com.backend.softue.models.DocumentoPlan;
+
+import com.backend.softue.models.PlanNegocio;
 import com.backend.softue.services.PlanNegocioServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.util.List;
 @RestController
 @RequestMapping("/planNegocio")
 public class PlanNegocioController {
@@ -47,7 +52,7 @@ public class PlanNegocioController {
     public ResponseEntity<?> agregarDocumento(@RequestParam String titulo, @RequestParam MultipartFile documento) {
         try {
             this.planNegocioServices.agregarDocumento(titulo, documento.getBytes(), documento.getOriginalFilename());
-            return ResponseEntity.ok(new ResponseConfirmation("El formato del plan de negocio se agrego correctamete"));
+            return ResponseEntity.ok(new ResponseConfirmation("El documento del plan de negocio se agregó correctamete"));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
@@ -56,10 +61,10 @@ public class PlanNegocioController {
 
     @CheckSession(permitedRol ={"estudiante"})
     @DeleteMapping("/{titulo}")
-    public ResponseEntity<?> eliminarFormato(@PathVariable String titulo) {
+    public ResponseEntity<?> eliminarDocumento(@PathVariable String titulo) {
         try {
             this.planNegocioServices.eliminarDocumento(titulo);
-            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El formato del plan se borro correctamente"), HttpStatus.OK);
+            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El documento del plan de negocio se borró correctamente"), HttpStatus.OK);
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
@@ -67,8 +72,8 @@ public class PlanNegocioController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping(value = "/recuperarFormato/{titulo}", produces = { "application/octet-stream", "application/pdf" })
-    public ResponseEntity<?> recuperarFormato(@PathVariable String titulo) {
+    @GetMapping(value = "/recuperarDocumento/{titulo}", produces = { "application/octet-stream", "application/pdf" })
+    public ResponseEntity<?> recuperarDocumento(@PathVariable String titulo) {
         try {
             DocumentoPlan documentoPlan = this.planNegocioServices.recuperarDocumento(titulo);
             String extension = documentoPlan.getNombreArchivo().substring(documentoPlan.getNombreArchivo().lastIndexOf("."));
@@ -86,6 +91,19 @@ public class PlanNegocioController {
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
+    }
+
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<PlanNegocio>> buscarPlanesPorFiltros(
+            @RequestParam(required = false) String estudianteEmail,
+            @RequestParam(required = false) String docenteEmail,
+            @RequestParam(required = false) String area,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        List<PlanNegocio> planesNegocio = this.planNegocioServices.buscarPlanPorFiltros(estudianteEmail, docenteEmail, area, estado, fechaInicio, fechaFin);
+        return ResponseEntity.ok(planesNegocio);
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
