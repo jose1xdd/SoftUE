@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 
+
 @Setter
 @Service
 public class IdeaNegocioServices {
@@ -234,7 +235,14 @@ public class IdeaNegocioServices {
 
         this.emailService.enviarEmailTutor(docenteEmail, titulo, docente.getNombre() + " " + docente.getApellido(), docente.getArea());
     }
-
+    public void eliminarTutor(String titulo){
+        IdeaNegocio ideaNegocio = this.obtenerIdeaNegocio(titulo);
+        if(ideaNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar una idea de negocio aprobada");
+        if(ideaNegocio.getTutor()==null)throw new RuntimeException("No hay un tutor Asignado, no se puede borrar");
+        ideaNegocio.setTutor(null);
+        this.ideaNegocioRepository.save(ideaNegocio);
+    }
     public IdeaNegocio confirmarTutor(IdeaNegocio ideaNegocio) {
         return ideaNegocioRepository.save(ideaNegocio);
     }
