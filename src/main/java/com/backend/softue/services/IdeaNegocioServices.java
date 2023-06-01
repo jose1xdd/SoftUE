@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+
 @Setter
 @Service
 public class IdeaNegocioServices {

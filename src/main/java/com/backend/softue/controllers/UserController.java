@@ -146,7 +146,7 @@ public class UserController {
             return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
-
         }
     }
 }
+

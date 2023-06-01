@@ -1,9 +1,9 @@
 package com.backend.softue.repositories;
 import com.backend.softue.models.PlanNegocio;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface PlanNegocioRepository extends JpaRepository<PlanNegocio, Integer> {
     Optional<PlanNegocio> findByTitulo(String titulo);
-
     @Query(value = "SELECT plan.* FROM plan_negocio plan " +
             "LEFT JOIN docente d ON plan.tutor_codigo = d.codigo " +
             "LEFT JOIN usuario u_docente ON d.codigo = u_docente.codigo " +
