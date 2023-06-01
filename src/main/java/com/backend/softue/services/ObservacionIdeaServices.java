@@ -38,6 +38,7 @@ public class ObservacionIdeaServices {
         IdeaNegocio idea = this.ideaNegocioServices.obtenerIdeaNegocio(ideaTitulo);
         if(idea.getEstado().equals("aprobada"))
             throw new RuntimeException("No se puede modificar una idea de negocio aprobada.");
+
         Docente docente = this.docenteServices.obtenerDocente(correoDocente);
 
         if(!permisosCrear(idea,correoDocente))

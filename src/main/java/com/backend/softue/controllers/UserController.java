@@ -97,6 +97,8 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
+
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @PostMapping("/eliminarTutor/{idea}")
     public ResponseEntity<?> eliminarTutor(@PathVariable String idea){
         try {
