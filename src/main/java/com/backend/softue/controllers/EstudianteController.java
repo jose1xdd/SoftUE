@@ -54,7 +54,7 @@ public class EstudianteController {
         }
     }
 
-    @CheckSession(permitedRol = {"docente","coordinador", "administrativo"})
+    @CheckSession(permitedRol = {"docente","coordinador", "administrativo", "estudiante"})
     @GetMapping("/listar")
     public ResponseEntity<?> listar(@RequestHeader("X-Softue-JWT") String jwt) {
         try {
@@ -63,7 +63,7 @@ public class EstudianteController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
-    @CheckSession(permitedRol = {"docente","coordinador", "administrativo"})
+    @CheckSession(permitedRol = {"docente","coordinador", "administrativo", "estudiante"})
     @GetMapping("/listar/{curso}")
     public ResponseEntity<?> listarCurso(@PathVariable("curso") String curso) {
         try {
