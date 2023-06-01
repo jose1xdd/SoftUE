@@ -159,6 +159,7 @@ public class UserServices {
     }
 
 
+
     public FotoUsuario obtenerFoto(String id) throws SQLException, IOException {
         if (id != null) {
             FotoUsuario result = this.fotoRepository.getReferenceById(Integer.parseInt(id));
