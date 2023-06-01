@@ -145,10 +145,15 @@ public class UserServices {
         ResetToken resetToken = this.resetTokenRepository.findByToken(token);
         if (resetToken == null) throw new RuntimeException("El ResetToken no existe");
         User user = resetToken.getUsuario_codigo();
+        String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[\\x21-\\x2F\\x3A-\\x40\\x5B-\\x60\\x7B-\\x7E]).{6,}$";
+        if (!password.matches(passwordPattern)) {
+            throw new RuntimeException("La contraseña no cumple con los requisitos");
+        }
         user.setContrasenia(this.encrypt.hash(password));
         this.userRepository.save(user);
         this.resetTokenRepository.delete(resetToken);
     }
+
 
 
     public FotoUsuario obtenerFoto(String id) throws SQLException, IOException {
