@@ -49,6 +49,12 @@ Dependencias utilizadas por el proyecto
 ### `Java `
 La version de java utilizada fue la version 17, en caso de no tenerla se puede descargar en el siguiente enlace [JAVA 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).
 
+<<<<<<< HEAD
+=======
+### `XAMPP`
+XAMPP fue el gestor de bases de datos utilizado durante el proyecto, en caso de no tenerlo puede descargarlo en el siguiente enlace [XAMPP](https://www.apachefriends.org/es/download.html).
+
+>>>>>>> b1e2100325d0ac9f3576d1a8ad4919df7bd4cc5a
 
 <div id='Paquetes'></div>
 
@@ -254,3 +260,4 @@ Contiene la configuracion del proyecto, se compone de:
 
 ## **Funcionamiento**
 Para poner en funcionamiento los servicios del ofrecidos por los paquetes y las clases del aplicativo se debe seleccionar la clase main (SoftueApplication.java) ubicada en la raiz del proyecto y ponerla en ejecucion, utilizando el comando mvnw spring-boot:run.
+
