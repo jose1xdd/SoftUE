@@ -49,13 +49,6 @@ Dependencias utilizadas por el proyecto
 ### `Java `
 La version de java utilizada fue la version 17, en caso de no tenerla se puede descargar en el siguiente enlace [JAVA 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).
 
-<<<<<<< HEAD
-=======
-### `XAMPP`
-XAMPP fue el gestor de bases de datos utilizado durante el proyecto, en caso de no tenerlo puede descargarlo en el siguiente enlace [XAMPP](https://www.apachefriends.org/es/download.html).
-
->>>>>>> b1e2100325d0ac9f3576d1a8ad4919df7bd4cc5a
-
 <div id='Paquetes'></div>
 
 ## **Paquetes del proyecto**
