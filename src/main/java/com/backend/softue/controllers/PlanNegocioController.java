@@ -2,7 +2,6 @@ package com.backend.softue.controllers;
 
 
 import com.backend.softue.models.DocumentoPlan;
-
 import com.backend.softue.models.PlanNegocio;
 import com.backend.softue.services.PlanNegocioServices;
 import com.backend.softue.utils.checkSession.CheckSession;
@@ -16,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+
 @RestController
 @RequestMapping("/planNegocio")
 public class PlanNegocioController {
