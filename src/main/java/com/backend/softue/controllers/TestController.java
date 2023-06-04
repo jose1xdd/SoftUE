@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/test")
 public class TestController {
-    @GetMapping("/")
+    @GetMapping("/test")
     public ResponseEntity<?> test() {
         return ResponseEntity.ok("pingpong");
     }

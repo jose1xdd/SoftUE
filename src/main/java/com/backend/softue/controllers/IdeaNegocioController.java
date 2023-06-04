@@ -30,7 +30,7 @@ public class IdeaNegocioController {
     @Autowired
     private ErrorFactory errorFactory;
 
-    @GetMapping("/")
+    @GetMapping("/test")
     public ResponseEntity<?> test() {
         return ResponseEntity.ok("pingpong");
     }

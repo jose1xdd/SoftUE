@@ -19,7 +19,7 @@ public class IdeaPlanteadaController {
     @Autowired
     private IdeaPlanteadaServices ideaPlanteadaServices;
 
-    @GetMapping("/")
+    @GetMapping("/test")
     public ResponseEntity<?> test() {
         return ResponseEntity.ok("pingpong");
     }
