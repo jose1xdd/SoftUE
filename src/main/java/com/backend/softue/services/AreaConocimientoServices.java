@@ -19,7 +19,7 @@ public class AreaConocimientoServices {
     public void agregar(String nombre) {
         if (nombre == null)
             throw new RuntimeException("No se paso un nombre con el que crear el area del conocimiento");
-        if (areaConocimientoRepository.findByNombre(nombre) != null)
+        if (this.areaConocimientoRepository.findByNombre(nombre) != null)
             throw new RuntimeException("Ya existe un area del conocimiento con ese nombre");
         this.areaConocimientoRepository.save(new AreaConocimiento(null, nombre));
     }
@@ -31,5 +31,9 @@ public class AreaConocimientoServices {
         if (areaConocimiento == null)
             throw new RuntimeException("No existe un area del conocimiento con ese nombre");
         this.areaConocimientoRepository.delete(areaConocimiento);
+    }
+
+    public boolean existe(String nombre) {
+        return this.areaConocimientoRepository.findByNombre(nombre) != null;
     }
 }
