@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@JsonIgnoreProperties({"tutor", "estudianteLider", "documentoPlan", "evaluaciones", "estudiantesIntegrantes", "observaciones", "docentesApoyo"})
+@JsonIgnoreProperties({"tutor", "estudianteLider", "documentoPlan", "evaluaciones", "estudiantesIntegrantes", "observaciones", "docentesApoyo", "area"})
 @Table(name = "Plan_negocio")
 public class PlanNegocio {
     @Id
@@ -33,9 +33,10 @@ public class PlanNegocio {
     @Column(nullable = false)
     private String estado;
 
-    @NotBlank(message = "Error: El campo 'areaEnfoque' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el area de enfoque del Plan de Negocio.")
-    @NotNull(message = "Error: El campo 'areaEnfoque' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el area de enfoque del Plan de Negocio.")
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "area_enfoque", nullable = false)
+    private AreaConocimiento area;
+    @Transient
     private String areaEnfoque;
 
     @ManyToOne
