@@ -30,6 +30,11 @@ public class IdeaNegocioController {
     @Autowired
     private ErrorFactory errorFactory;
 
+    @GetMapping("/test/")
+    public String test(){
+        return "test";
+    }
+
     @CheckSession(permitedRol = {"estudiante"})
     @PostMapping("/")
     public ResponseEntity<?> crear(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String[] integrantes, @RequestParam String area, @RequestParam MultipartFile documento) {
