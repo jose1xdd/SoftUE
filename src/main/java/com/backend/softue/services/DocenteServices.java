@@ -9,8 +9,10 @@ import com.backend.softue.security.Hashing;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class DocenteServices {
@@ -103,9 +105,19 @@ public class DocenteServices {
         if(respuesta){
             IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
             if(ideaNegocio == null ) throw  new RuntimeException("se mandó mal el titulo de la idea de negocio");
-            ideaNegocio.setTutor(this.obtenerDocente(this.encrypth.getJwt().getKey(jwt)));
+            Docente docente = this.obtenerDocente(this.encrypth.getJwt().getKey(jwt));
+            ideaNegocio.setTutor(docente);
+            Set<DocenteApoyoIdea> docentes = ideaNegocio.getDocentesApoyo();
+            if(docentePertenece(docentes,docente)) throw new RuntimeException("El docente tutor no puede ser docente de apoyo");
             if(this.ideaNegocioServices.confirmarTutor(ideaNegocio) != null);return "Docente Asignado";
         }
         return "El docente rechazo";
+    }
+    private Boolean docentePertenece(Set<DocenteApoyoIdea> docentes ,Docente docente){
+        Iterator<DocenteApoyoIdea> it = docentes.iterator();
+        while (it.hasNext()){
+            if(it.next().getDocente().equals(docente)) return true;
+        }
+        return  false;
     }
 }

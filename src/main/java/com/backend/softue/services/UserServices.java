@@ -14,11 +14,7 @@ import com.backend.softue.utils.response.ResponseToken;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -45,6 +41,8 @@ public class UserServices {
     private UsuarioDeshabilitadoRepository usuarioDeshabilitadoRepository;
 
     private IdeaNegocioServices ideaNegocioServices;
+
+    private DocenteServices docenteServices;
 
     public ResponseToken login(LoginResponse user) {
         SingInToken token = singInTokenRepository.findTokenByEmail(user.getEmail());
@@ -138,7 +136,7 @@ public class UserServices {
         resetToken.setFecha_caducidad(newDateTime);
         resetToken.setUsuario_codigo(user);
         this.resetTokenRepository.save(resetToken);
-        this.emailGenericMessages.enviarEmailRecuperacion(email,user.getNombre()+" "+user.getApellido());
+        this.emailGenericMessages.enviarEmailRecuperacion(email,user.getNombre()+" "+user.getApellido(),resetToken.getToken());
         ResponseToken responseToken = new ResponseToken(token, this.encrypt.getJwt().getKey(token), this.encrypt.getJwt().getValue(token));
         return responseToken;
     }
@@ -147,10 +145,19 @@ public class UserServices {
         ResetToken resetToken = this.resetTokenRepository.findByToken(token);
         if (resetToken == null) throw new RuntimeException("El ResetToken no existe");
         User user = resetToken.getUsuario_codigo();
+        String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&+]).{6,}$";
+        if (!password.matches(passwordPattern)) {
+            throw new RuntimeException("La contraseña no cumple con los requisitos");
+        }
         user.setContrasenia(this.encrypt.hash(password));
         this.userRepository.save(user);
         this.resetTokenRepository.delete(resetToken);
     }
+
+    public void deleteTutor(String email ){
+
+    }
+
 
 
     public FotoUsuario obtenerFoto(String id) throws SQLException, IOException {
@@ -186,4 +193,7 @@ public class UserServices {
 
     }
 
+    public void borrarTutor(String idea){
+        this.ideaNegocioServices.eliminarTutor(idea);
+    }
 }
