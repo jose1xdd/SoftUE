@@ -84,9 +84,7 @@ public class EntidadFinanciadoraServices {
     }
 
     public List<EntidadFinanciadora> listar() {
-        List<EntidadFinanciadora> entidadesFinanciadoras = this.entidadFinanciadoraRepository.findAll();
-        if(entidadesFinanciadoras.isEmpty()) throw new RuntimeException("No hay entidades financiadoras");
-        return entidadesFinanciadoras;
+        return this.entidadFinanciadoraRepository.findAll();
     }
 
     public EntidadFinanciadora visualizar(String correo) {

@@ -90,13 +90,11 @@ public class DocenteServices {
     }
 
     public  List<Docente> listarDocentes() {
-        List<Docente> docentes = this.docenteRepository.findAll();
-        if(docentes.isEmpty()) throw new RuntimeException("No hay Docentes registrados");
-        return docentes;
+        return this.docenteRepository.findAll();
     }
 
     public List<Docente> listarDocentesArea(String area){
-        area=area.toLowerCase();
+        area = area.toLowerCase();
         if(!areasConocimiento.getAreasConocimiento().contains(area)) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         return this.docenteRepository.findByArea(area);
     }
