@@ -30,7 +30,7 @@ public class IdeaNegocioController {
     @Autowired
     private ErrorFactory errorFactory;
 
-    @GetMapping("/test/")
+    @GetMapping("/test")
     public String test(){
         return "test";
     }
