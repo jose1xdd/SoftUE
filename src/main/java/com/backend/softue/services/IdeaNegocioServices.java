@@ -4,7 +4,6 @@ import com.backend.softue.models.*;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
-import com.backend.softue.utils.beansAuxiliares.AreasConocimiento;
 import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
 import com.backend.softue.utils.emailModule.EmailService;
 import jakarta.annotation.PostConstruct;
@@ -41,7 +40,7 @@ public class IdeaNegocioServices {
     private Roles roles;
 
     @Autowired
-    private AreasConocimiento areasConocimiento;
+    private AreaConocimientoServices areaConocimientoServices;
 
     @Autowired
     private EstadosIdeaPlanNegocio estadosIdeaPlanNegocio;
@@ -68,7 +67,7 @@ public class IdeaNegocioServices {
             throw new RuntimeException("Existe otra idea de negocio con el mismo título");
         if (!this.encrypt.getJwt().getValue(JWT).toLowerCase().equals("estudiante"))
             throw new RuntimeException("No se puede crear una idea de negocio si no se es un estudiante");
-        if (!areasConocimiento.getAreasConocimiento().contains(ideaNegocio.getAreaEnfoque()))
+        if (!this.areaConocimientoServices.existe(ideaNegocio.getAreaEnfoque()))
             throw  new RuntimeException("No se puede crear esta idea de negocio, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         List<Estudiante> estudiantesIntegrantes = new LinkedList<Estudiante>();
         try {
@@ -190,7 +189,7 @@ public class IdeaNegocioServices {
             tituloNuevo = idea.getTitulo();
         if (area == null)
             area = idea.getAreaEnfoque();
-        if (!areasConocimiento.getAreasConocimiento().contains(area))
+        if (!this.areaConocimientoServices.existe(area))
             throw new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
 
         idea.setAreaEnfoque(area);

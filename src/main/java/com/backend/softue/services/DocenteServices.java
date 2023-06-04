@@ -4,7 +4,6 @@ import com.backend.softue.models.*;
 import com.backend.softue.repositories.DocenteRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
-import com.backend.softue.utils.beansAuxiliares.AreasConocimiento;
 import com.backend.softue.security.Hashing;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,26 +28,29 @@ public class DocenteServices {
     private SingInTokenRepository singInTokenRepository;
 
     @Autowired
-    private AreasConocimiento areasConocimiento;
-    @Autowired
     private Hashing encrypth;
+
     @Autowired
     private IdeaNegocioServices ideaNegocioServices;
+
+    @Autowired
+    private AreaConocimientoServices areaConocimientoServices;
+
     @PostConstruct
     public void init() {
     this.ideaNegocioServices.setDocenteServices(this);
     }
     public void registrarDocente(Docente docente) {
-        docente.setArea(docente.getArea().toLowerCase());
-        if(!areasConocimiento.getAreasConocimiento().contains(docente.getArea())) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        if(this.areaConocimientoServices.existe(docente.getNombre()))
+            throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         if(!docente.getTipoUsuario().equals("docente")) throw new RuntimeException("No se puede registrar este usuario, no es un docente");
         usuarioServices.registerUser((User) docente);
         docenteRepository.save(docente);
     }
 
     public void actualizarDocente(Docente docente, String jwt) {
-        docente.setArea(docente.getArea().toLowerCase());
-        if(!areasConocimiento.getAreasConocimiento().contains(docente.getArea())) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        if(!this.areaConocimientoServices.existe(docente.getNombre()))
+            throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         if(!docente.getTipoUsuario().equals("docente")) throw new RuntimeException("No se puede actualizar este usuario, no se puede cambiar de rol");
         usuarioServices.actualizarUsuario((User) docente, jwt);
         Docente result = this.docenteRepository.findByCorreo(docente.getCorreo());
@@ -96,8 +98,8 @@ public class DocenteServices {
     }
 
     public List<Docente> listarDocentesArea(String area){
-        area=area.toLowerCase();
-        if(!areasConocimiento.getAreasConocimiento().contains(area)) throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        if(!this.areaConocimientoServices.existe(area))
+            throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         return this.docenteRepository.findByArea(area);
     }
 
