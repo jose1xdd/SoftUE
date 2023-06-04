@@ -49,6 +49,9 @@ public class PlanNegocio {
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 
+    @Transient
+    private LocalDate fechaCorte;
+
     @NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider del Plan de Negocio.")
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante_lider")

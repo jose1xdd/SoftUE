@@ -174,6 +174,11 @@ public class IdeaNegocioServices {
         }
         catch (Exception e) {}
         result.setAreaEnfoque(result.getArea().getNombre());
+        try {
+            EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtenerEvaluacionReciente(result);
+            result.setFechaCorte(evaluacionIdea.getFechaCorte());
+        }
+        catch (Exception e) {}
         return result;
     }
 

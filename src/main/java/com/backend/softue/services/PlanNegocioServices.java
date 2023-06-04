@@ -59,7 +59,7 @@ public class PlanNegocioServices {
             throw new RuntimeException("No existe una idea de negocio con ese titulo");
         if (!ideaNegocio.getEstado().equals("aprobada"))
             throw new RuntimeException("No se puede un plan a partir de una idea de negocio no aprobada");
-        PlanNegocio planNegocio = new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "formulado", ideaNegocio.getArea(), null, ideaNegocio.getTutor(), null, LocalDate.now(), ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null);
+        PlanNegocio planNegocio = new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "formulado", ideaNegocio.getArea(), null, ideaNegocio.getTutor(), null, LocalDate.now(), null, ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null);
         this.planNegocioRepository.save(planNegocio);
 
        if(ideaNegocio.getDocentesApoyo() != null){
@@ -117,9 +117,13 @@ public class PlanNegocioServices {
         try{
             this.evaluacionPlanServices.obtenerEvaluacionReciente(planNegocio);
         }
-        catch (Exception e) {
-        }
+        catch (Exception e) {}
         planNegocio.setAreaEnfoque(planNegocio.getArea().getNombre());
+        try {
+            EvaluacionPlan evaluacionPlan = this.evaluacionPlanServices.obtenerEvaluacionReciente(planNegocio);
+            planNegocio.setFechaCorte(evaluacionPlan.getFechaCorte());
+        }
+        catch (Exception e) {}
         return planNegocio;
     }
 

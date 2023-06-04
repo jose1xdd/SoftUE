@@ -65,13 +65,13 @@ public class EvaluacionIdeaServices {
 
     public EvaluacionIdea obtenerEvaluacionReciente(String titulo) {
         IdeaNegocio ideaNegocio = this.ideaNegocioServices.obtenerIdeaNegocio(titulo);
-        return evaluacionReciente(ideaNegocio);
+        return this.evaluacionReciente(ideaNegocio);
     }
 
     public EvaluacionIdea obtenerEvaluacionReciente(IdeaNegocio ideaNegocio) {
         if(ideaNegocio == null)
             throw new RuntimeException("Información insuficiente para obtener la evaluación más reciente de una idea de negocio");
-        return evaluacionReciente(ideaNegocio);
+        return this.evaluacionReciente(ideaNegocio);
     }
 
     private EvaluacionIdea evaluacionReciente(IdeaNegocio ideaNegocio) {
@@ -99,9 +99,9 @@ public class EvaluacionIdeaServices {
             EvaluacionIdea evaluacionIdea = evaluaciones.get(i);
             evaluacionIdea.setCalificacionesInfo(this.calificacionIdeaServices.obtenerCalificacionesDeEvaluacion(evaluacionIdea));
             evaluaciones.set(i, evaluacionIdea);
-            esEvaluador |= esEvaluador(evaluacionIdea, JWT);
+            esEvaluador |= this.esEvaluador(evaluacionIdea, JWT);
         }
-        if(!(esEvaluador || permisos(ideaNegocio, JWT)))
+        if(!(esEvaluador || this.permisos(ideaNegocio, JWT)))
             throw new RuntimeException("El usuario no presenta permisos sufientes para visualizar las evaluaciones de la idea de negocio.");
         return evaluaciones;
     }
