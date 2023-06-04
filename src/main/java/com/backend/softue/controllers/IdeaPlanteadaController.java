@@ -13,12 +13,16 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/ideaNegocio/integrantes")
+@RequestMapping(value = "/timbers")
 public class IdeaPlanteadaController {
 
     @Autowired
     private IdeaPlanteadaServices ideaPlanteadaServices;
 
+    @GetMapping("/")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok("pingpong");
+    }
     @CheckSession(permitedRol ={"docente"})
     @DeleteMapping("/{titulo}/{correo}")
     public ResponseEntity<?> eliminar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String titulo, @PathVariable String correo) {

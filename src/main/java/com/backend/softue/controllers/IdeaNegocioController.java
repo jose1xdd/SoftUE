@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ideaNegocio")
+@RequestMapping(value = "/albin")
 public class IdeaNegocioController {
 
     @Autowired
@@ -30,9 +30,9 @@ public class IdeaNegocioController {
     @Autowired
     private ErrorFactory errorFactory;
 
-    @GetMapping("/test")
-    public String test(){
-        return "test";
+    @GetMapping("/")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok("pingpong");
     }
 
     @CheckSession(permitedRol = {"estudiante"})
