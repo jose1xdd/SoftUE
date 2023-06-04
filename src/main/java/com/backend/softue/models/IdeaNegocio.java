@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Entity
-@JsonIgnoreProperties({"documentoIdea", "evaluaciones", "docentesApoyo", "estudiantesIntegrantes", "observaciones", "tutor", "estudianteLider"})
+@JsonIgnoreProperties({"documentoIdea", "evaluaciones", "docentesApoyo", "estudiantesIntegrantes", "observaciones", "tutor", "estudianteLider", "area"})
 @Table(name = "Idea_negocio")
 public class IdeaNegocio {
     @Id
@@ -31,9 +31,10 @@ public class IdeaNegocio {
     @Column(nullable = false)
     private String estado;
 
-    @NotBlank(message = "Error: El campo 'areaEnfoque' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el area de enfoque de la Idea de Negocio.")
-    @NotNull(message = "Error: El campo 'areaEnfoque' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el area de enfoque de la Idea de Negocio.")
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "area_enfoque", nullable = false)
+    private AreaConocimiento area;
+    @Transient
     private String areaEnfoque;
 
     @ManyToOne
@@ -45,6 +46,9 @@ public class IdeaNegocio {
     @NotNull(message = "Error: El campo 'fechaCreacion' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la fecha de creacion de la Idea de Negocio.")
     @Column(nullable = false)
     private LocalDate fechaCreacion;
+
+    @Transient
+    private LocalDate fechaCorte;
 
     @NotNull(message = "Error: El campo 'estudianteLider' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el estudiante lider de la Idea de Negocio.")
     @ManyToOne

@@ -59,7 +59,7 @@ public class PlanNegocioServices {
             throw new RuntimeException("No existe una idea de negocio con ese titulo");
         if (!ideaNegocio.getEstado().equals("aprobada"))
             throw new RuntimeException("No se puede un plan a partir de una idea de negocio no aprobada");
-        PlanNegocio planNegocio = new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "formulado", ideaNegocio.getAreaEnfoque(), ideaNegocio.getTutor(), null, LocalDate.now(), ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null);
+        PlanNegocio planNegocio = new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "formulado", ideaNegocio.getArea(), null, ideaNegocio.getTutor(), null, LocalDate.now(), null, ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null);
         this.planNegocioRepository.save(planNegocio);
 
        if(ideaNegocio.getDocentesApoyo() != null){
@@ -117,8 +117,13 @@ public class PlanNegocioServices {
         try{
             this.evaluacionPlanServices.obtenerEvaluacionReciente(planNegocio);
         }
-        catch (Exception e) {
+        catch (Exception e) {}
+        planNegocio.setAreaEnfoque(planNegocio.getArea().getNombre());
+        try {
+            EvaluacionPlan evaluacionPlan = this.evaluacionPlanServices.obtenerEvaluacionReciente(planNegocio);
+            planNegocio.setFechaCorte(evaluacionPlan.getFechaCorte());
         }
+        catch (Exception e) {}
         return planNegocio;
     }
 
@@ -194,7 +199,11 @@ public class PlanNegocioServices {
     public List<PlanNegocio> buscarPlanPorFiltros(String estudianteEmail, String docenteEmail, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
         if (fechaFin == null ^ fechaInicio == null)
             throw new RuntimeException("Una o las dos fechas del filtro son nulas");
-        return this.planNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+        List<PlanNegocio> planesNegocio = this.planNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+        for(PlanNegocio planNegocio : planesNegocio) {
+            planNegocio = this.obtenerPlanNegocio(planNegocio.getTitulo());
+        }
+        return planesNegocio;
     }
 
 }
