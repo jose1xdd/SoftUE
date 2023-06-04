@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EntidadFinanciadoraServices {
@@ -29,13 +30,13 @@ public class EntidadFinanciadoraServices {
     public void crear(EntidadFinanciadora entidadFinanciadora) {
         EntidadFinanciadora resultado = this.entidadFinanciadoraRepository.findByCorreo(entidadFinanciadora.getCorreo());
         if(resultado != null) throw new RuntimeException("La entidad financiadora ya existe.");
+        entidadFinanciadora.setId(null);
         this.entidadFinanciadoraRepository.save(entidadFinanciadora);
     }
 
     public void actualizar(EntidadFinanciadora entidadFinanciadora) {
-        EntidadFinanciadora resultado = this.entidadFinanciadoraRepository.findByCorreo(entidadFinanciadora.getCorreo());
-        if(resultado == null) throw new RuntimeException("La entidad financiadora a actualizar no existe");
-        entidadFinanciadora.setId(resultado.getId());
+        Optional<EntidadFinanciadora> resultado = this.entidadFinanciadoraRepository.findById(entidadFinanciadora.getId());
+        if(!resultado.isPresent()) throw new RuntimeException("La entidad financiadora a actualizar no existe");
         this.entidadFinanciadoraRepository.save(entidadFinanciadora);
     }
 
