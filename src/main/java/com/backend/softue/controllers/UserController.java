@@ -97,6 +97,19 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
+
+    @CheckSession(permitedRol = {"coordinador", "administrativo", "estudiante", "docente"})
+    @PatchMapping("/reestablecer")
+    public ResponseEntity restablecerContrasenia(@Valid @RequestHeader("X-Softue-JWT") String token, @RequestBody RequestPassword password) {
+        try {
+            this.userServices.reestablecerContrasenia(token, password.getPassword());
+            return ResponseEntity.ok(new ResponseConfirmation("Contraseña Restablecida"));
+        } catch (Exception e) {
+
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
     @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @PostMapping("/eliminarTutor/{idea}")
     public ResponseEntity<?> eliminarTutor(@PathVariable String idea){
