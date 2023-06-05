@@ -54,6 +54,9 @@ public class IdeaNegocioServices {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private CalificacionIdeaServices calificacionIdeaServices;
+
     @PostConstruct
     public void init() {
         this.ideaPlanteadaServices.setIdeaNegocioServices(this);
@@ -249,4 +252,10 @@ public class IdeaNegocioServices {
         return ideaNegocioRepository.save(ideaNegocio);
     }
 
+    public Set<IdeaNegocio> listarIdeasDocenteEvaluador(String correoDocente) {
+        if(correoDocente == null) throw  new RuntimeException("No se envio el correo del docente.");
+        Docente docente = this.docenteServices.obtenerDocente(correoDocente);
+        Set<IdeaNegocio> ideaNegocios = this.ideaNegocioRepository.findByEvaluador(docente.getCodigo());
+        return ideaNegocios;
+    }
 }

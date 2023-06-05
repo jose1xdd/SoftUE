@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Integer> {
@@ -32,5 +33,14 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             @Param("estado") String estado,
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
+
+    @Query(value = "SELECT idea.* FROM idea_negocio idea " +
+                   "JOIN Evaluacion_idea ei ON (idea.id = ei.ideaNegocio_id)" +
+                   "JOIN Calificacion_idea ci ON (ei.id = ci.Evaluacion_idea)" +
+                   "WHERE Docente_codigo = :id", nativeQuery = true)
+    Set<IdeaNegocio> findByEvaluador(@Param("docente_codigo") Integer id);
+
+
+
 
 }
