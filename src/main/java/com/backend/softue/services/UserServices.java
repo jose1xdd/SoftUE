@@ -145,14 +145,24 @@ public class UserServices {
         ResetToken resetToken = this.resetTokenRepository.findByToken(token);
         if (resetToken == null) throw new RuntimeException("El ResetToken no existe");
         User user = resetToken.getUsuario_codigo();
+        this.resetPassword(user, password);
+        this.resetTokenRepository.delete(resetToken);
+    }
+
+    public void reestablecerContrasenia(String jwt, String password) {
+        User user = this.obtenerUsuario(this.encrypt.getJwt().getKey(jwt));
+        this.resetPassword(user, password);
+    }
+
+    private void resetPassword(User user, String password) {
         String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&+]).{6,}$";
         if (!password.matches(passwordPattern)) {
             throw new RuntimeException("La contraseña no cumple con los requisitos");
         }
         user.setContrasenia(this.encrypt.hash(password));
         this.userRepository.save(user);
-        this.resetTokenRepository.delete(resetToken);
     }
+
 
     public void deleteTutor(String email ){
 

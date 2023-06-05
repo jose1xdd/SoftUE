@@ -19,8 +19,9 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             "LEFT JOIN usuario u_docente ON d.codigo = u_docente.codigo " +
             "LEFT JOIN estudiante e ON idea.codigo_estudiante_lider = e.codigo " +
             "LEFT JOIN usuario u_estudiante ON e.codigo = u_estudiante.codigo " +
+            "LEFT JOIN area_conocimiento a ON a.id = idea.area_enfoque " +
             "WHERE " +
-            "(:minera IS NULL OR idea.area_enfoque = :minera) " +
+            "(:area IS NULL OR a.nombre = :area) " +
             "AND (u_docente.correo = :docenteEmail OR :docenteEmail IS NULL) " +
             "AND (:estudianteEmail IS NULL OR u_estudiante.correo = :estudianteEmail) " +
             "AND (:estado IS NULL OR idea.estado = :estado) " +
@@ -29,7 +30,7 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
     List<IdeaNegocio> findByFilters(
             @Param("docenteEmail") String docenteEmail,
             @Param("estudianteEmail") String estudianteEmail,
-            @Param("minera") String minera,
+            @Param("area") String area,
             @Param("estado") String estado,
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
@@ -37,7 +38,7 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
     @Query(value = "SELECT idea.* FROM idea_negocio idea " +
                    "JOIN Evaluacion_idea ei ON (idea.id = ei.ideaNegocio_id)" +
                    "JOIN Calificacion_idea ci ON (ei.id = ci.Evaluacion_idea)" +
-                   "WHERE Docente_codigo = :id", nativeQuery = true)
+                   "WHERE Docente_codigo = :docente_codigo", nativeQuery = true)
     Set<IdeaNegocio> findByEvaluador(@Param("docente_codigo") Integer id);
 
 
