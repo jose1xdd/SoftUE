@@ -50,7 +50,6 @@ public class IdeaNegocioServices {
     @Autowired
     private AreaConocimientoServices areaConocimientoServices;
 
-
     @PostConstruct
     public void init() {
         this.ideaPlanteadaServices.setIdeaNegocioServices(this);
