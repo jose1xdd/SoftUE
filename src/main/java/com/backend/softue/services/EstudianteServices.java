@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Service
@@ -83,4 +84,7 @@ public class EstudianteServices {
 
     }
 
+    public Set<String> listarCursos() {
+        return this.estudianteRepository.findCursos();
+    }
 }
