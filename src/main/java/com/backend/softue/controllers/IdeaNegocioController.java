@@ -95,7 +95,7 @@ public class IdeaNegocioController {
     }
 
     @CheckSession(permitedRol = {"coordinador", "administrativo"})
-    @GetMapping("/filtrar")
+    @PostMapping("/filtrar")
     public ResponseEntity<List<IdeaNegocio>> buscarIdeasPorFiltros(
             @RequestParam(required = false) String estudianteEmail,
             @RequestParam(required = false) String docenteEmail,
@@ -127,5 +127,27 @@ public class IdeaNegocioController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
         }
     }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/DocentesEvaluadores")
+    public ResponseEntity<?> listarIdeasDocenteEvaluador(@RequestParam String correoDocente){
+        try {
+            return ResponseEntity.ok(this.ideaNegocioServices.listarIdeasDocenteEvaluador(correoDocente));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
+        }
+    }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/DocentesApoyo")
+    public ResponseEntity<?> listarIdeasDocenteApoyo(@RequestParam String correoDocente){
+        try {
+            return ResponseEntity.ok(this.ideaNegocioServices.listarIdeasDocenteApoyo(correoDocente));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
+        }
+    }
+
+
 }
 

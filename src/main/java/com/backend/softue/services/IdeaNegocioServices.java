@@ -37,9 +37,6 @@ public class IdeaNegocioServices {
     private Hashing encrypt;
 
     @Autowired
-    private Roles roles;
-
-    @Autowired
     private EstadosIdeaPlanNegocio estadosIdeaPlanNegocio;
 
     @Autowired
@@ -270,5 +267,26 @@ public class IdeaNegocioServices {
     public IdeaNegocio confirmarTutor(IdeaNegocio ideaNegocio) {
         return ideaNegocioRepository.save(ideaNegocio);
     }
+
+    public Set<IdeaNegocio> listarIdeasDocenteEvaluador(String correoDocente) {
+        if(correoDocente == null) throw  new RuntimeException("No se envio el correo del docente.");
+        Docente docente = this.docenteServices.obtenerDocente(correoDocente);
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByEvaluador(docente.getCodigo());
+        for(IdeaNegocio ideaNegocio : ideasNegocios){
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocios;
+    }
+
+    public Set<IdeaNegocio> listarIdeasDocenteApoyo(String correoDocente) {
+        if(correoDocente == null) throw  new RuntimeException("No se envio el correo del docente.");
+        Docente docente = this.docenteServices.obtenerDocente(correoDocente);
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByDocenteApoyo(docente.getCodigo());
+        for(IdeaNegocio ideaNegocio : ideasNegocios){
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocios;
+    }
+
 
 }

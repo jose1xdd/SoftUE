@@ -92,9 +92,7 @@ public class DocenteServices {
     }
 
     public  List<Docente> listarDocentes() {
-        List<Docente> docentes = this.docenteRepository.findAll();
-        if(docentes.isEmpty()) throw new RuntimeException("No hay Docentes registrados");
-        return docentes;
+        return this.docenteRepository.findAll();
     }
 
     public List<Docente> listarDocentesArea(String area){
