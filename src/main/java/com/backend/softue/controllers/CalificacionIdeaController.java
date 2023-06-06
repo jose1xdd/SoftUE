@@ -74,4 +74,15 @@ public class CalificacionIdeaController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+
+    @CheckSession(permitedRol ={"docente", "coordinador"})
+    @GetMapping("/obtener/{idDocente}/{idEvaluacion}")
+    public ResponseEntity<?> obtener(@PathVariable Integer idDocente, @PathVariable Integer idEvaluacion) {
+        try {
+            CalificacionIdeaKey id = new CalificacionIdeaKey(idDocente, idEvaluacion);
+            return ResponseEntity.ok(this.calificacionIdeaServices.obtener(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
 }
