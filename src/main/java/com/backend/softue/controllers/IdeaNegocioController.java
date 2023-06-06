@@ -138,6 +138,16 @@ public class IdeaNegocioController {
         }
     }
 
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/DocentesApoyo")
+    public ResponseEntity<?> listarIdeasDocenteApoyo(@RequestParam String correoDocente){
+        try {
+            return ResponseEntity.ok(this.ideaNegocioServices.listarIdeasDocenteApoyo(correoDocente));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
+        }
+    }
+
 
 }
 

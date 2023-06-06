@@ -36,10 +36,15 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             @Param("fechaFin") LocalDate fechaFin);
 
     @Query(value = "SELECT idea.* FROM idea_negocio idea " +
-                   "JOIN Evaluacion_idea ei ON (idea.id = ei.ideaNegocio_id)" +
-                   "JOIN Calificacion_idea ci ON (ei.id = ci.Evaluacion_idea)" +
-                   "WHERE Docente_codigo = :docente_codigo", nativeQuery = true)
+                   "JOIN evaluacion_idea ei ON (idea.id = ei.idea_negocio)" +
+                   "JOIN calificacion_idea ci ON (ei.id = ci.evaluacion_idea_id)" +
+                   "WHERE ci.Docente_codigo = :docente_codigo", nativeQuery = true)
     Set<IdeaNegocio> findByEvaluador(@Param("docente_codigo") Integer id);
+
+    @Query(value = "SELECT idea.* FROM idea_negocio idea " +
+            "JOIN docente_apoyo_idea dai ON (idea.id = dai.idea_negocio_id)" +
+            "WHERE dai.docente_codigo = :docente_codigo", nativeQuery = true)
+    Set<IdeaNegocio> findByDocenteApoyo(@Param("docente_codigo") Integer id);
 
 
 

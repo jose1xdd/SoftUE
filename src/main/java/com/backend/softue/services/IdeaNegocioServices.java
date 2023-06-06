@@ -272,7 +272,22 @@ public class IdeaNegocioServices {
     public Set<IdeaNegocio> listarIdeasDocenteEvaluador(String correoDocente) {
         if(correoDocente == null) throw  new RuntimeException("No se envio el correo del docente.");
         Docente docente = this.docenteServices.obtenerDocente(correoDocente);
-        Set<IdeaNegocio> ideaNegocios = this.ideaNegocioRepository.findByEvaluador(docente.getCodigo());
-        return ideaNegocios;
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByEvaluador(docente.getCodigo());
+        for(IdeaNegocio ideaNegocio : ideasNegocios){
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocios;
     }
+
+    public Set<IdeaNegocio> listarIdeasDocenteApoyo(String correoDocente) {
+        if(correoDocente == null) throw  new RuntimeException("No se envio el correo del docente.");
+        Docente docente = this.docenteServices.obtenerDocente(correoDocente);
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByDocenteApoyo(docente.getCodigo());
+        for(IdeaNegocio ideaNegocio : ideasNegocios){
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocios;
+    }
+
+
 }
