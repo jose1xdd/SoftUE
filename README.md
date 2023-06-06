@@ -49,7 +49,6 @@ Dependencias utilizadas por el proyecto
 ### `Java `
 La version de java utilizada fue la version 17, en caso de no tenerla se puede descargar en el siguiente enlace [JAVA 17](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html).
 
-
 <div id='Paquetes'></div>
 
 ## **Paquetes del proyecto**

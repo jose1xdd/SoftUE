@@ -59,7 +59,7 @@ public class User {
     @NotBlank(message = "Error: El campo 'contrasenia' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la contrasenia del usuario.")
     @NotNull(message = "Error: El campo 'contrasenia' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la contrasenia del usuario.")
     @Column(nullable = false)
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&+]).{6,}$",message = "Error: La contraseña que ha ingresado debe cumplir con los siguientes requisitos minimos : almenos 6 caracteres ,una letra en mayuscula, un numero y un caracter especial")
+    //@Pattern(regexp = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&+]).{6,}$",message = "Error: La contraseña que ha ingresado debe cumplir con los siguientes requisitos minimos : almenos 6 caracteres ,una letra en mayuscula, un numero y un caracter especial")
     private String contrasenia;
 
     @NotBlank(message = "Error: El campo 'tipo_usuario' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el tipo del usuario.")

@@ -16,4 +16,7 @@ public interface CalificacionIdeaRepository extends JpaRepository<CalificacionId
                     "FROM calificacion_idea " +
                     "WHERE evaluacion_idea_id = :id_evaluacion", nativeQuery = true)
     List<CalificacionIdea> findByEvaluacion(@Param("id_evaluacion") Integer idEvaluacion);
+
+
+
 }
