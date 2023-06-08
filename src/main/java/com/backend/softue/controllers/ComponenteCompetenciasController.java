@@ -1,6 +1,7 @@
 package com.backend.softue.controllers;
 
 import com.backend.softue.models.ComponenteCompetencias;
+import com.backend.softue.models.EntidadFinanciadora;
 import com.backend.softue.services.ComponenteCompetenciasServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ErrorFactory;
