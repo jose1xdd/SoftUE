@@ -20,8 +20,9 @@ public interface PlanNegocioRepository extends JpaRepository<PlanNegocio, Intege
             "LEFT JOIN usuario u_docente ON d.codigo = u_docente.codigo " +
             "LEFT JOIN estudiante e ON plan.codigo_estudiante_lider = e.codigo " +
             "LEFT JOIN usuario u_estudiante ON e.codigo = u_estudiante.codigo " +
+            "LEFT JOIN area_conocimiento a ON a.id = plan.area_enfoque " +
             "WHERE " +
-            "(:minera IS NULL OR plan.area_enfoque = :minera) " +
+            "(:area IS NULL OR a.nombre = :area) " +
             "AND (u_docente.correo = :docenteEmail OR :docenteEmail IS NULL) " +
             "AND (:estudianteEmail IS NULL OR u_estudiante.correo = :estudianteEmail) " +
             "AND (:estado IS NULL OR plan.estado = :estado) " +
@@ -30,7 +31,7 @@ public interface PlanNegocioRepository extends JpaRepository<PlanNegocio, Intege
     List<PlanNegocio> findByFilters(
             @Param("docenteEmail") String docenteEmail,
             @Param("estudianteEmail") String estudianteEmail,
-            @Param("minera") String minera,
+            @Param("area") String area,
             @Param("estado") String estado,
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);

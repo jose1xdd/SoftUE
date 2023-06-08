@@ -3,7 +3,6 @@ package com.backend.softue.services;
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
-import com.backend.softue.security.Roles;
 import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
 import com.backend.softue.utils.emailModule.EmailService;
 import jakarta.annotation.PostConstruct;
@@ -37,12 +36,6 @@ public class IdeaNegocioServices {
     private Hashing encrypt;
 
     @Autowired
-    private Roles roles;
-
-    @Autowired
-    private AreaConocimientoServices areaConocimientoServices;
-
-    @Autowired
     private EstadosIdeaPlanNegocio estadosIdeaPlanNegocio;
 
     @Autowired
@@ -53,6 +46,9 @@ public class IdeaNegocioServices {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private AreaConocimientoServices areaConocimientoServices;
+
     @PostConstruct
     public void init() {
         this.ideaPlanteadaServices.setIdeaNegocioServices(this);
@@ -61,14 +57,20 @@ public class IdeaNegocioServices {
         this.estudianteServices.getUsuarioServices().setIdeaNegocioServices(this);
     }
 
-    public void crear(IdeaNegocio ideaNegocio, String integrantes[], byte[] documento, String nombreArchivo, String JWT) {
+    public void crear(IdeaNegocio ideaNegocio, String area, String integrantes[], byte[] documento, String nombreArchivo, String JWT) {
         IdeaNegocio resultado = this.ideaNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
         if (resultado != null)
             throw new RuntimeException("Existe otra idea de negocio con el mismo título");
         if (!this.encrypt.getJwt().getValue(JWT).toLowerCase().equals("estudiante"))
             throw new RuntimeException("No se puede crear una idea de negocio si no se es un estudiante");
-        if (!this.areaConocimientoServices.existe(ideaNegocio.getAreaEnfoque()))
+        AreaConocimiento areaConocimiento = null;
+        try {
+            areaConocimiento = this.areaConocimientoServices.obtener(area);
+        }
+        catch (Exception e) {
             throw  new RuntimeException("No se puede crear esta idea de negocio, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
+        }
+        ideaNegocio.setArea(areaConocimiento);
         List<Estudiante> estudiantesIntegrantes = new LinkedList<Estudiante>();
         try {
             for (String correo : integrantes) {
@@ -167,6 +169,12 @@ public class IdeaNegocioServices {
             this.evaluacionIdeaServices.obtenerEvaluacionReciente(result);
         }
         catch (Exception e) {}
+        result.setAreaEnfoque(result.getArea().getNombre());
+        try {
+            EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtenerEvaluacionReciente(result);
+            result.setFechaCorte(evaluacionIdea.getFechaCorte());
+        }
+        catch (Exception e) {}
         return result;
     }
 
@@ -185,14 +193,21 @@ public class IdeaNegocioServices {
         if (!correo.equals(idea.getEstudianteLider().getCorreo()))
             throw new RuntimeException("Solo el estudiante lider puede actualizar la idea de negocio");
 
-        if (tituloNuevo == null)
+        if (tituloNuevo == null || tituloNuevo.isBlank())
             tituloNuevo = idea.getTitulo();
-        if (area == null)
-            area = idea.getAreaEnfoque();
-        if (!this.areaConocimientoServices.existe(area))
+
+        if (area != null && !area.isBlank() && !this.areaConocimientoServices.existe(area))
             throw new RuntimeException("No se puede actualizar la idea, el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
 
-        idea.setAreaEnfoque(area);
+        AreaConocimiento areaConocimiento = null;
+        try {
+            areaConocimiento = this.areaConocimientoServices.obtener(area);
+        }
+        catch (Exception e) {
+            areaConocimiento = this.areaConocimientoServices.obtener(idea.getArea().getNombre());
+        }
+
+        idea.setArea(areaConocimiento);
         idea.setTitulo(tituloNuevo);
         this.ideaNegocioRepository.save(idea);
     }
@@ -217,7 +232,11 @@ public class IdeaNegocioServices {
     public List<IdeaNegocio> buscarIdeasPorFiltros(String estudianteEmail, String docenteEmail, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
         if (fechaFin == null ^ fechaInicio == null)
             throw new RuntimeException("Una o las dos fechas del filtro son nulas");
-        return ideaNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+        List<IdeaNegocio> ideasNegocio = this.ideaNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+        for(IdeaNegocio ideaNegocio : ideasNegocio){
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocio;
     }
 
     public List<IdeaNegocio> listar() {
@@ -247,5 +266,26 @@ public class IdeaNegocioServices {
     public IdeaNegocio confirmarTutor(IdeaNegocio ideaNegocio) {
         return ideaNegocioRepository.save(ideaNegocio);
     }
+
+    public Set<IdeaNegocio> listarIdeasDocenteEvaluador(String correoDocente) {
+        if(correoDocente == null) throw  new RuntimeException("No se envio el correo del docente.");
+        Docente docente = this.docenteServices.obtenerDocente(correoDocente);
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByEvaluador(docente.getCodigo());
+        for(IdeaNegocio ideaNegocio : ideasNegocios){
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocios;
+    }
+
+    public Set<IdeaNegocio> listarIdeasDocenteApoyo(String correoDocente) {
+        if(correoDocente == null) throw  new RuntimeException("No se envio el correo del docente.");
+        Docente docente = this.docenteServices.obtenerDocente(correoDocente);
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByDocenteApoyo(docente.getCodigo());
+        for(IdeaNegocio ideaNegocio : ideasNegocios){
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocios;
+    }
+
 
 }

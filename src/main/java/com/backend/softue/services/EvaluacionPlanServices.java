@@ -65,13 +65,13 @@ public class EvaluacionPlanServices {
 
     public EvaluacionPlan obtenerEvaluacionReciente(String titulo) {
         PlanNegocio planNegocio = this.planNegocioServices.obtenerPlanNegocio(titulo);
-        return evaluacionReciente(planNegocio);
+        return this.evaluacionReciente(planNegocio);
     }
 
     public EvaluacionPlan obtenerEvaluacionReciente(PlanNegocio planNegocio) {
         if(planNegocio == null)
             throw new RuntimeException("Información insuficiente para obtener la evaluación más reciente de un plan de negocio");
-        return evaluacionReciente(planNegocio);
+        return this.evaluacionReciente(planNegocio);
     }
 
     private EvaluacionPlan evaluacionReciente(PlanNegocio planNegocio) {
@@ -99,9 +99,9 @@ public class EvaluacionPlanServices {
             EvaluacionPlan evaluacionPlan = evaluaciones.get(i);
             evaluacionPlan.setCalificacionesInfo(this.calificacionPlanServices.obtenerCalificacionesDeEvaluacion(evaluacionPlan));
             evaluaciones.set(i, evaluacionPlan);
-            esEvaluador |= esEvaluador(evaluacionPlan, JWT);
+            esEvaluador |= this.esEvaluador(evaluacionPlan, JWT);
         }
-        if(!(esEvaluador || permisos(planNegocio, JWT)))
+        if(!(esEvaluador || this.permisos(planNegocio, JWT)))
             throw new RuntimeException("El usuario no presenta permisos sufientes para visualizar las evaluaciones del plan de negocio.");
         return evaluaciones;
     }

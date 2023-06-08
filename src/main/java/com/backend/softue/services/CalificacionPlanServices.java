@@ -174,9 +174,11 @@ public class CalificacionPlanServices {
         if(calificacionPlan.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || calificacionPlan.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
             throw new RuntimeException("No se puede eliminar una calificación que ya este evaluada.");
 
+        /**
         //No se puede eliminar una calificacion que se encuentre pendiente
         if(calificacionPlan.getEstado().equals(this.estadosCalificacion.getEstados()[2]))
             throw new RuntimeException("No se puede eliminar una calificación pendiente");
+        **/
 
         //En esta sección se verifica que la evaluación aún no este calificada
         EvaluacionPlan evaluacionPlan = this.evaluacionPlanServices.obtener(calificacionPlanKey.getEvaluacionPlanId());

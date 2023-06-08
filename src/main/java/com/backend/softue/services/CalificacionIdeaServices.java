@@ -173,9 +173,11 @@ public class CalificacionIdeaServices {
         if(calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[0]) || calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[1]))
             throw new RuntimeException("No se puede eliminar una calificación que ya este evaluada.");
 
+        /**
         //No se puede eliminar una calificacion que se encuentre pendiente
-        if(calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[2]))
+         * if(calificacionIdea.getEstado().equals(this.estadosCalificacion.getEstados()[2]))
             throw new RuntimeException("No se puede eliminar una calificación pendiente");
+        **/
 
         //En esta sección se verifica que la evaluación aún no este calificada
         EvaluacionIdea evaluacionIdea = this.evaluacionIdeaServices.obtener(calificacionIdeaKey.getEvaluacionIdeaId());
