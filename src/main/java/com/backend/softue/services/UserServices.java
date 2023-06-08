@@ -149,9 +149,14 @@ public class UserServices {
         this.resetTokenRepository.delete(resetToken);
     }
 
-    public void reestablecerContrasenia(String jwt, String password) {
+    public void restablecerContrasenia(String jwt, String password) {
         User user = this.obtenerUsuario(this.encrypt.getJwt().getKey(jwt));
         this.resetPassword(user, password);
+    }
+
+    public void restablecerContraseniaOtroUsuario(String correo, String contrasenia) {
+        User user = this.obtenerUsuario(correo);
+        this.resetPassword(user, contrasenia);
     }
 
     private void resetPassword(User user, String password) {
@@ -162,7 +167,6 @@ public class UserServices {
         user.setContrasenia(this.encrypt.hash(password));
         this.userRepository.save(user);
     }
-
 
     public void deleteTutor(String email ){
 
