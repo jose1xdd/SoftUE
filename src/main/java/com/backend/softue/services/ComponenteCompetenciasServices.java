@@ -20,14 +20,16 @@ public class ComponenteCompetenciasServices {
         if (resultado != null)
             throw new RuntimeException("El componente de competencias ya existe");
         if (!validarPorcentajePorArriba(componenteCompetencias.getValorPorcentaje()))
-            throw new RuntimeException("El sumaorio de los porcentajes no puede ser mayor al 100%");
+            throw new RuntimeException("El sumatorio de los porcentajes no puede ser mayor al 100%");
         this.componenteCompetenciasRepository.save(componenteCompetencias);
     }
 
     public void actualizar(ComponenteCompetencias componenteCompetencias) {
         if (componenteCompetencias == null)
-            throw new RuntimeException("El componente de competencias a actualizar no existe");
+            throw new RuntimeException("El componente es nulo");
         ComponenteCompetencias resultado = this.componenteCompetenciasRepository.findById(componenteCompetencias.getId()).get();
+        if (resultado == null)
+            throw new RuntimeException("El componente de competencias a actualizar no existe");
         if (!validarPorcentajePorArriba(componenteCompetencias.getValorPorcentaje() - resultado.getValorPorcentaje()))
             throw new RuntimeException("Los porcentajes no pueden exceder del 100%");
         this.componenteCompetenciasRepository.save(componenteCompetencias);
@@ -45,6 +47,13 @@ public class ComponenteCompetenciasServices {
     public List<ComponenteCompetencias> listar() {
         List<ComponenteCompetencias> componenteCompetencias = this.componenteCompetenciasRepository.findAll();
         return componenteCompetencias;
+    }
+
+    public ComponenteCompetencias obtener(String nombre) {
+        ComponenteCompetencias resultado = this.componenteCompetenciasRepository.findByNombre(nombre);
+        if (resultado == null)
+            throw new RuntimeException("La componente con ese nombre no existe");
+        return resultado;
     }
 
     public boolean validarPorcentaje() {
@@ -67,5 +76,9 @@ public class ComponenteCompetenciasServices {
             sumatoria = sumatoria + elemento.getValorPorcentaje();
         }
         return 100.0 - sumatoria > -epsilon;
+    }
+
+    public boolean existe(Integer id) {
+        return this.componenteCompetenciasRepository.existsById(id);
     }
 }
