@@ -128,21 +128,31 @@ public class IdeaNegocioController {
         }
     }
 
+
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping("/DocentesEvaluadores")
-    public ResponseEntity<?> listarIdeasDocenteEvaluador(@RequestParam String correoDocente){
+    @PostMapping("/IdeasDocentesApoyo")
+    public ResponseEntity<?> listarIdeasDocenteApoyo(
+            @RequestParam(required = false) Integer docenteCodigo,
+            @RequestParam(required = false) Integer estudianteCodigo,
+            @RequestParam(required = false) Integer area,
+            @RequestParam(required = false) String estado){
         try {
-            return ResponseEntity.ok(this.ideaNegocioServices.listarIdeasDocenteEvaluador(correoDocente));
+            return ResponseEntity.ok(this.ideaNegocioServices.listarIdeasDocenteApoyo(docenteCodigo,estudianteCodigo,area,estado));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
         }
     }
-
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping("/DocentesApoyo")
-    public ResponseEntity<?> listarIdeasDocenteApoyo(@RequestParam String correoDocente){
+    @PostMapping("/IdeasDocentesEvaluadores")
+    public ResponseEntity<?> listarIdeasDocenteEvaluador(
+            @RequestParam(required = false) Integer docenteCodigo,
+            @RequestParam(required = false) Integer estudianteCodigo,
+            @RequestParam(required = false) Integer area,
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin){
         try {
-            return ResponseEntity.ok(this.ideaNegocioServices.listarIdeasDocenteApoyo(correoDocente));
+            return ResponseEntity.ok(this.ideaNegocioServices.listarIdeasDocenteEvaluador(docenteCodigo,estudianteCodigo,area,estado,fechaInicio,fechaFin));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
         }
