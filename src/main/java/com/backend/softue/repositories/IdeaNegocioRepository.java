@@ -35,18 +35,41 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
 
-    @Query(value = "SELECT idea.* FROM idea_negocio idea " +
-                   "JOIN evaluacion_idea ei ON (idea.id = ei.idea_negocio)" +
-                   "JOIN calificacion_idea ci ON (ei.id = ci.evaluacion_idea_id)" +
-                   "WHERE ci.Docente_codigo = :docente_codigo", nativeQuery = true)
-    Set<IdeaNegocio> findByEvaluador(@Param("docente_codigo") Integer id);
-
-    @Query(value = "SELECT idea.* FROM idea_negocio idea " +
+    @Query(value = "SELECT DISTINCT idea.* FROM idea_negocio idea " +
             "JOIN docente_apoyo_idea dai ON (idea.id = dai.idea_negocio_id)" +
-            "WHERE dai.docente_codigo = :docente_codigo", nativeQuery = true)
-    Set<IdeaNegocio> findByDocenteApoyo(@Param("docente_codigo") Integer id);
+            "JOIN idea_planteada ip ON (idea.id = ip.idea_negocio_id)" +
+            "WHERE " +
+            "(dai.docente_codigo = :docente_codigo OR :docente_codigo IS NULL) AND" +
+            "(ip.estudiante_codigo = :estudiante_codigo OR idea.codigo_estudiante_lider = :estudiante_codigo OR  :estudiante_codigo IS NULL) AND" +
+            "(idea.area_enfoque = :area OR :area IS NULL) AND" +
+            "(idea.estado = :estado OR :estado IS NULL)"
+            , nativeQuery = true)
+    Set<IdeaNegocio> findByDocenteApoyoFiltros(
+            @Param("docente_codigo") Integer id,
+            @Param("estudiante_codigo") Integer estudiante_codigo,
+            @Param("area") Integer area,
+            @Param("estado") String estado
+    );
 
 
+    @Query(value = "SELECT DISTINCT idea.* FROM idea_negocio idea " +
+            "JOIN evaluacion_idea ei ON (idea.id = ei.idea_negocio) " +
+            "JOIN calificacion_idea ci ON (ei.id = ci.evaluacion_idea_id) " +
+            "JOIN idea_planteada ip ON (idea.id = ip.idea_negocio_id)" +
+            "WHERE" +
+            "(ci.Docente_codigo = :docente_codigo OR :docente_codigo IS NULL) AND" +
+            "(ip.estudiante_codigo = :estudiante_codigo OR idea.codigo_estudiante_lider = :estudiante_codigo OR  :estudiante_codigo IS NULL) AND" +
+            "(idea.area_enfoque = :area OR :area IS NULL) AND" +
+            "(idea.estado = :estado OR :estado IS NULL) AND" +
+            "((:fecha_inicio IS NULL AND :fecha_fin IS NULL) OR (ei.fecha_presentacion >= :fecha_inicio AND :fecha_fin IS NULL) OR (ei.fecha_presentacion >= :fecha_inicio AND ei.fecha_corte <= :fecha_fin))"
+            , nativeQuery = true)
+    Set<IdeaNegocio> findByEvaluadorFiltros(
+            @Param("docente_codigo") Integer id,
+            @Param("estudiante_codigo") Integer estudiante_codigo,
+            @Param("area") Integer area,
+            @Param("estado") String estado,
+            @Param("fecha_inicio") LocalDate fecha_inicio,
+            @Param("fecha_fin") LocalDate fecha_fin
 
-
+    );
 }

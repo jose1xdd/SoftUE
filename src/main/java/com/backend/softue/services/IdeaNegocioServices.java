@@ -3,13 +3,15 @@ package com.backend.softue.services;
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
-import com.backend.softue.security.Roles;
 import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
 import com.backend.softue.utils.emailModule.EmailService;
 import jakarta.annotation.PostConstruct;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -268,20 +270,26 @@ public class IdeaNegocioServices {
         return ideaNegocioRepository.save(ideaNegocio);
     }
 
-    public Set<IdeaNegocio> listarIdeasDocenteEvaluador(String correoDocente) {
-        if(correoDocente == null) throw  new RuntimeException("No se envio el correo del docente.");
-        Docente docente = this.docenteServices.obtenerDocente(correoDocente);
-        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByEvaluador(docente.getCodigo());
+    public Set<IdeaNegocio> listarIdeasDocenteApoyo(
+            Integer docenteCodigo,
+            Integer estudianteCodigo,
+            Integer area,
+            String estado){
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByDocenteApoyoFiltros(docenteCodigo, estudianteCodigo, area, estado);
         for(IdeaNegocio ideaNegocio : ideasNegocios){
             ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
         }
         return ideasNegocios;
     }
 
-    public Set<IdeaNegocio> listarIdeasDocenteApoyo(String correoDocente) {
-        if(correoDocente == null) throw  new RuntimeException("No se envio el correo del docente.");
-        Docente docente = this.docenteServices.obtenerDocente(correoDocente);
-        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByDocenteApoyo(docente.getCodigo());
+    public Set<IdeaNegocio> listarIdeasDocenteEvaluador(
+            Integer docenteCodigo,
+            Integer estudianteCodigo,
+            Integer area,
+            String estado,
+            LocalDate fechaInicio,
+            LocalDate fechaFin){
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByEvaluadorFiltros(docenteCodigo, estudianteCodigo, area, estado, fechaInicio, fechaFin);
         for(IdeaNegocio ideaNegocio : ideasNegocios){
             ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
         }
