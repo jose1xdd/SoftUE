@@ -271,10 +271,10 @@ public class IdeaNegocioServices {
     }
 
     public Set<IdeaNegocio> listarIdeasDocenteApoyo(
-            @RequestParam(required = false) Integer docenteCodigo,
-            @RequestParam(required = false) Integer estudianteCodigo,
-            @RequestParam(required = false) Integer area,
-            @RequestParam(required = false) String estado){
+            Integer docenteCodigo,
+            Integer estudianteCodigo,
+            Integer area,
+            String estado){
         Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByDocenteApoyoFiltros(docenteCodigo, estudianteCodigo, area, estado);
         for(IdeaNegocio ideaNegocio : ideasNegocios){
             ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
@@ -283,12 +283,12 @@ public class IdeaNegocioServices {
     }
 
     public Set<IdeaNegocio> listarIdeasDocenteEvaluador(
-            @RequestParam(required = false) Integer docenteCodigo,
-            @RequestParam(required = false) Integer estudianteCodigo,
-            @RequestParam(required = false) Integer area,
-            @RequestParam(required = false) String estado,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin){
+            Integer docenteCodigo,
+            Integer estudianteCodigo,
+            Integer area,
+            String estado,
+            LocalDate fechaInicio,
+            LocalDate fechaFin){
         Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByEvaluadorFiltros(docenteCodigo, estudianteCodigo, area, estado, fechaInicio, fechaFin);
         for(IdeaNegocio ideaNegocio : ideasNegocios){
             ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());

@@ -132,7 +132,7 @@ public class IdeaNegocioController {
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @PostMapping("/IdeasDocentesApoyo")
     public ResponseEntity<?> listarIdeasDocenteApoyo(
-            @RequestParam Integer docenteCodigo,
+            @RequestParam(required = false) Integer docenteCodigo,
             @RequestParam(required = false) Integer estudianteCodigo,
             @RequestParam(required = false) Integer area,
             @RequestParam(required = false) String estado){
@@ -145,7 +145,7 @@ public class IdeaNegocioController {
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @PostMapping("/IdeasDocentesEvaluadores")
     public ResponseEntity<?> listarIdeasDocenteEvaluador(
-            @RequestParam Integer docenteCodigo,
+            @RequestParam(required = false) Integer docenteCodigo,
             @RequestParam(required = false) Integer estudianteCodigo,
             @RequestParam(required = false) Integer area,
             @RequestParam(required = false) String estado,
