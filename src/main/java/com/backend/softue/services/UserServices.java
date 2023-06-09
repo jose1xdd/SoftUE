@@ -1,11 +1,7 @@
 package com.backend.softue.services;
 
 import com.backend.softue.models.*;
-import com.backend.softue.repositories.FotoRepository;
-import com.backend.softue.repositories.ResetTokenRepository;
-import com.backend.softue.repositories.SingInTokenRepository;
-import com.backend.softue.repositories.UserRepository;
-import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
+import com.backend.softue.repositories.*;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.emailModule.EmailService;
@@ -39,6 +35,8 @@ public class UserServices {
     private EmailService emailGenericMessages;
     @Autowired
     private UsuarioDeshabilitadoRepository usuarioDeshabilitadoRepository;
+    @Autowired
+    private PlanNegocioServices planNegocioServices;
 
     private IdeaNegocioServices ideaNegocioServices;
 
@@ -205,6 +203,10 @@ public class UserServices {
     public void solicitarDocente(String ideaNegocio, String docenteEmail) {
         this.ideaNegocioServices.asignarTutor(ideaNegocio, docenteEmail);
 
+    }
+
+    public void solicitarDocentePlan(String planNegocio,String docenteEmail){
+        this.planNegocioServices.asignarTutor(planNegocio,docenteEmail);
     }
 
     public void borrarTutor(String idea){

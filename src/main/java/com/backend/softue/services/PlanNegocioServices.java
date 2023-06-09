@@ -6,6 +6,7 @@ import com.backend.softue.models.*;
 import com.backend.softue.repositories.PlanNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
+import com.backend.softue.utils.emailModule.EmailService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,10 @@ public class PlanNegocioServices {
 
     @Autowired
     private PlanPresentadoServices planPresentadoServices;
-
+    @Autowired
+    private DocenteServices docenteServices;
+    @Autowired
+    private EmailService emailService;
     @PostConstruct
     public void init() {
         this.documentoPlanServices.setPlanNegocioServices(this);
@@ -204,6 +208,16 @@ public class PlanNegocioServices {
             planNegocio = this.obtenerPlanNegocio(planNegocio.getTitulo());
         }
         return planesNegocio;
+    }
+
+    public void asignarTutor(String titulo, String docenteEmail) {
+        Optional<PlanNegocio> plan = this.planNegocioRepository.findByTitulo(titulo);
+        PlanNegocio planNegocio = plan.get();
+        if(planNegocio.getEstado().equals("aprobada"))
+            throw new RuntimeException("No se puede modificar un plan de negocio aprobado");
+        Docente docente = this.docenteServices.obtenerDocente(docenteEmail);
+        if (docente == null) throw new RuntimeException("No se encontro un docente con ese email");
+        this.emailService.enviarEmailTutor(docenteEmail, titulo, docente.getNombre() + " " + docente.getApellido(), docente.getArea());
     }
 
 }
