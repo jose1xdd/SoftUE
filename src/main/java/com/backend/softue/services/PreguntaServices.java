@@ -5,9 +5,9 @@ import com.backend.softue.models.Pregunta;
 import com.backend.softue.repositories.PreguntaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PreguntaServices {
@@ -22,7 +22,7 @@ public class PreguntaServices {
         if (enunciado == null || enunciado.equals(""))
             throw new RuntimeException("El enunciado no puede estar vacío");
         ComponenteCompetencias componenteCompetencias = this.componenteCompetenciasServices.obtener(nombreComponente);
-        this.preguntaRepository.save(new Pregunta(null, enunciado, componenteCompetencias));
+        this.preguntaRepository.save(new Pregunta(null, enunciado, componenteCompetencias, null));
     }
 
     public List<Pregunta> listar() {
@@ -54,5 +54,14 @@ public class PreguntaServices {
         if (!this.preguntaRepository.existsById(id))
             throw new RuntimeException("La pregunta a eliminar no existe");
         this.preguntaRepository.deleteById(id);
+    }
+
+    public Pregunta obtener(Integer id) {
+        if (id == null)
+            throw new RuntimeException("No se tiene un id con el que buscar la pregunta");
+        Optional<Pregunta> resultado = this.preguntaRepository.findById(id);
+        if (!resultado.isPresent())
+            throw new RuntimeException("La pregunta a buscar no existe");
+        return resultado.get();
     }
 }

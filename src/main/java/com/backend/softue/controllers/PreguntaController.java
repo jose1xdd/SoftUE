@@ -1,19 +1,16 @@
 package com.backend.softue.controllers;
 
-import com.backend.softue.models.Pregunta;
 import com.backend.softue.services.PreguntaServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ErrorFactory;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("pregunta")
+@RequestMapping("/pregunta")
 public class PreguntaController {
 
     @Autowired

@@ -20,25 +20,16 @@ public class ComponenteCompetenciasServices {
         if (resultado != null)
             throw new RuntimeException("El componente de competencias ya existe");
         if (!validarPorcentajePorArriba(componenteCompetencias.getValorPorcentaje()))
-<<<<<<< HEAD
             throw new RuntimeException("El sumatorio de los porcentajes no puede ser mayor al 100%");
-=======
-            throw new RuntimeException("El sumaorio de los porcentajes no puede ser mayor al 100%");
->>>>>>> 67b2fde6d0c895f8ca0d6c0d33ec229f83c8eec6
         this.componenteCompetenciasRepository.save(componenteCompetencias);
     }
 
     public void actualizar(ComponenteCompetencias componenteCompetencias) {
         if (componenteCompetencias == null)
-<<<<<<< HEAD
             throw new RuntimeException("El componente es nulo");
         ComponenteCompetencias resultado = this.componenteCompetenciasRepository.findById(componenteCompetencias.getId()).get();
         if (resultado == null)
             throw new RuntimeException("El componente de competencias a actualizar no existe");
-=======
-            throw new RuntimeException("El componente de competencias a actualizar no existe");
-        ComponenteCompetencias resultado = this.componenteCompetenciasRepository.findById(componenteCompetencias.getId()).get();
->>>>>>> 67b2fde6d0c895f8ca0d6c0d33ec229f83c8eec6
         if (!validarPorcentajePorArriba(componenteCompetencias.getValorPorcentaje() - resultado.getValorPorcentaje()))
             throw new RuntimeException("Los porcentajes no pueden exceder del 100%");
         this.componenteCompetenciasRepository.save(componenteCompetencias);
@@ -58,7 +49,6 @@ public class ComponenteCompetenciasServices {
         return componenteCompetencias;
     }
 
-<<<<<<< HEAD
     public ComponenteCompetencias obtener(String nombre) {
         ComponenteCompetencias resultado = this.componenteCompetenciasRepository.findByNombre(nombre);
         if (resultado == null)
@@ -66,8 +56,6 @@ public class ComponenteCompetenciasServices {
         return resultado;
     }
 
-=======
->>>>>>> 67b2fde6d0c895f8ca0d6c0d33ec229f83c8eec6
     public boolean validarPorcentaje() {
         return validarPorcentaje(0.0);
     }
@@ -89,11 +77,9 @@ public class ComponenteCompetenciasServices {
         }
         return 100.0 - sumatoria > -epsilon;
     }
-<<<<<<< HEAD
 
     public boolean existe(Integer id) {
         return this.componenteCompetenciasRepository.existsById(id);
     }
-=======
->>>>>>> 67b2fde6d0c895f8ca0d6c0d33ec229f83c8eec6
+
 }

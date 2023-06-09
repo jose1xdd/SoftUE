@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,4 +29,7 @@ public class Pregunta {
     @ManyToOne()
     @JoinColumn(name = "componente_competencias_id")
     private ComponenteCompetencias componenteCompetenciasId;
+
+    @OneToMany(mappedBy = "preguntaId", fetch = FetchType.LAZY)
+    private Set<Respuesta> respuestas;
 }
