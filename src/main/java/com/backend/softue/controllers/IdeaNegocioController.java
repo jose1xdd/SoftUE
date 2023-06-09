@@ -158,6 +158,14 @@ public class IdeaNegocioController {
         }
     }
 
-
+    @CheckSession(permitedRol = {"estudiante"})
+    @GetMapping("/comprobarIdeaAprobada")
+    public ResponseEntity<?> comprobarIdeaAprobada(@RequestParam String correoEstudiante){
+        try {
+            return ResponseEntity.ok(this.ideaNegocioServices.comprobarIdeaAprobada(correoEstudiante));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
 }
 
