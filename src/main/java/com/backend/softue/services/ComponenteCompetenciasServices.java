@@ -31,7 +31,6 @@ public class ComponenteCompetenciasServices {
         ComponenteCompetencias resultado = this.componenteCompetenciasRepository.findById(componenteCompetencias.getId()).get();
         if (resultado == null)
             throw new RuntimeException("El componente de competencias a actualizar no existe");
-
         if (!validarPorcentajePorArriba(componenteCompetencias.getValorPorcentaje() - resultado.getValorPorcentaje()))
             throw new RuntimeException("Los porcentajes no pueden exceder del 100%");
         this.componenteCompetenciasRepository.save(componenteCompetencias);

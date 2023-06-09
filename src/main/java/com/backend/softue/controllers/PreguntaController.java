@@ -1,19 +1,16 @@
 package com.backend.softue.controllers;
 
-import com.backend.softue.models.Pregunta;
 import com.backend.softue.services.PreguntaServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ErrorFactory;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("pregunta")
+@RequestMapping("/pregunta")
 public class PreguntaController {
 
     @Autowired
@@ -34,11 +31,23 @@ public class PreguntaController {
         }
     }
 
+
     @CheckSession(permitedRol = {"coordinador","estudiante"})
     @GetMapping()
     public ResponseEntity<?> listar() {
         try {
             return ResponseEntity.ok(this.preguntaServices.listar());
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @CheckSession(permitedRol = {"coordinador", "estudiante"})
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtener(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok(this.preguntaServices.obtener(Integer.parseInt(id)));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));

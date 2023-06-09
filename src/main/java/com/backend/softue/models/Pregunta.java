@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,6 +16,7 @@ import lombok.*;
 @Setter
 @ToString
 @Table
+@JsonIgnoreProperties(value = "respuestas")
 public class Pregunta {
 
     @Id
@@ -27,4 +31,9 @@ public class Pregunta {
     @ManyToOne()
     @JoinColumn(name = "componente_competencias_id")
     private ComponenteCompetencias componenteCompetenciasId;
+
+    @OneToMany(mappedBy = "preguntaId", fetch = FetchType.LAZY)
+    private Set<Respuesta> respuestas;
+    @Transient
+    private List<Respuesta> listaRespuestas;
 }
