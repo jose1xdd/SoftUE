@@ -6,13 +6,16 @@ import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
 import com.backend.softue.security.Hashing;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
+@Setter
+@Getter
 @Service
 public class DocenteServices {
     @Autowired
@@ -113,6 +116,7 @@ public class DocenteServices {
         }
         return "El docente rechazo";
     }
+
     private Boolean docentePertenece(Set<DocenteApoyoIdea> docentes ,Docente docente){
         Iterator<DocenteApoyoIdea> it = docentes.iterator();
         while (it.hasNext()){

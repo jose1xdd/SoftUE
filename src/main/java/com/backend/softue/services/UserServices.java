@@ -7,6 +7,7 @@ import com.backend.softue.security.Roles;
 import com.backend.softue.utils.emailModule.EmailService;
 import com.backend.softue.utils.response.LoginResponse;
 import com.backend.softue.utils.response.ResponseToken;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 @Setter
+@Getter
 @Service
 public class UserServices {
 
@@ -35,8 +37,8 @@ public class UserServices {
     private EmailService emailGenericMessages;
     @Autowired
     private UsuarioDeshabilitadoRepository usuarioDeshabilitadoRepository;
-    @Autowired
-    private PlanNegocioServices planNegocioServices;
+
+    private PlanNegocioServicesInterface planNegocioServicesInterface;
 
     private IdeaNegocioServices ideaNegocioServices;
 
@@ -206,7 +208,7 @@ public class UserServices {
     }
 
     public void solicitarDocentePlan(String planNegocio,String docenteEmail){
-        this.planNegocioServices.asignarTutor(planNegocio,docenteEmail);
+        this.planNegocioServicesInterface.asignarTutor(planNegocio,docenteEmail);
     }
 
     public void borrarTutor(String idea){

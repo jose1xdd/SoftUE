@@ -210,14 +210,4 @@ public class PlanNegocioServices {
         return planesNegocio;
     }
 
-    public void asignarTutor(String titulo, String docenteEmail) {
-        Optional<PlanNegocio> plan = this.planNegocioRepository.findByTitulo(titulo);
-        PlanNegocio planNegocio = plan.get();
-        if(planNegocio.getEstado().equals("aprobada"))
-            throw new RuntimeException("No se puede modificar un plan de negocio aprobado");
-        Docente docente = this.docenteServices.obtenerDocente(docenteEmail);
-        if (docente == null) throw new RuntimeException("No se encontro un docente con ese email");
-        this.emailService.enviarEmailTutor(docenteEmail, titulo, docente.getNombre() + " " + docente.getApellido(), docente.getArea());
-    }
-
 }
