@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,6 +16,7 @@ import java.util.Set;
 @Setter
 @ToString
 @Table
+@JsonIgnoreProperties(value = "respuestas")
 public class Pregunta {
 
     @Id
@@ -32,4 +34,6 @@ public class Pregunta {
 
     @OneToMany(mappedBy = "preguntaId", fetch = FetchType.LAZY)
     private Set<Respuesta> respuestas;
+    @Transient
+    private List<Respuesta> listaRespuestas;
 }

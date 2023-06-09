@@ -31,11 +31,22 @@ public class PreguntaController {
         }
     }
 
-    @CheckSession(permitedRol = {"coordinador"})
+    @CheckSession(permitedRol = {"coordinador", "estudiante"})
     @GetMapping()
     public ResponseEntity<?> listar() {
         try {
             return ResponseEntity.ok(this.preguntaServices.listar());
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @CheckSession(permitedRol = {"coordinador", "estudiante"})
+    @GetMapping("/{id}")
+    public ResponseEntity<?> obtener(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok(this.preguntaServices.obtener(Integer.parseInt(id)));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
