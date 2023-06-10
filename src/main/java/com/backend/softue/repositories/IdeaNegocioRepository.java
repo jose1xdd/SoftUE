@@ -64,7 +64,7 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             "(ip.estudiante_codigo = :estudiante_codigo OR idea.codigo_estudiante_lider = :estudiante_codigo OR  :estudiante_codigo IS NULL) AND" +
             "(idea.area_enfoque = :area OR :area IS NULL) AND" +
             "(idea.estado = :estado OR :estado IS NULL) AND" +
-            "((:fecha_inicio IS NULL AND :fecha_fin IS NULL) OR (ei.fecha_presentacion >= :fecha_inicio AND :fecha_fin IS NULL) OR (ei.fecha_presentacion >= :fecha_inicio AND ei.fecha_corte <= :fecha_fin))"
+            "((:fecha_inicio IS NULL AND :fecha_fin IS NULL) OR (ei.fecha_corte >= :fecha_inicio AND ei.fecha_corte <= :fecha_fin))"
             , nativeQuery = true)
     Set<IdeaNegocio> findByEvaluadorFiltros(
             @Param("docente_codigo") Integer id,
@@ -75,6 +75,8 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             @Param("fecha_fin") LocalDate fecha_fin
 
     );
+
+    Set<IdeaNegocio> findByDocentesApoyo(@Param("docente_codigo") Integer id);
 
     @Query(value = "SELECT idea.* FROM idea_negocio idea " +
             "JOIN idea_planteada idea_p ON (idea.id = idea_p.idea_negocio_id)" +
