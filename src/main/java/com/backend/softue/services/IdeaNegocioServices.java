@@ -296,5 +296,12 @@ public class IdeaNegocioServices {
         return ideasNegocios;
     }
 
-
+    public List<IdeaNegocio> comprobarIdeaAprobada(String correoEstudiante) {
+        if (correoEstudiante == null)
+            throw new RuntimeException("No se envió un correo con el que comprobar la idea");
+        Estudiante estudiante = this.estudianteServices.obtenerEstudiante(correoEstudiante);
+        List<IdeaNegocio> resultado = this.ideaNegocioRepository.findByLiderAprobada(estudiante.getCodigo());
+        resultado.addAll(this.ideaNegocioRepository.findByIntegranteAprobada(estudiante.getCodigo()));
+        return resultado;
+    }
 }
