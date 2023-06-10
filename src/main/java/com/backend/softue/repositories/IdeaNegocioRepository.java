@@ -75,7 +75,8 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             @Param("fecha_fin") LocalDate fecha_fin
 
     );
-    //Set<IdeaNegocio> findByDocenteApoyo(@Param("docente_codigo") Integer id);
+
+    Set<IdeaNegocio> findByDocentesApoyo(@Param("docente_codigo") Integer id);
 
     @Query(value = "SELECT idea.* FROM idea_negocio idea " +
             "JOIN idea_planteada idea_p ON (idea.id = idea_p.idea_negocio_id)" +
