@@ -63,6 +63,10 @@ public class UserServices {
         if (result != null) throw new RuntimeException("User already exists");
         if (!this.validateUserRol(user.getTipoUsuario())) throw new RuntimeException("Use has Invalid Type");
         user.setTipoUsuario(user.getTipoUsuario().toLowerCase());
+        String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&+]).{6,}$";
+        if (!user.getContrasenia().matches(passwordPattern)) {
+            throw new RuntimeException("La contraseña no cumple con los requisitos");
+        }
         user.setContrasenia(encrypt.hash(user.getContrasenia()));
         User userData = this.userRepository.save(user);
     }

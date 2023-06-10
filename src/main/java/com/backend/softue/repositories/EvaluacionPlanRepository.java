@@ -21,6 +21,6 @@ public interface EvaluacionPlanRepository extends JpaRepository<EvaluacionPlan, 
     @Query(value =  "SELECT * " +
             "FROM evaluacion_plan " +
             "WHERE plan_negocio = :id_plan " +
-            "ORDER BY e.fecha_presentacion, e.id DESC", nativeQuery = true)
+            "ORDER BY fecha_presentacion, id DESC", nativeQuery = true)
     List<EvaluacionPlan> findByPlanNegocio(@Param("id_plan") Integer plan);
 }
