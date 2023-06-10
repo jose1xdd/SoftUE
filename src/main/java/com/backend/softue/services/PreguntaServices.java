@@ -3,12 +3,15 @@ package com.backend.softue.services;
 import com.backend.softue.models.ComponenteCompetencias;
 import com.backend.softue.models.Pregunta;
 import com.backend.softue.repositories.PreguntaRepository;
+import jakarta.annotation.PostConstruct;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Optional;
 
+@Getter
 @Service
 public class PreguntaServices {
 
@@ -18,15 +21,27 @@ public class PreguntaServices {
     @Autowired
     private ComponenteCompetenciasServices componenteCompetenciasServices;
 
+    @Autowired
+    private RespuestaServices respuestaServices;
+
+    @PostConstruct
+    public void init() {
+        this.respuestaServices.setPreguntaServices(this);
+    }
+
     public void crear(String enunciado, String nombreComponente) {
         if (enunciado == null || enunciado.equals(""))
             throw new RuntimeException("El enunciado no puede estar vacío");
         ComponenteCompetencias componenteCompetencias = this.componenteCompetenciasServices.obtener(nombreComponente);
-        this.preguntaRepository.save(new Pregunta(null, enunciado, componenteCompetencias));
+        this.preguntaRepository.save(new Pregunta(null, enunciado, componenteCompetencias, null, null));
     }
 
     public List<Pregunta> listar() {
-        return this.preguntaRepository.findAll();
+        List<Pregunta> resultado = this.preguntaRepository.findAll();
+        for (Pregunta pregunta : resultado) {
+            pregunta.setListaRespuestas(this.respuestaServices.obtenerRespuestas(pregunta.getId()));
+        }
+        return resultado;
     }
 
     public void actualizar(String id, String enunciado, String nombreComponente) {
@@ -54,5 +69,16 @@ public class PreguntaServices {
         if (!this.preguntaRepository.existsById(id))
             throw new RuntimeException("La pregunta a eliminar no existe");
         this.preguntaRepository.deleteById(id);
+    }
+
+    public Pregunta obtener(Integer id) {
+        if (id == null)
+            throw new RuntimeException("No se tiene un id con el que buscar la pregunta");
+        Optional<Pregunta> resultado = this.preguntaRepository.findById(id);
+        if (!resultado.isPresent())
+            throw new RuntimeException("La pregunta a buscar no existe");
+        Pregunta pregunta = resultado.get();
+        pregunta.setListaRespuestas(this.respuestaServices.obtenerRespuestas(pregunta));
+        return pregunta;
     }
 }

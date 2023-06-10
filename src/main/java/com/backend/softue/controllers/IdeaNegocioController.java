@@ -94,7 +94,7 @@ public class IdeaNegocioController {
         }
     }
 
-    @CheckSession(permitedRol = {"coordinador", "administrativo", "docente"})
+    @CheckSession(permitedRol = {"coordinador", "administrativo", "docente","estudiante"})
     @PostMapping("/filtrar")
     public ResponseEntity<List<IdeaNegocio>> buscarIdeasPorFiltros(
             @RequestParam(required = false) String estudianteEmail,
@@ -158,6 +158,14 @@ public class IdeaNegocioController {
         }
     }
 
-
+    @CheckSession(permitedRol = {"estudiante"})
+    @GetMapping("/comprobarIdeaAprobada")
+    public ResponseEntity<?> comprobarIdeaAprobada(@RequestParam String correoEstudiante){
+        try {
+            return ResponseEntity.ok(this.ideaNegocioServices.comprobarIdeaAprobada(correoEstudiante));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
 }
 
