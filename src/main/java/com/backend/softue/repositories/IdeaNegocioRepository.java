@@ -64,7 +64,8 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             "(ip.estudiante_codigo = :estudiante_codigo OR idea.codigo_estudiante_lider = :estudiante_codigo OR  :estudiante_codigo IS NULL) AND" +
             "(idea.area_enfoque = :area OR :area IS NULL) AND" +
             "(idea.estado = :estado OR :estado IS NULL) AND" +
-            "((:fecha_inicio IS NULL AND :fecha_fin IS NULL) OR (ei.fecha_corte >= :fecha_inicio AND ei.fecha_corte <= :fecha_fin))"
+            "((:fecha_inicio IS NULL AND :fecha_fin IS NULL) OR (ei.fecha_corte >= :fecha_inicio AND ei.fecha_corte <= :fecha_fin)) AND " +
+            "(ci.estado = 'pendiente')"
             , nativeQuery = true)
     Set<IdeaNegocio> findByEvaluadorFiltros(
             @Param("docente_codigo") Integer id,
