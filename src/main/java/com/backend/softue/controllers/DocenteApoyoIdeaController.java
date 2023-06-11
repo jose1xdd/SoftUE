@@ -9,14 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/docenteApoyoIdea")
+@RequestMapping(value = "/docenteApoyoIdea")
 public class DocenteApoyoIdeaController {
 
     @Autowired
     private DocenteApoyoIdeaServices docenteApoyoIdeaServices;
 
     @CheckSession(permitedRol = {"docente"})
-    @PostMapping()
+    @PostMapping(value = "/")
     public ResponseEntity<?> agregarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
         try {
             this.docenteApoyoIdeaServices.agregarDocenteApoyo(jwt, tituloIdea, correoDocente);
@@ -28,7 +28,7 @@ public class DocenteApoyoIdeaController {
     }
 
     @CheckSession(permitedRol = {"docente"})
-    @DeleteMapping()
+    @DeleteMapping(value = "/")
     public ResponseEntity<?> eliminarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
         try {
             this.docenteApoyoIdeaServices.eliminarDocenteApoyo(jwt, tituloIdea, correoDocente);
