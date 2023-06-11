@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/apoyo")
+@RequestMapping(value = "/apoyoIdea")
 public class ApoyoIdeaController {
     @GetMapping("/test")
     public ResponseEntity<?> test() {
