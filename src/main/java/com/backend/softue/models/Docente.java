@@ -16,7 +16,7 @@ import java.util.Set;
 @ToString
 @Table(name = "Docente")
 @JsonIgnoreProperties({"foto_usuario","planesApoyados","ideasApoyadas","ideasTutoradas","planesTutoradas","observacionesPlan","observacionesIdea","ideasCalificadas","planesCalificados"})
-public class Docente extends User {
+public class  Docente extends User {
 
     @NotBlank(message = "Error: El campo 'cedula' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para la cedula del Docente.")
     @NotNull(message = "Error: El campo 'cedula' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para la cedula del Docente.")
