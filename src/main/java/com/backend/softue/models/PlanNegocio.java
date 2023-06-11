@@ -40,7 +40,7 @@ public class PlanNegocio {
     private String areaEnfoque;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "tutor_codigo")
+    @JoinColumn(nullable = true, name = "tutor_codigo")
     private Docente tutor;
     @Transient
     private String [][] tutorInfo;

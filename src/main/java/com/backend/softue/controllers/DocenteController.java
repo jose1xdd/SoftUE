@@ -3,6 +3,7 @@ package com.backend.softue.controllers;
 import com.backend.softue.models.Docente;
 import com.backend.softue.models.Estudiante;
 import com.backend.softue.services.DocenteServices;
+import com.backend.softue.services.PlanNegocioServicesInterface;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
@@ -19,6 +20,9 @@ public class DocenteController {
 
     @Autowired
     private DocenteServices docenteServices;
+
+    @Autowired
+    private PlanNegocioServicesInterface planNegocioServicesInterface;
 
     @CheckSession(permitedRol = {"docente", "coordinador", "administrativo"})
     @PatchMapping("/actualizar")
@@ -86,6 +90,17 @@ public class DocenteController {
     public  ResponseEntity<?>acceptarTutor(@PathVariable String titulo ,@PathVariable boolean confirmacion, @RequestHeader("X-Softue-JWT") String jwt ){
         try {
             return ResponseEntity.ok(this.docenteServices.confirmarTutoria(confirmacion,titulo,jwt));
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+
+        }
+    }
+    @CheckSession(permitedRol = {"docente"})
+    @GetMapping("/acceptarTutorPlan/{titulo}/{confirmacion}")
+    public  ResponseEntity<?>acceptarTutorPlan(@PathVariable String titulo ,@PathVariable boolean confirmacion, @RequestHeader("X-Softue-JWT") String jwt ){
+        try {
+            return ResponseEntity.ok(this.planNegocioServicesInterface.confirmarTutoria(confirmacion,titulo,jwt));
         }
         catch (Exception e){
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
