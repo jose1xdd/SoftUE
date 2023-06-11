@@ -232,10 +232,10 @@ public class IdeaNegocioServices {
     }
 
 
-    public List<IdeaNegocio> buscarIdeasPorFiltros(String estudianteEmail, String docenteEmail, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
+    public List<IdeaNegocio> buscarIdeasPorFiltros(String tutorCodigo,String codigoEstudiante, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
         if (fechaFin == null ^ fechaInicio == null)
             throw new RuntimeException("Una o las dos fechas del filtro son nulas");
-        List<IdeaNegocio> ideasNegocio = this.ideaNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+        List<IdeaNegocio> ideasNegocio = this.ideaNegocioRepository.findByFilters(tutorCodigo,codigoEstudiante,area,estado,fechaInicio,fechaFin);
         for(IdeaNegocio ideaNegocio : ideasNegocio){
             ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
         }
