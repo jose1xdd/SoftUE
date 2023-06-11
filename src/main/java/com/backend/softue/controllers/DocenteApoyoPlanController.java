@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/albin")
+@RequestMapping(value = "/albin")
 public class DocenteApoyoPlanController {
     @Autowired
     private DocenteApoyoPlanServices docenteApoyoPlanServices;
