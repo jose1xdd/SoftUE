@@ -213,4 +213,30 @@ public class PlanNegocioServices {
         return planesNegocio;
     }
 
+    public Set<PlanNegocio> listarPlanesDocenteApoyo(
+            Integer docenteCodigo,
+            Integer estudianteCodigo,
+            Integer area,
+            String estado){
+        Set<PlanNegocio> planNegocios = this.planNegocioRepository.findByDocenteApoyoFiltros(docenteCodigo, estudianteCodigo, area, estado);
+        for(PlanNegocio planNegocio : planNegocios){
+            planNegocio = this.obtenerPlanNegocio(planNegocio.getTitulo());
+        }
+        return planNegocios;
+    }
+
+    public Set<PlanNegocio> listarPlanesDocenteEvaluador(
+            Integer docenteCodigo,
+            Integer estudianteCodigo,
+            Integer area,
+            String estado,
+            LocalDate fechaInicio,
+            LocalDate fechaFin){
+        Set<PlanNegocio> planNegocios = this.planNegocioRepository.findByEvaluadorFiltros(docenteCodigo, estudianteCodigo, area, estado, fechaInicio, fechaFin);
+        for(PlanNegocio planNegocio : planNegocios){
+            planNegocio = this.obtenerPlanNegocio(planNegocio.getTitulo());
+        }
+        return planNegocios;
+    }
+
 }
