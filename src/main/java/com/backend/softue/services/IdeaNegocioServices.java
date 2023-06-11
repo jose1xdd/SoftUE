@@ -3,13 +3,15 @@ package com.backend.softue.services;
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.IdeaNegocioRepository;
 import com.backend.softue.security.Hashing;
-import com.backend.softue.security.Roles;
 import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
 import com.backend.softue.utils.emailModule.EmailService;
 import jakarta.annotation.PostConstruct;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.time.LocalDate;
 import java.util.*;
 import java.util.HashSet;
@@ -36,9 +38,6 @@ public class IdeaNegocioServices {
 
     @Autowired
     private Hashing encrypt;
-
-    @Autowired
-    private Roles roles;
 
     @Autowired
     private EstadosIdeaPlanNegocio estadosIdeaPlanNegocio;
@@ -234,10 +233,10 @@ public class IdeaNegocioServices {
     }
 
 
-    public List<IdeaNegocio> buscarIdeasPorFiltros(String estudianteEmail, String docenteEmail, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
+    public List<IdeaNegocio> buscarIdeasPorFiltros(String tutorCodigo,String codigoEstudiante, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
         if (fechaFin == null ^ fechaInicio == null)
             throw new RuntimeException("Una o las dos fechas del filtro son nulas");
-        List<IdeaNegocio> ideasNegocio = this.ideaNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+        List<IdeaNegocio> ideasNegocio = this.ideaNegocioRepository.findByFilters(tutorCodigo,codigoEstudiante,area,estado,fechaInicio,fechaFin);
         for(IdeaNegocio ideaNegocio : ideasNegocio){
             ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
         }
@@ -273,4 +272,38 @@ public class IdeaNegocioServices {
         return ideaNegocioRepository.save(ideaNegocio);
     }
 
+    public Set<IdeaNegocio> listarIdeasDocenteApoyo(
+            Integer docenteCodigo,
+            Integer estudianteCodigo,
+            Integer area,
+            String estado){
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByDocenteApoyoFiltros(docenteCodigo, estudianteCodigo, area, estado);
+        for(IdeaNegocio ideaNegocio : ideasNegocios){
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocios;
+    }
+
+    public Set<IdeaNegocio> listarIdeasDocenteEvaluador(
+            Integer docenteCodigo,
+            Integer estudianteCodigo,
+            Integer area,
+            String estado,
+            LocalDate fechaInicio,
+            LocalDate fechaFin){
+        Set<IdeaNegocio> ideasNegocios = this.ideaNegocioRepository.findByEvaluadorFiltros(docenteCodigo, estudianteCodigo, area, estado, fechaInicio, fechaFin);
+        for(IdeaNegocio ideaNegocio : ideasNegocios){
+            ideaNegocio = this.obtenerIdeaNegocio(ideaNegocio.getTitulo());
+        }
+        return ideasNegocios;
+    }
+
+    public List<IdeaNegocio> comprobarIdeaAprobada(String correoEstudiante) {
+        if (correoEstudiante == null)
+            throw new RuntimeException("No se envió un correo con el que comprobar la idea");
+        Estudiante estudiante = this.estudianteServices.obtenerEstudiante(correoEstudiante);
+        List<IdeaNegocio> resultado = this.ideaNegocioRepository.findByLiderAprobada(estudiante.getCodigo());
+        resultado.addAll(this.ideaNegocioRepository.findByIntegranteAprobada(estudiante.getCodigo()));
+        return resultado;
+    }
 }

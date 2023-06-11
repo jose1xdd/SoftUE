@@ -21,6 +21,7 @@ public interface EvaluacionIdeaRepository extends JpaRepository<EvaluacionIdea, 
 
     @Query(value =  "SELECT * " +
             "FROM evaluacion_idea " +
-            "WHERE idea_negocio = :id_idea ", nativeQuery = true)
+            "WHERE idea_negocio = :id_idea " +
+            "ORDER BY fecha_presentacion, id DESC", nativeQuery = true)
     List<EvaluacionIdea> findByIdeaNegocio(@Param("id_idea") Integer idea);
 }

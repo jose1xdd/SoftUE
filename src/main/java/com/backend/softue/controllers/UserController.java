@@ -2,6 +2,7 @@ package com.backend.softue.controllers;
 
 import com.backend.softue.models.FotoUsuario;
 import com.backend.softue.security.Hashing;
+import com.backend.softue.services.PlanNegocioServicesInterface;
 import com.backend.softue.services.UserServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.*;
@@ -26,6 +27,9 @@ public class UserController {
     private UserServices userServices;
     @Autowired
     private ErrorFactory errorFactory;
+
+    @Autowired
+    private PlanNegocioServicesInterface planNegocioServicesInterface;
 
     @Autowired
     private Hashing encryp;
@@ -97,6 +101,30 @@ public class UserController {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
+
+    @CheckSession(permitedRol = {"coordinador", "administrativo", "estudiante", "docente"})
+    @PatchMapping("/reestablecer")
+    public ResponseEntity restablecerContrasenia(@Valid @RequestHeader("X-Softue-JWT") String token, @RequestBody RequestPassword password) {
+        try {
+            this.userServices.restablecerContrasenia(token, password.getPassword());
+            return ResponseEntity.ok(new ResponseConfirmation("Contraseña Restablecida"));
+        } catch (Exception e) {
+
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
+    @PatchMapping("/restablecerOtroUsuario")
+    public ResponseEntity restablecerContraseniaOtroUsuario(@RequestParam String correo, @RequestParam String contrasenia) {
+        try {
+            this.userServices.restablecerContraseniaOtroUsuario(correo, contrasenia);
+            return ResponseEntity.ok(new ResponseConfirmation("Contraseña Restablecida"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
     @CheckSession(permitedRol = {"coordinador", "administrativo"})
     @PostMapping("/eliminarTutor/{idea}")
     public ResponseEntity<?> eliminarTutor(@PathVariable String idea){
@@ -154,6 +182,16 @@ public class UserController {
     public ResponseEntity<?> asignarTutor(@PathVariable String idea , @PathVariable String docente) {
         try {
             this.userServices.solicitarDocente(idea,docente);
+            return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
+    @GetMapping("/asignarPlan/{plan}/{docente}")
+    public ResponseEntity<?> asignarTutorPlan(@PathVariable String plan , @PathVariable String docente) {
+        try {
+            this.planNegocioServicesInterface.asignarTutor(plan,docente);
             return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));

@@ -47,10 +47,10 @@ public class FormatoController {
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @PostMapping()
-    public ResponseEntity<?> crearFormato(@RequestParam String modulo, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)  LocalDate fechaCreacion, @RequestParam MultipartFile documento) {
+    public ResponseEntity<?> crearFormato(@RequestParam String modulo, @RequestParam MultipartFile documento) {
         try {
             String extension = documento.getOriginalFilename().substring(documento.getOriginalFilename().lastIndexOf("."));
-            Formato formato = new Formato(null, modulo, fechaCreacion, documento.getBytes(), extension);
+            Formato formato = new Formato(null, modulo, LocalDate.now(), documento.getBytes(), extension);
             this.formatoServices.guardarFormato(formato);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El formato se guardo correctamente"), HttpStatus.OK);
         }

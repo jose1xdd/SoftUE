@@ -73,4 +73,14 @@ public class EstudianteController {
         }
     }
 
+    @CheckSession(permitedRol = {"docente","coordinador", "administrativo", "estudiante"})
+    @GetMapping("/listarCursos")
+    public ResponseEntity<?> listarCursos() {
+        try {
+            return ResponseEntity.ok(this.estudianteServices.listarCursos());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
 }

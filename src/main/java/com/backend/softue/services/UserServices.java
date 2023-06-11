@@ -1,16 +1,13 @@
 package com.backend.softue.services;
 
 import com.backend.softue.models.*;
-import com.backend.softue.repositories.FotoRepository;
-import com.backend.softue.repositories.ResetTokenRepository;
-import com.backend.softue.repositories.SingInTokenRepository;
-import com.backend.softue.repositories.UserRepository;
-import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
+import com.backend.softue.repositories.*;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.emailModule.EmailService;
 import com.backend.softue.utils.response.LoginResponse;
 import com.backend.softue.utils.response.ResponseToken;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 @Setter
+@Getter
 @Service
 public class UserServices {
 
@@ -40,6 +38,8 @@ public class UserServices {
     private EmailService emailGenericMessages;
     @Autowired
     private UsuarioDeshabilitadoRepository usuarioDeshabilitadoRepository;
+
+    private PlanNegocioServicesInterface planNegocioServicesInterface;
 
     private IdeaNegocioServices ideaNegocioServices;
 
@@ -64,6 +64,10 @@ public class UserServices {
         if (result != null) throw new RuntimeException("User already exists");
         if (!this.validateUserRol(user.getTipoUsuario())) throw new RuntimeException("Use has Invalid Type");
         user.setTipoUsuario(user.getTipoUsuario().toLowerCase());
+        String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&+]).{6,}$";
+        if (!user.getContrasenia().matches(passwordPattern)) {
+            throw new RuntimeException("La contraseña no cumple con los requisitos");
+        }
         user.setContrasenia(encrypt.hash(user.getContrasenia()));
         User userData = this.userRepository.save(user);
     }
@@ -146,13 +150,27 @@ public class UserServices {
         ResetToken resetToken = this.resetTokenRepository.findByToken(token);
         if (resetToken == null) throw new RuntimeException("El ResetToken no existe");
         User user = resetToken.getUsuario_codigo();
+        this.resetPassword(user, password);
+        this.resetTokenRepository.delete(resetToken);
+    }
+
+    public void restablecerContrasenia(String jwt, String password) {
+        User user = this.obtenerUsuario(this.encrypt.getJwt().getKey(jwt));
+        this.resetPassword(user, password);
+    }
+
+    public void restablecerContraseniaOtroUsuario(String correo, String contrasenia) {
+        User user = this.obtenerUsuario(correo);
+        this.resetPassword(user, contrasenia);
+    }
+
+    private void resetPassword(User user, String password) {
         String passwordPattern = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&+]).{6,}$";
         if (!password.matches(passwordPattern)) {
             throw new RuntimeException("La contraseña no cumple con los requisitos");
         }
         user.setContrasenia(this.encrypt.hash(password));
         this.userRepository.save(user);
-        this.resetTokenRepository.delete(resetToken);
     }
 
     public void deleteTutor(String email ){
@@ -193,7 +211,13 @@ public class UserServices {
         this.ideaNegocioServices.asignarTutor(ideaNegocio, docenteEmail);
 
     }
+
+    public void solicitarDocentePlan(String planNegocio,String docenteEmail){
+        this.planNegocioServicesInterface.asignarTutor(planNegocio,docenteEmail);
+    }
     public void borrarTutor(String idea){
         this.ideaNegocioServices.eliminarTutor(idea);
     }
+
+    public boolean tokenExpirado(String jwt) {return this.encrypt.getJwt().isTokenExpired(jwt);}
 }

@@ -6,6 +6,8 @@ import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
 import com.backend.softue.security.Hashing;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
+@Setter
+@Getter
 @Service
 public class DocenteServices {
     @Autowired
@@ -42,7 +45,7 @@ public class DocenteServices {
     this.ideaNegocioServices.setDocenteServices(this);
     }
     public void registrarDocente(Docente docente) {
-        if(this.areaConocimientoServices.existe(docente.getNombre()))
+        if(!this.areaConocimientoServices.existe(docente.getArea()))
             throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         if(!docente.getTipoUsuario().equals("docente")) throw new RuntimeException("No se puede registrar este usuario, no es un docente");
         usuarioServices.registerUser((User) docente);
@@ -50,7 +53,7 @@ public class DocenteServices {
     }
 
     public void actualizarDocente(Docente docente, String jwt) {
-        if(!this.areaConocimientoServices.existe(docente.getNombre()))
+        if(!this.areaConocimientoServices.existe(docente.getArea()))
             throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         if(!docente.getTipoUsuario().equals("docente")) throw new RuntimeException("No se puede actualizar este usuario, no se puede cambiar de rol");
         usuarioServices.actualizarUsuario((User) docente, jwt);
@@ -93,9 +96,7 @@ public class DocenteServices {
     }
 
     public  List<Docente> listarDocentes() {
-        List<Docente> docentes = this.docenteRepository.findAll();
-        if(docentes.isEmpty()) throw new RuntimeException("No hay Docentes registrados");
-        return docentes;
+        return this.docenteRepository.findAll();
     }
 
     public List<Docente> listarDocentesArea(String area){
@@ -116,6 +117,7 @@ public class DocenteServices {
         }
         return "El docente rechazo";
     }
+
     private Boolean docentePertenece(Set<DocenteApoyoIdea> docentes ,Docente docente){
         Iterator<DocenteApoyoIdea> it = docentes.iterator();
         while (it.hasNext()){

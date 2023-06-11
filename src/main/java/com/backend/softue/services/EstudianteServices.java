@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Service
@@ -26,12 +27,8 @@ public class EstudianteServices {
     @Autowired
     private SingInTokenRepository singInTokenRepository;
 
-    @Autowired
-    private GradosPermitidos gradosPermitidos;
-
     public void registrarEstudiante(Estudiante estudiante) {
-
-        if (!gradosPermitidos.getGrados().contains(estudiante.getCurso()))
+        if (!gradoPermitido(estudiante.getCurso()))
             throw new RuntimeException("No se puede registrar este usuario, ya que el curso diligenciado no es valido");
         if (!estudiante.getTipoUsuario().equals("estudiante"))
             throw new RuntimeException("No se puede registrar este usuario, no es un estudiante");
@@ -40,7 +37,7 @@ public class EstudianteServices {
     }
 
     public void actualizarEstudiante(Estudiante estudiante, String jwt) {
-        if (!gradosPermitidos.getGrados().contains(estudiante.getCurso()))
+        if (!gradoPermitido(estudiante.getCurso()))
             throw new RuntimeException("No se puede actualizar este usuario, ya que el curso diligenciado no es valido");
         if (!estudiante.getTipoUsuario().equals("estudiante"))
             throw new RuntimeException("No se puede actualizar este usuario, no se puede cambiar de rol");
@@ -56,6 +53,18 @@ public class EstudianteServices {
             Estudiante result = this.estudianteRepository.findByCorreo(email);
             if (result == null) throw new RuntimeException("El estudiante no existe");
             if (result.getFoto_usuario() != null) result.setFotoUsuarioId(result.getFoto_usuario().getId());
+            return result;
+        }
+        throw new RuntimeException("No se envió información con la que buscar al usuario");
+    }
+
+    public Estudiante obtenerEstudiante(Integer codigo) {
+        if (codigo != null) {
+            Estudiante result = this.estudianteRepository.findById(codigo).get();
+            if (result == null)
+                throw new RuntimeException("El estudiante no existe");
+            if (result.getFoto_usuario() != null)
+                result.setFotoUsuarioId(result.getFoto_usuario().getId());
             return result;
         }
         throw new RuntimeException("No se envió información con la que buscar al usuario");
@@ -77,10 +86,37 @@ public class EstudianteServices {
     }
 
     public List<Estudiante> listarEstudiantesCurso(String curso) {
-        if (!gradosPermitidos.getGrados().contains(curso))
+        if (!gradoPermitido(curso))
             throw new RuntimeException("No se puede registrar este usuario, ya que el curso diligenciado no es valido");
         return this.estudianteRepository.findByCurso(curso);
 
     }
 
+    public Set<String> listarCursos() {
+        return this.estudianteRepository.findCursos();
+    }
+
+
+    private boolean gradoPermitido(String grado) {
+        boolean ok = true;
+        int cnt = 0;
+        String [] arr = grado.split("-");
+        for(int i = 0; i < arr.length && ok; i++) {
+            ok = isNumeric(arr[i]);
+            cnt++;
+        }
+        if(ok && cnt == 2)
+            return true;
+        return false;
+    }
+
+    private boolean isNumeric(String numero) {
+        try {
+            Integer num = Integer.parseInt(numero);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
 }
