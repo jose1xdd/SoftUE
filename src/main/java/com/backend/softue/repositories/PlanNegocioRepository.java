@@ -17,24 +17,23 @@ import java.util.Set;
 public interface PlanNegocioRepository extends JpaRepository<PlanNegocio, Integer> {
     Optional<PlanNegocio> findByTitulo(String titulo);
 
-    @Query(value = "SELECT DISTINCT p.* FROM plan_negocio p " +
-            "LEFT JOIN area_conocimiento ac ON p.area_enfoque = ac.id " +
-            "LEFT JOIN idea_planteada ip ON p.id = ip.plan_negocio_id " +
-            "LEFT JOIN evaluacion_plan ep ON p.id = ep.plan_negocio " +
-            "WHERE ((:estudianteCodigo IS NULL) OR (p.codigo_estudiante_lider = :estudianteCodigo OR ip.estudiante_codigo = :estudianteCodigo)) " +
-            "AND (:docenteCodigo IS NULL OR p.tutor_codigo = :docenteCodigo) " +
+    @Query(value = "SELECT DISTINCT i.* FROM idea_negocio i " +
+            "LEFT JOIN area_conocimiento ac ON i.area_enfoque = ac.id " +
+            "LEFT JOIN plan_presentado pp ON i.id = pp.plan_negocio_id " +
+            "LEFT JOIN evaluacion_idea ei ON i.id = ei.idea_negocio " +
+            "WHERE ((:estudianteCodigo IS NULL) OR (i.codigo_estudiante_lider = :estudianteCodigo OR pp.estudiante_codigo = :estudianteCodigo)) " +
+            "AND (:docenteCodigo IS NULL OR i.tutor_codigo = :docenteCodigo) " +
             "AND (:areaConocimientoNombre IS NULL OR ac.nombre = :areaConocimientoNombre) " +
-            "AND (:estado IS NULL OR p.estado = :estado) " +
-            "AND (:fechaInicio IS NULL OR :fechaFin IS NULL OR (ep.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) " ,
+            "AND (:estado IS NULL OR i.estado = :estado) " +
+            "AND ((:fechaInicio IS NULL AND :fechaFin IS NULL) OR (ei.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) ",
             nativeQuery = true)
     List<PlanNegocio> findByFilters(
-            @Param("estudianteCodigo") String estudianteCodigo,
             @Param("docenteCodigo") String docenteCodigo,
+            @Param("estudianteCodigo") String estudianteCodigo,
             @Param("areaConocimientoNombre") String areaConocimientoNombre,
             @Param("estado") String estado,
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
-
     @Query(value = "SELECT DISTINCT plan.* FROM plan_negocio plan " +
             "JOIN docente_apoyo_plan dap ON (idea.id = dap.plan_negocio_id)" +
             "JOIN plan_presentado pp ON (idea.id = pp.plan_negocio_id)" +
