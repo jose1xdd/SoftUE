@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/timbers")
+@RequestMapping(value = "/docenteApoyoIdea")
 public class DocenteApoyoIdeaController {
 
     @Autowired
@@ -19,6 +19,7 @@ public class DocenteApoyoIdeaController {
     public ResponseEntity<?> test() {
         return ResponseEntity.ok("pingpong");
     }
+
     @CheckSession(permitedRol = {"docente"})
     @PostMapping("/a")
     public ResponseEntity<?> agregarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
