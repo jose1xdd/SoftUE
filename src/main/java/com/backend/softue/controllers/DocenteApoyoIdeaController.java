@@ -9,10 +9,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/docenteApoyoIdea")
+@RequestMapping("/docenteApoyoIdea")
 public class DocenteApoyoIdeaController {
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-        return ResponseEntity.ok("pingpong");
+
+    @Autowired
+    private DocenteApoyoIdeaServices docenteApoyoIdeaServices;
+
+    @CheckSession(permitedRol = {"docente"})
+    @PostMapping()
+    public ResponseEntity<?> agregarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
+        try {
+            this.docenteApoyoIdeaServices.agregarDocenteApoyo(jwt, tituloIdea, correoDocente);
+            return ResponseEntity.ok(new ResponseConfirmation("El docente de apoyo se agrego correctamete a la idea de negocio"));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
+    @CheckSession(permitedRol = {"docente"})
+    @DeleteMapping()
+    public ResponseEntity<?> eliminarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
+        try {
+            this.docenteApoyoIdeaServices.eliminarDocenteApoyo(jwt, tituloIdea, correoDocente);
+            return ResponseEntity.ok(new ResponseConfirmation("El docente de apoyo se elimino correctamete de la idea de negocio"));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
     }
 }
