@@ -15,6 +15,10 @@ public class DocenteApoyoIdeaController {
     @Autowired
     private DocenteApoyoIdeaServices docenteApoyoIdeaServices;
 
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        return ResponseEntity.ok("pingpong");
+    }
     @CheckSession(permitedRol = {"docente"})
     @PostMapping("/")
     public ResponseEntity<?> agregarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
