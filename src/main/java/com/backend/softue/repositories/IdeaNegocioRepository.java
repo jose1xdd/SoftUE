@@ -17,15 +17,15 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
 
     List<IdeaNegocio> findByEstudianteLider(Estudiante estudianteLider);
 
-    @Query(value = "SELECT DISTINCT i.* FROM idea_negocio i " +
-            "LEFT JOIN area_conocimiento ac ON i.area_enfoque = ac.id " +
-            "LEFT JOIN plan_presentado pp ON i.id = pp.plan_negocio_id " +
-            "LEFT JOIN evaluacion_plan ep ON i.id = ep.plan_negocio " +
-            "WHERE ((:estudianteCodigo IS NULL) OR (i.codigo_estudiante_lider = :estudianteCodigo OR pp.estudiante_codigo = :estudianteCodigo)) " +
-            "AND (:docenteCodigo IS NULL OR i.tutor_codigo = :docenteCodigo) " +
+    @Query(value = "SELECT DISTINCT pn.* FROM plan_negocio pn " +
+            "LEFT JOIN area_conocimiento ac ON pn.area_enfoque = ac.id " +
+            "LEFT JOIN plan_presentado pp ON pn.id = pp.plan_negocio_id " +
+            "LEFT JOIN evaluacion_idea ei ON pn.id = ei.idea_negocio " +
+            "WHERE ((:estudianteCodigo IS NULL) OR (pn.codigo_estudiante_lider = :estudianteCodigo OR pp.estudiante_codigo = :estudianteCodigo)) " +
+            "AND (:docenteCodigo IS NULL OR pn.tutor_codigo = :docenteCodigo) " +
             "AND (:areaConocimientoNombre IS NULL OR ac.nombre = :areaConocimientoNombre) " +
-            "AND (:estado IS NULL OR i.estado = :estado) " +
-            "AND ((:fechaInicio IS NULL AND :fechaFin IS NULL) OR (ep.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) ",
+            "AND (:estado IS NULL OR pn.estado = :estado) " +
+            "AND ((:fechaInicio IS NULL AND :fechaFin IS NULL) OR (ei.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) ",
             nativeQuery = true)
     public List<IdeaNegocio> findByFilters(
             @Param("docenteCodigo") String docenteCodigo,
