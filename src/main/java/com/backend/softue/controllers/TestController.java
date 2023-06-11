@@ -6,10 +6,7 @@ import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
@@ -26,6 +23,17 @@ public class TestController {
         try {
             this.testServices.crear(codigoEstudiante, respuestasId, LocalDate.now());
             return ResponseEntity.ok(new ResponseConfirmation("Test registrao correctamente"));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping()
+    public  ResponseEntity<?> listar() {
+        try {
+            return ResponseEntity.ok(this.testServices.listar());
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
