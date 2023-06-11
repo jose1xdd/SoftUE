@@ -203,10 +203,10 @@ public class PlanNegocioServices {
         return planes;
     }
 
-    public List<PlanNegocio> buscarPlanPorFiltros(String estudianteEmail, String docenteEmail, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
+    public List<PlanNegocio> buscarPlanPorFiltros(String tutorCodigo,String codigoEstudiante, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
         if (fechaFin == null ^ fechaInicio == null)
             throw new RuntimeException("Una o las dos fechas del filtro son nulas");
-        List<PlanNegocio> planesNegocio = this.planNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+        List<PlanNegocio> planesNegocio = this.planNegocioRepository.findByFilters(tutorCodigo,codigoEstudiante,area,estado,fechaInicio,fechaFin);
         for(PlanNegocio planNegocio : planesNegocio) {
             planNegocio = this.obtenerPlanNegocio(planNegocio.getTitulo());
         }

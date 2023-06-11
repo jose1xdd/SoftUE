@@ -29,8 +29,8 @@ public interface PlanNegocioRepository extends JpaRepository<PlanNegocio, Intege
             "AND (ep.fecha_corte = (SELECT MAX(fecha_corte) FROM evaluacion_plan WHERE plan_negocio = p.id))",
             nativeQuery = true)
     List<PlanNegocio> findByFilters(
-            @Param("estudianteCodigo") Integer estudianteCodigo,
-            @Param("docenteCodigo") Integer docenteCodigo,
+            @Param("estudianteCodigo") String estudianteCodigo,
+            @Param("docenteCodigo") String docenteCodigo,
             @Param("areaConocimientoNombre") String areaConocimientoNombre,
             @Param("estado") String estado,
             @Param("fechaInicio") LocalDate fechaInicio,
