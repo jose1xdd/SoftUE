@@ -20,7 +20,7 @@ public class DocenteApoyoIdeaController {
         return ResponseEntity.ok("pingpong");
     }
     @CheckSession(permitedRol = {"docente"})
-    @PostMapping("/")
+    @PostMapping("/a")
     public ResponseEntity<?> agregarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
         try {
             this.docenteApoyoIdeaServices.agregarDocenteApoyo(jwt, tituloIdea, correoDocente);
@@ -32,7 +32,7 @@ public class DocenteApoyoIdeaController {
     }
 
     @CheckSession(permitedRol = {"docente"})
-    @DeleteMapping("/")
+    @DeleteMapping("/b")
     public ResponseEntity<?> eliminarDocenteApoyo(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String tituloIdea, @RequestParam String correoDocente) {
         try {
             this.docenteApoyoIdeaServices.eliminarDocenteApoyo(jwt, tituloIdea, correoDocente);
