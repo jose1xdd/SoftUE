@@ -6,6 +6,7 @@ import com.backend.softue.models.*;
 import com.backend.softue.repositories.PlanNegocioRepository;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.utils.beansAuxiliares.EstadosIdeaPlanNegocio;
+import com.backend.softue.utils.emailModule.EmailService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,10 @@ public class PlanNegocioServices {
 
     @Autowired
     private PlanPresentadoServices planPresentadoServices;
-
+    @Autowired
+    private DocenteServices docenteServices;
+    @Autowired
+    private EmailService emailService;
     @PostConstruct
     public void init() {
         this.documentoPlanServices.setPlanNegocioServices(this);
@@ -60,7 +64,7 @@ public class PlanNegocioServices {
         if (!ideaNegocio.getEstado().equals("aprobada"))
             throw new RuntimeException("No se puede un plan a partir de una idea de negocio no aprobada");
         Optional<PlanNegocio> result = this.planNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
-        if(result != null)
+        if(!result.isPresent())
             throw new RuntimeException("No se puede crear el plan de negocio debido a que ya existe otro con el mismo título");
         PlanNegocio planNegocio = new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "formulado", ideaNegocio.getArea(), null, ideaNegocio.getTutor(), null, LocalDate.now(), null, ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null);
         this.planNegocioRepository.save(planNegocio);
@@ -199,10 +203,10 @@ public class PlanNegocioServices {
         return planes;
     }
 
-    public List<PlanNegocio> buscarPlanPorFiltros(String estudianteEmail, String docenteEmail, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
+    public List<PlanNegocio> buscarPlanPorFiltros(String tutorCodigo,String codigoEstudiante, String area, String estado, LocalDate fechaInicio, LocalDate fechaFin) {
         if (fechaFin == null ^ fechaInicio == null)
             throw new RuntimeException("Una o las dos fechas del filtro son nulas");
-        List<PlanNegocio> planesNegocio = this.planNegocioRepository.findByFilters(docenteEmail, estudianteEmail, area, estado, fechaInicio, fechaFin);
+        List<PlanNegocio> planesNegocio = this.planNegocioRepository.findByFilters(tutorCodigo,codigoEstudiante,area,estado,fechaInicio,fechaFin);
         for(PlanNegocio planNegocio : planesNegocio) {
             planNegocio = this.obtenerPlanNegocio(planNegocio.getTitulo());
         }

@@ -17,34 +17,30 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
 
     List<IdeaNegocio> findByEstudianteLider(Estudiante estudianteLider);
 
-    @Query(value = "SELECT idea.* FROM idea_negocio idea " +
-            "LEFT JOIN docente d ON idea.tutor_codigo = d.codigo " +
-            "LEFT JOIN usuario u_docente ON d.codigo = u_docente.codigo " +
-            "LEFT JOIN estudiante e ON idea.codigo_estudiante_lider = e.codigo " +
-            "LEFT JOIN usuario u_estudiante ON e.codigo = u_estudiante.codigo " +
-            "LEFT JOIN area_conocimiento a ON a.id = idea.area_enfoque " +
-            "WHERE " +
-            "(:area IS NULL OR a.nombre = :area) " +
-            "AND (u_docente.correo = :docenteEmail OR :docenteEmail IS NULL) " +
-            "AND (:estudianteEmail IS NULL OR u_estudiante.correo = :estudianteEmail) " +
-            "AND (:estado IS NULL OR idea.estado = :estado) " +
-            "AND (:fechaInicio IS NULL OR idea.fecha_creacion >= :fechaInicio) " +
-            "AND (:fechaFin IS NULL OR idea.fecha_creacion <= :fechaFin)", nativeQuery = true)
-    List<IdeaNegocio> findByFilters(
-            @Param("docenteEmail") String docenteEmail,
-            @Param("estudianteEmail") String estudianteEmail,
-            @Param("area") String area,
+    @Query(value = "SELECT DISTINCT i.* FROM idea_negocio i " +
+            "LEFT JOIN area_conocimiento ac ON i.area_enfoque = ac.id " +
+            "LEFT JOIN idea_planteada ip ON i.id = ip.idea_negocio_id " +
+            "LEFT JOIN evaluacion_idea ei ON i.id = ei.idea_negocio " +
+            "WHERE ((:estudianteCodigo IS NULL) OR (i.codigo_estudiante_lider = :estudianteCodigo OR ip.estudiante_codigo = :estudianteCodigo)) " +
+            "AND (:docenteCodigo IS NULL OR i.tutor_codigo = :docenteCodigo) " +
+            "AND (:areaConocimientoNombre IS NULL OR ac.nombre = :areaConocimientoNombre) " +
+            "AND (:estado IS NULL OR i.estado = :estado) " +
+            "AND ((:fechaInicio IS NULL AND :fechaFin IS NULL) OR (ei.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) ",
+            nativeQuery = true)
+    public List<IdeaNegocio> findByFilters(
+            @Param("docenteCodigo") String docenteCodigo,
+            @Param("estudianteCodigo") String estudianteCodigo,
+            @Param("areaConocimientoNombre") String areaConocimientoNombre,
             @Param("estado") String estado,
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
-
     @Query(value = "SELECT DISTINCT idea.* FROM idea_negocio idea " +
             "JOIN docente_apoyo_idea dai ON (idea.id = dai.idea_negocio_id)" +
             "JOIN idea_planteada ip ON (idea.id = ip.idea_negocio_id)" +
             "WHERE " +
-            "(dai.docente_codigo = :docente_codigo OR :docente_codigo IS NULL) AND" +
-            "(ip.estudiante_codigo = :estudiante_codigo OR idea.codigo_estudiante_lider = :estudiante_codigo OR  :estudiante_codigo IS NULL) AND" +
-            "(idea.area_enfoque = :area OR :area IS NULL) AND" +
+            "(:docente_codigo IS NULL OR dai.docente_codigo = :docente_codigo) AND " +
+            "(:estudiante_codigo IS NULL OR idea.codigo_estudiante_lider = :estudiante_codigo) AND " +
+            "(idea.area_enfoque = :area OR :area IS NULL) AND " +
             "(idea.estado = :estado OR :estado IS NULL)"
             , nativeQuery = true)
     Set<IdeaNegocio> findByDocenteApoyoFiltros(

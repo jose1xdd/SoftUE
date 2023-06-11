@@ -29,11 +29,11 @@ public class PreguntaServices {
         this.respuestaServices.setPreguntaServices(this);
     }
 
-    public void crear(String enunciado, String nombreComponente) {
+    public Pregunta crear(String enunciado, String nombreComponente) {
         if (enunciado == null || enunciado.equals(""))
             throw new RuntimeException("El enunciado no puede estar vacío");
         ComponenteCompetencias componenteCompetencias = this.componenteCompetenciasServices.obtener(nombreComponente);
-        this.preguntaRepository.save(new Pregunta(null, enunciado, componenteCompetencias, null, null));
+        return this.preguntaRepository.save(new Pregunta(null, enunciado, componenteCompetencias, null, null));
     }
 
     public List<Pregunta> listar() {

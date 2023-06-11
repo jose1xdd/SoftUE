@@ -2,6 +2,7 @@ package com.backend.softue.controllers;
 
 import com.backend.softue.models.FotoUsuario;
 import com.backend.softue.security.Hashing;
+import com.backend.softue.services.PlanNegocioServicesInterface;
 import com.backend.softue.services.UserServices;
 import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.*;
@@ -26,6 +27,9 @@ public class UserController {
     private UserServices userServices;
     @Autowired
     private ErrorFactory errorFactory;
+
+    @Autowired
+    private PlanNegocioServicesInterface planNegocioServicesInterface;
 
     @Autowired
     private Hashing encryp;
@@ -178,6 +182,16 @@ public class UserController {
     public ResponseEntity<?> asignarTutor(@PathVariable String idea , @PathVariable String docente) {
         try {
             this.userServices.solicitarDocente(idea,docente);
+            return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+    @CheckSession(permitedRol = {"coordinador", "administrativo"})
+    @GetMapping("/asignarPlan/{plan}/{docente}")
+    public ResponseEntity<?> asignarTutorPlan(@PathVariable String plan , @PathVariable String docente) {
+        try {
+            this.planNegocioServicesInterface.asignarTutor(plan,docente);
             return ResponseEntity.ok(new ResponseConfirmation("Correo Enviado"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
