@@ -23,14 +23,12 @@ public class PreguntaController {
     @PostMapping()
     public ResponseEntity<?> crear(@RequestParam String enunciado, @RequestParam String nombreComponente) {
         try {
-            this.preguntaServices.crear(enunciado, nombreComponente);
-            return ResponseEntity.ok(new ResponseConfirmation("Pregunta registrada correctamente"));
+            return ResponseEntity.ok(this.preguntaServices.crear(enunciado, nombreComponente));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
-
 
     @CheckSession(permitedRol = {"coordinador","estudiante"})
     @GetMapping()

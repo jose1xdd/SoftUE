@@ -1,16 +1,13 @@
 package com.backend.softue.services;
 
 import com.backend.softue.models.*;
-import com.backend.softue.repositories.FotoRepository;
-import com.backend.softue.repositories.ResetTokenRepository;
-import com.backend.softue.repositories.SingInTokenRepository;
-import com.backend.softue.repositories.UserRepository;
-import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
+import com.backend.softue.repositories.*;
 import com.backend.softue.security.Hashing;
 import com.backend.softue.security.Roles;
 import com.backend.softue.utils.emailModule.EmailService;
 import com.backend.softue.utils.response.LoginResponse;
 import com.backend.softue.utils.response.ResponseToken;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 @Setter
+@Getter
 @Service
 public class UserServices {
 
@@ -39,6 +37,8 @@ public class UserServices {
     private EmailService emailGenericMessages;
     @Autowired
     private UsuarioDeshabilitadoRepository usuarioDeshabilitadoRepository;
+
+    private PlanNegocioServicesInterface planNegocioServicesInterface;
 
     private IdeaNegocioServices ideaNegocioServices;
 
@@ -209,6 +209,10 @@ public class UserServices {
     public void solicitarDocente(String ideaNegocio, String docenteEmail) {
         this.ideaNegocioServices.asignarTutor(ideaNegocio, docenteEmail);
 
+    }
+
+    public void solicitarDocentePlan(String planNegocio,String docenteEmail){
+        this.planNegocioServicesInterface.asignarTutor(planNegocio,docenteEmail);
     }
 
     public void borrarTutor(String idea){
