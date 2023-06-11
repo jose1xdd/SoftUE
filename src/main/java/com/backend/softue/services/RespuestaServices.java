@@ -72,13 +72,13 @@ public class RespuestaServices {
         if (id == null)
             throw new RuntimeException("No se pueden obtener las respuestas de un id null");
         Pregunta pregunta = this.preguntaServices.obtener(id);
-        if (pregunta == null)
+        if (pregunta == null || pregunta.getEliminada())
             throw new RuntimeException("La pregunta de las que se desea obtener las respuestas no existe");
         return this.respuestaRepository.findByPreguntaId(pregunta);
     }
 
     public List<Respuesta> obtenerRespuestas(Pregunta pregunta) {
-        if (pregunta == null)
+        if (pregunta == null || pregunta.getEliminada())
             throw new RuntimeException("No se pueden obtener las respuestas de un null");
         return this.respuestaRepository.findByPreguntaId(pregunta);
     }
