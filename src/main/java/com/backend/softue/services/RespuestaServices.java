@@ -24,6 +24,8 @@ public class RespuestaServices {
             throw new RuntimeException("El contenido no puede estar vacío");
         if (valor == null)
             throw new RuntimeException("El valor de la respuesta no puede ser nulo");
+        if (!(0 <= valor && valor <= 100))
+            throw new RuntimeException("El valor debe estar entre 0 y 100");
         Pregunta pregunta = this.preguntaServices.obtener(preguntaId);
         this.respuestaRepository.save(new Respuesta(null, contenido, valor, pregunta));
     }
@@ -55,6 +57,15 @@ public class RespuestaServices {
             respuesta.setPreguntaId(pregunta);
         }
         this.respuestaRepository.save(respuesta);
+    }
+
+    public Respuesta obtener(Integer id) {
+        if (id == null)
+            throw new RuntimeException("No se puede obtener una respuesta sin un ID");
+        Respuesta respuesta = this.respuestaRepository.findById(id).get();
+        if (respuesta == null)
+            throw new RuntimeException("No existe una respuesta con ese ID");
+        return respuesta;
     }
 
     public List<Respuesta> obtenerRespuestas(Integer id) {

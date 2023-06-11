@@ -58,6 +58,18 @@ public class EstudianteServices {
         throw new RuntimeException("No se envió información con la que buscar al usuario");
     }
 
+    public Estudiante obtenerEstudiante(Integer codigo) {
+        if (codigo != null) {
+            Estudiante result = this.estudianteRepository.findById(codigo).get();
+            if (result == null)
+                throw new RuntimeException("El estudiante no existe");
+            if (result.getFoto_usuario() != null)
+                result.setFotoUsuarioId(result.getFoto_usuario().getId());
+            return result;
+        }
+        throw new RuntimeException("No se envió información con la que buscar al usuario");
+    }
+
     public void deshabilitarEstudiante(String email) {
         if (email != null) {
             Estudiante result = this.estudianteRepository.findByCorreo(email);
