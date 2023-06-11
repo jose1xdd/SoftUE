@@ -25,8 +25,7 @@ public interface PlanNegocioRepository extends JpaRepository<PlanNegocio, Intege
             "AND (:docenteCodigo IS NULL OR p.tutor_codigo = :docenteCodigo) " +
             "AND (:areaConocimientoNombre IS NULL OR ac.nombre = :areaConocimientoNombre) " +
             "AND (:estado IS NULL OR p.estado = :estado) " +
-            "AND (:fechaInicio IS NULL OR :fechaFin IS NULL OR (ep.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) " +
-            "AND (ep.fecha_corte = (SELECT MAX(fecha_corte) FROM evaluacion_plan WHERE plan_negocio = p.id))",
+            "AND (:fechaInicio IS NULL OR :fechaFin IS NULL OR (ep.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) " ,
             nativeQuery = true)
     List<PlanNegocio> findByFilters(
             @Param("estudianteCodigo") String estudianteCodigo,

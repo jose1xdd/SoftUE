@@ -25,8 +25,7 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             "AND (:docenteCodigo IS NULL OR i.tutor_codigo = :docenteCodigo) " +
             "AND (:areaConocimientoNombre IS NULL OR ac.nombre = :areaConocimientoNombre) " +
             "AND (:estado IS NULL OR i.estado = :estado) " +
-            "AND (:fechaInicio IS NULL OR :fechaFin IS NULL OR (ei.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) " +
-            "AND (ei.fecha_corte = (SELECT MAX(fecha_corte) FROM evaluacion_idea WHERE idea_negocio = i.id))",
+            "AND ((:fechaInicio IS NULL AND :fechaFin IS NULL) OR (ei.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) ",
             nativeQuery = true)
     public List<IdeaNegocio> findByFilters(
             @Param("docenteCodigo") String docenteCodigo,
