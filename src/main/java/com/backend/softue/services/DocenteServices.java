@@ -41,7 +41,7 @@ public class DocenteServices {
     this.ideaNegocioServices.setDocenteServices(this);
     }
     public void registrarDocente(Docente docente) {
-        if(this.areaConocimientoServices.existe(docente.getNombre()))
+        if(!this.areaConocimientoServices.existe(docente.getArea()))
             throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         if(!docente.getTipoUsuario().equals("docente")) throw new RuntimeException("No se puede registrar este usuario, no es un docente");
         usuarioServices.registerUser((User) docente);
@@ -49,7 +49,7 @@ public class DocenteServices {
     }
 
     public void actualizarDocente(Docente docente, String jwt) {
-        if(!this.areaConocimientoServices.existe(docente.getNombre()))
+        if(!this.areaConocimientoServices.existe(docente.getArea()))
             throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
         if(!docente.getTipoUsuario().equals("docente")) throw new RuntimeException("No se puede actualizar este usuario, no se puede cambiar de rol");
         usuarioServices.actualizarUsuario((User) docente, jwt);

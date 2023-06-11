@@ -59,6 +59,9 @@ public class PlanNegocioServices {
             throw new RuntimeException("No existe una idea de negocio con ese titulo");
         if (!ideaNegocio.getEstado().equals("aprobada"))
             throw new RuntimeException("No se puede un plan a partir de una idea de negocio no aprobada");
+        Optional<PlanNegocio> result = this.planNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
+        if(result != null)
+            throw new RuntimeException("No se puede crear el plan de negocio debido a que ya existe otro con el mismo título");
         PlanNegocio planNegocio = new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "formulado", ideaNegocio.getArea(), null, ideaNegocio.getTutor(), null, LocalDate.now(), null, ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null);
         this.planNegocioRepository.save(planNegocio);
 
