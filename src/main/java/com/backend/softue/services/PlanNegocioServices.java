@@ -115,7 +115,7 @@ public class PlanNegocioServices {
             String docentesApoyoInfo[][] = new String[2][planNegocio.getDocentesApoyo().size()];
             for (DocenteApoyoPlan docenteApoyoPlan : planNegocio.getDocentesApoyo()) {
                 docentesApoyoInfo[0][indice] = docenteApoyoPlan.getDocente().getCorreo();
-                docentesApoyoInfo[1][indice] = docenteApoyoPlan.getDocente().getNombre() + docenteApoyoPlan.getDocente().getApellido();
+                docentesApoyoInfo[1][indice] = docenteApoyoPlan.getDocente().getNombre() + " " + docenteApoyoPlan.getDocente().getApellido();
                 indice++;
             }
             planNegocio.setDocentesApoyoInfo(docentesApoyoInfo);
