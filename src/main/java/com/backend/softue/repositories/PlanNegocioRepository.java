@@ -17,23 +17,21 @@ import java.util.Set;
 public interface PlanNegocioRepository extends JpaRepository<PlanNegocio, Integer> {
     Optional<PlanNegocio> findByTitulo(String titulo);
 
-    @Query(value = "SELECT plan.* FROM plan_negocio plan " +
-            "LEFT JOIN docente d ON plan.tutor_codigo = d.codigo " +
-            "LEFT JOIN usuario u_docente ON d.codigo = u_docente.codigo " +
-            "LEFT JOIN estudiante e ON plan.codigo_estudiante_lider = e.codigo " +
-            "LEFT JOIN usuario u_estudiante ON e.codigo = u_estudiante.codigo " +
-            "LEFT JOIN area_conocimiento a ON a.id = plan.area_enfoque " +
-            "WHERE " +
-            "(:area IS NULL OR a.nombre = :area) " +
-            "AND (u_docente.correo = :docenteEmail OR :docenteEmail IS NULL) " +
-            "AND (:estudianteEmail IS NULL OR u_estudiante.correo = :estudianteEmail) " +
-            "AND (:estado IS NULL OR plan.estado = :estado) " +
-            "AND (:fechaInicio IS NULL OR plan.fecha_creacion >= :fechaInicio) " +
-            "AND (:fechaFin IS NULL OR plan.fecha_creacion <= :fechaFin)", nativeQuery = true)
+    @Query(value = "SELECT DISTINCT p.* FROM plan_negocio p " +
+            "LEFT JOIN area_conocimiento ac ON p.area_enfoque = ac.id " +
+            "LEFT JOIN idea_planteada ip ON p.id = ip.plan_negocio_id " +
+            "LEFT JOIN evaluacion_plan ep ON p.id = ep.plan_negocio " +
+            "WHERE ((:estudianteCodigo IS NULL) OR (p.codigo_estudiante_lider = :estudianteCodigo OR ip.estudiante_codigo = :estudianteCodigo)) " +
+            "AND (:docenteCodigo IS NULL OR p.tutor_codigo = :docenteCodigo) " +
+            "AND (:areaConocimientoNombre IS NULL OR ac.nombre = :areaConocimientoNombre) " +
+            "AND (:estado IS NULL OR p.estado = :estado) " +
+            "AND (:fechaInicio IS NULL OR :fechaFin IS NULL OR (ep.fecha_corte BETWEEN :fechaInicio AND :fechaFin)) " +
+            "AND (ep.fecha_corte = (SELECT MAX(fecha_corte) FROM evaluacion_plan WHERE plan_negocio = p.id))",
+            nativeQuery = true)
     List<PlanNegocio> findByFilters(
-            @Param("docenteEmail") String docenteEmail,
-            @Param("estudianteEmail") String estudianteEmail,
-            @Param("area") String area,
+            @Param("estudianteCodigo") Integer estudianteCodigo,
+            @Param("docenteCodigo") Integer docenteCodigo,
+            @Param("areaConocimientoNombre") String areaConocimientoNombre,
             @Param("estado") String estado,
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
