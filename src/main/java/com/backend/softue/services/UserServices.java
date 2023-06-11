@@ -214,4 +214,6 @@ public class UserServices {
     public void borrarTutor(String idea){
         this.ideaNegocioServices.eliminarTutor(idea);
     }
+
+    public boolean tokenExpirado(String jwt) {return this.encrypt.getJwt().isTokenExpired(jwt);}
 }
