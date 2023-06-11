@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping(value = "/timbers")
+@RequestMapping(value = "/ideaPlanteada")
 public class IdeaPlanteadaController {
 
     @Autowired

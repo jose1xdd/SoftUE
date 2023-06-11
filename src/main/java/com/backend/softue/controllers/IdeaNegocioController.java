@@ -18,7 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/albin")
+@RequestMapping(value = "/ideaNegocio")
 public class IdeaNegocioController {
 
     @Autowired
@@ -124,7 +124,7 @@ public class IdeaNegocioController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping("/")
+    @GetMapping("/listar")
     public ResponseEntity<?> listar() {
         try {
             return ResponseEntity.ok(this.ideaNegocioServices.listar());
