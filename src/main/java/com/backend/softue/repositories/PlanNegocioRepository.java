@@ -39,11 +39,11 @@ public interface PlanNegocioRepository extends JpaRepository<PlanNegocio, Intege
             @Param("fechaFin") LocalDate fechaFin);
 
     @Query(value = "SELECT DISTINCT plan.* FROM plan_negocio plan " +
-            "JOIN docente_apoyo_plan dap ON (idea.id = dap.plan_negocio_id)" +
-            "JOIN plan_presentado pp ON (idea.id = pp.plan_negocio_id)" +
+            "JOIN docente_apoyo_plan dap ON (plan.id = dap.plan_negocio_id)" +
+            "JOIN plan_presentado pp ON (plan.id = pp.plan_negocio_id)" +
             "WHERE " +
             "(dap.docente_codigo = :docente_codigo OR :docente_codigo IS NULL) AND" +
-            "(pp.estudiante_codigo = :estudiante_codigo OR idea.codigo_estudiante_lider = :estudiante_codigo OR  :estudiante_codigo IS NULL) AND" +
+            "(pp.estudiante_codigo = :estudiante_codigo OR plan.codigo_estudiante_lider = :estudiante_codigo OR  :estudiante_codigo IS NULL) AND" +
             "(plan.area_enfoque = :area OR :area IS NULL) AND" +
             "(plan.estado = :estado OR :estado IS NULL)"
             , nativeQuery = true)
