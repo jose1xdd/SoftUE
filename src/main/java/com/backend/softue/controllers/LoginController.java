@@ -32,10 +32,18 @@ public class LoginController {
             }
             return new ResponseEntity<ResponseToken>(this.userServices.login(user), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
-
+    @GetMapping("/validarExpiracion")
+    public ResponseEntity<?> verificarExpiracionToken(@RequestParam String jwt) {
+        try {
+            return ResponseEntity.ok(this.userServices.tokenExpirado(jwt));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
 }
 
