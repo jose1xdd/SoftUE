@@ -97,13 +97,13 @@ public class IdeaNegocioController {
     @CheckSession(permitedRol = {"coordinador", "administrativo", "docente","estudiante"})
     @PostMapping("/filtrar")
     public ResponseEntity<List<IdeaNegocio>> buscarIdeasPorFiltros(
-            @RequestParam(required = false) String estudianteEmail,
-            @RequestParam(required = false) String docenteEmail,
+            @RequestParam(required = false)String tutorCodigo,
+            @RequestParam(required = false) String codigoEstudiante,
             @RequestParam(required = false) String area,
-            @RequestParam(required = false) String estado,
+            @RequestParam(required = false)  String estado,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
-        List<IdeaNegocio> ideasNegocio = this.ideaNegocioServices.buscarIdeasPorFiltros(estudianteEmail, docenteEmail, area, estado, fechaInicio, fechaFin);
+        List<IdeaNegocio> ideasNegocio = this.ideaNegocioServices.buscarIdeasPorFiltros(tutorCodigo,codigoEstudiante ,area, estado, fechaInicio, fechaFin);
         return ResponseEntity.ok(ideasNegocio);
     }
 
