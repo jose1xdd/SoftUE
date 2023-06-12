@@ -80,4 +80,15 @@ public class TestController {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @PostMapping(value = "/resultadoEstudiante/{codigo}")
+    public ResponseEntity<?> obtenerResultadoUltimoTest(@PathVariable Integer codigo) {
+        try {
+            return ResponseEntity.ok((this.testServices.obtenerResultadoTest(codigo)));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
 }
