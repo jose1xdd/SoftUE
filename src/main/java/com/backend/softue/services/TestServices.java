@@ -2,6 +2,7 @@ package com.backend.softue.services;
 
 import com.backend.softue.models.*;
 import com.backend.softue.repositories.TestRepository;
+import com.backend.softue.utils.response.ComponenteValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
@@ -50,5 +51,23 @@ public class TestServices {
 
     public List<Test> listar() {
         return this.testRepository.findAll();
+    }
+
+    public List<ComponenteValue> obtenerResultadosByTest(Integer testId) {
+        if (testId == null)
+            throw new RuntimeException("No se puede obtener con un testId igual a null");
+        Test test = this.testRepository.findById(testId).get();
+        if (test == null)
+            throw new RuntimeException("No existe un test con ese ID");
+        return this.testRepository.obtenerResultadoComponentes(testId);
+    }
+
+    public List<ComponenteValue> obtenerResultadosByEstudiante(Integer codigoEstudiante) {
+        if (codigoEstudiante == null)
+            throw new RuntimeException("No se puede obtener con un codigoEstudiante igual a null");
+        Estudiante estudiante = this.estudianteServices.obtenerEstudiante(codigoEstudiante);
+        if (estudiante == null)
+            throw new RuntimeException("No existe un estudiante con ese codigo");
+        return obtenerResultadosByTest(this.testRepository.obtenerUltimoTestEstudiante(codigoEstudiante));
     }
 }
