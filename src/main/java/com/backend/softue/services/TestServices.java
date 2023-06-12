@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TestServices {
@@ -47,6 +48,10 @@ public class TestServices {
         }
         test.setCalificacion(this.testRepository.obtenerResultado(test.getId()));
         this.testRepository.save(test);
+        if(test.getCalificacion() >= 75){
+            estudiante.setCapacitacionAprobada("aprobada");
+            this.estudianteServices.actualizarEstudiante(estudiante);
+        }
     }
 
     public List<Test> listar() {
@@ -69,5 +74,16 @@ public class TestServices {
         if (estudiante == null)
             throw new RuntimeException("No existe un estudiante con ese codigo");
         return obtenerResultadosByTest(this.testRepository.obtenerUltimoTestEstudiante(codigoEstudiante));
+    }
+    public Optional<Test> obtenerResultadoTest(Integer codigoEstudiante) {
+        if (codigoEstudiante == null)
+            throw new RuntimeException("No se puede obtener con un codigoEstudiante igual a null");
+        Estudiante estudiante = this.estudianteServices.obtenerEstudiante(codigoEstudiante);
+        if (estudiante == null)
+            throw new RuntimeException("No existe un estudiante con ese codigo");
+        System.out.println(1);
+        Integer codigoTest = this.testRepository.obtenerUltimoTestEstudiante(estudiante.getCodigo());
+        System.out.println(2);
+        return this.testRepository.findById(codigoTest);
     }
 }
