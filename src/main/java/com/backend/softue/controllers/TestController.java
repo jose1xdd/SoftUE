@@ -71,9 +71,10 @@ public class TestController {
             @RequestParam(required = false) Integer codigo,
             @RequestParam(required = false) String curso,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin,
+            @RequestParam(required = false) String estado) {
         try {
-            List<Test> tests = this.testServices.filtrar(codigo, curso, fechaInicio, fechaFin);
+            List<Test> tests = this.testServices.filtrar(codigo, curso, fechaInicio, fechaFin, estado);
             return ResponseEntity.ok(tests);
         }
         catch (Exception e) {
@@ -82,7 +83,7 @@ public class TestController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @PostMapping(value = "/resultadoEstudiante/{codigo}")
+    @GetMapping(value = "/{codigo}")
     public ResponseEntity<?> obtenerResultadoUltimoTest(@PathVariable Integer codigo) {
         try {
             return ResponseEntity.ok((this.testServices.obtenerResultadoTest(codigo)));

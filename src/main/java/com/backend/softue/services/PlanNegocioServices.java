@@ -41,11 +41,17 @@ public class PlanNegocioServices {
     private DocenteApoyoPlanServices docenteApoyoPlanServices;
 
     @Autowired
+    private EstudianteServices estudianteServices;
+
+    @Autowired
     private PlanPresentadoServices planPresentadoServices;
+
     @Autowired
     private DocenteServices docenteServices;
+
     @Autowired
     private EmailService emailService;
+
     @PostConstruct
     public void init() {
         this.documentoPlanServices.setPlanNegocioServices(this);
@@ -237,6 +243,12 @@ public class PlanNegocioServices {
             planNegocio = this.obtenerPlanNegocio(planNegocio.getTitulo());
         }
         return planNegocios;
+    }
+
+    public List<IdeaNegocio> comprobarPlanAprobado(String correoEstudiante) {
+        if (correoEstudiante == null)
+            throw new RuntimeException("No se envió un correo con el que comprobar la idea");
+        return null;
     }
 
 }
