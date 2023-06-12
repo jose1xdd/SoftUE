@@ -38,7 +38,7 @@ public class ComponenteCompetenciasServices {
             throw new RuntimeException("El componente es nulo");
 
         ComponenteCompetencias resultado = this.componenteCompetenciasRepository.findById(componenteCompetencias.getId()).get();
-        if (resultado == null)
+        if (resultado == null || resultado.getEliminada())
             throw new RuntimeException("El componente de competencias a actualizar no existe");
         if (!validarPorcentajePorArriba(componenteCompetencias.getValorPorcentaje() - resultado.getValorPorcentaje()))
             throw new RuntimeException("Los porcentajes no pueden exceder del 100%");
@@ -52,6 +52,7 @@ public class ComponenteCompetenciasServices {
         if (resultado == null)
             throw new RuntimeException("El componente con ese nombre no existe");
         resultado.setEliminada(true);
+        resultado.setNombre(resultado.getNombre() + resultado.getId());
         this.componenteCompetenciasRepository.save(resultado);
         List<Integer> preguntasId = this.componenteCompetenciasRepository.obtenerPreguntasByComponente(resultado.getId());
         for (Integer id : preguntasId) {
@@ -60,13 +61,13 @@ public class ComponenteCompetenciasServices {
     }
 
     public List<ComponenteCompetencias> listar() {
-        List<ComponenteCompetencias> componenteCompetencias = this.componenteCompetenciasRepository.findAll();
+        List<ComponenteCompetencias> componenteCompetencias = this.componenteCompetenciasRepository.findByEliminada(false);
         return componenteCompetencias;
     }
 
     public ComponenteCompetencias obtener(String nombre) {
         ComponenteCompetencias resultado = this.componenteCompetenciasRepository.findByNombre(nombre);
-        if (resultado == null)
+        if (resultado == null || resultado.getEliminada())
             throw new RuntimeException("La componente con ese nombre no existe");
         return resultado;
     }

@@ -13,6 +13,8 @@ import java.util.List;
 public interface ComponenteCompetenciasRepository extends JpaRepository<ComponenteCompetencias, Integer> {
     ComponenteCompetencias findByNombre(String nombre);
 
+    List<ComponenteCompetencias> findByEliminada(Boolean eliminada);
+
     @Query(value = "SELECT p.id FROM componente_competencias cc JOIN pregunta p ON(cc.id = p.componente_competencias_id) WHERE cc.id = :cc_id AND p.eliminada = false", nativeQuery = true)
     List<Integer> obtenerPreguntasByComponente(@Param(value = "cc_id") Integer id);
 }

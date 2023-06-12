@@ -81,4 +81,49 @@ public class FormatoController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
+    @GetMapping(value = "/IdeaNegocio")
+    public ResponseEntity<?> recuperarFormatoIdeaNegocio() {
+        try {
+            Formato formato = this.formatoServices.obtenerFormatoIdea();
+            if(formato == null) throw new RuntimeException("No hay formatos de idea de negocio cargados en el sistema");
+            String nombreArchivo = this.formatoServices.obtenerNombre(formato.getId().toString());
+                HttpHeaders headers = new HttpHeaders();
+                if (formato.getExtension().equals(".docx")) {
+                    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                }
+                else if (formato.getExtension().equals(".pdf")) {
+                    headers.setContentType(MediaType.APPLICATION_PDF);
+                }
+                else throw new RuntimeException("El formato del archivo no es apto para retornarse");
+                headers.setContentDisposition(ContentDisposition.attachment().filename(nombreArchivo).build());
+                return new ResponseEntity<>(formato.getDocumento(), headers, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @GetMapping(value = "/PlanNegocio")
+    public ResponseEntity<?> recuperarFormatoPlanNegocio() {
+        try {
+            Formato formato = this.formatoServices.obtenerFormatoPlan();
+            if(formato == null) throw new RuntimeException("No hay formatos de plan de negocio cargados en el sistema");
+            String nombreArchivo = this.formatoServices.obtenerNombre(formato.getId().toString());
+            HttpHeaders headers = new HttpHeaders();
+            if (formato.getExtension().equals(".docx")) {
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            }
+            else if (formato.getExtension().equals(".pdf")) {
+                headers.setContentType(MediaType.APPLICATION_PDF);
+            }
+            else throw new RuntimeException("El formato del archivo no es apto para retornarse");
+            headers.setContentDisposition(ContentDisposition.attachment().filename(nombreArchivo).build());
+            return new ResponseEntity<>(formato.getDocumento(), headers, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+
 }

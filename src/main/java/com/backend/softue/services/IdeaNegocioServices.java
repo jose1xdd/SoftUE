@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Setter
@@ -256,6 +253,8 @@ public class IdeaNegocioServices {
             throw new RuntimeException("No se puede modificar una idea de negocio aprobada");
         Docente docente = this.docenteServices.obtenerDocente(docenteEmail);
         if (docente == null) throw new RuntimeException("No se encontro un docente con ese email");
+        Set<DocenteApoyoIdea> docentes = ideaNegocio.getDocentesApoyo();
+        if(docentePertenece(docentes,docente)) throw new RuntimeException("El docente tutor no puede ser docente de apoyo");
         this.emailService.enviarEmailTutor(docenteEmail, titulo, docente.getNombre() + " " + docente.getApellido(), docente.getArea());
     }
     public void eliminarTutor(String titulo){
@@ -303,5 +302,12 @@ public class IdeaNegocioServices {
         List<IdeaNegocio> resultado = this.ideaNegocioRepository.findByLiderAprobada(estudiante.getCodigo());
         resultado.addAll(this.ideaNegocioRepository.findByIntegranteAprobada(estudiante.getCodigo()));
         return resultado;
+    }
+    private Boolean docentePertenece(Set<DocenteApoyoIdea> docentes ,Docente docente){
+        Iterator<DocenteApoyoIdea> it = docentes.iterator();
+        while (it.hasNext()){
+            if(it.next().getDocente().equals(docente)) return true;
+        }
+        return  false;
     }
 }
