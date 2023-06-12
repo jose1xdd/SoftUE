@@ -26,6 +26,8 @@ public class Test {
     @ManyToOne
     @JoinColumn(nullable = false, name = "codigo_estudiante")
     private Estudiante estudiante;
+    @Transient
+    private String [] estudianteInfo;
 
     @NotNull
     @Column(nullable = false)

@@ -157,4 +157,14 @@ public class PlanNegocioController {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(), e.getMessage(), e.getStackTrace()[0].toString()));
         }
     }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/comprobarPlanAprobada")
+    public ResponseEntity<?> comprobarPlanAprobado(@RequestParam String correoEstudiante){
+        try {
+            return ResponseEntity.ok(this.planNegocioServices.comprobarPlanAprobado(correoEstudiante));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
 }

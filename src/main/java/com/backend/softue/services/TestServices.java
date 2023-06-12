@@ -40,7 +40,7 @@ public class TestServices {
                 throw new RuntimeException("No existe una pregunta con ID " + id);
             }
         }
-        Test test = new Test(null, estudiante, fechaCreacion, 0.0);
+        Test test = new Test(null, estudiante, null, fechaCreacion, 0.0);
         this.testRepository.save(test);
         test = this.testRepository.findByEstudianteAndFecha(estudiante.getCodigo(), fechaCreacion);
         for (Respuesta respuesta : respuestas) {
@@ -55,7 +55,11 @@ public class TestServices {
     }
 
     public List<Test> listar() {
-        return this.testRepository.findAll();
+        List<Test> result = this.testRepository.findAll();
+        for(Test test : result) {
+            test.setEstudianteInfo(new String[] { Integer.toString(test.getEstudiante().getCodigo()), test.getEstudiante().getCurso(), test.getEstudiante().getCapacitacionAprobada()});
+        }
+        return result;
     }
 
     public List<ComponenteValue> obtenerResultadosByTest(Integer testId) {
@@ -75,6 +79,20 @@ public class TestServices {
             throw new RuntimeException("No existe un estudiante con ese codigo");
         return obtenerResultadosByTest(this.testRepository.obtenerUltimoTestEstudiante(codigoEstudiante));
     }
+
+    public List<Test> filtrar(Integer codigo, String curso, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
+        if (fechaInicio == null ^ fechaFin == null)
+            throw new RuntimeException("Para filtrar los resultados por fechas, debe ingresar fecha inicio y fecha fin");
+        estado = estado.toLowerCase();
+        if (estado != null && !(estado.equals("aprobada") || estado.equals("rechazada")))
+            throw new RuntimeException("El estado solo puede ser aprobada o rechazada");
+        List<Test> result = this.testRepository.filtrarTest(codigo, curso, fechaInicio, fechaFin, estado);
+        for(Test test : result) {
+            test.setEstudianteInfo(new String[] { Integer.toString(test.getEstudiante().getCodigo()), test.getEstudiante().getCurso(), test.getEstudiante().getCapacitacionAprobada()});
+        }
+        return result;
+    }
+
     public Optional<Test> obtenerResultadoTest(Integer codigoEstudiante) {
         if (codigoEstudiante == null)
             throw new RuntimeException("No se puede obtener con un codigoEstudiante igual a null");
