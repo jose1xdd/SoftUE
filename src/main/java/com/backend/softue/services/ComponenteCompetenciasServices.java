@@ -2,6 +2,7 @@ package com.backend.softue.services;
 
 import com.backend.softue.models.ComponenteCompetencias;
 import com.backend.softue.repositories.ComponenteCompetenciasRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,14 @@ public class ComponenteCompetenciasServices {
 
     @Autowired
     private ComponenteCompetenciasRepository componenteCompetenciasRepository;
+
+    @Autowired
+    private PreguntaServices preguntaServices;
+
+    @PostConstruct
+    public void init() {
+        this.preguntaServices.setComponenteCompetenciasServices(this);
+    }
 
     private final double epsilon = 1e-9;
 
@@ -42,7 +51,12 @@ public class ComponenteCompetenciasServices {
         ComponenteCompetencias resultado = this.componenteCompetenciasRepository.findByNombre(nombre);
         if (resultado == null)
             throw new RuntimeException("El componente con ese nombre no existe");
-        this.componenteCompetenciasRepository.delete(resultado);
+        resultado.setEliminada(true);
+        this.componenteCompetenciasRepository.save(resultado);
+        List<Integer> preguntasId = this.componenteCompetenciasRepository.obtenerPreguntasByComponente(resultado.getId());
+        for (Integer id : preguntasId) {
+            this.preguntaServices.eliminar(id);
+        }
     }
 
     public List<ComponenteCompetencias> listar() {

@@ -29,6 +29,8 @@ public class TestServices {
             throw new RuntimeException("No se puede asignar los resultados de una prueba sin un código de estudiante");
         if (respuestasId == null)
             throw new RuntimeException("No se puede asignar los resultados de una prueba sin los IDs de las respuestas");
+        if (!this.respuestaServices.getPreguntaServices().getComponenteCompetenciasServices().validarPorcentaje(0.0))
+            throw new RuntimeException("Los componentes agregados por el coordinador no suman 100%, comunicarse con el para solucionarlo");
         Estudiante estudiante = this.estudianteServices.obtenerEstudiante(codigoEstudiante);
         List<Respuesta> respuestas = new LinkedList<>();
         for (Integer id : respuestasId) {

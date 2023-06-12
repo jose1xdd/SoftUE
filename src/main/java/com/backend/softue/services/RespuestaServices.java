@@ -3,6 +3,7 @@ package com.backend.softue.services;
 import com.backend.softue.models.Pregunta;
 import com.backend.softue.models.Respuesta;
 import com.backend.softue.repositories.RespuestaRepository;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Setter
+@Getter
 @Service
 public class RespuestaServices {
 
