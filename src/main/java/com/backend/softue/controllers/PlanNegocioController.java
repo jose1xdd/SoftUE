@@ -160,7 +160,7 @@ public class PlanNegocioController {
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping("/comprobarPlanAprobada")
-    public ResponseEntity<?> comprobarIdeaAprobada(@RequestParam String correoEstudiante){
+    public ResponseEntity<?> comprobarPlanAprobado(@RequestParam String correoEstudiante){
         try {
             return ResponseEntity.ok(this.planNegocioServices.comprobarPlanAprobado(correoEstudiante));
         } catch (Exception e) {

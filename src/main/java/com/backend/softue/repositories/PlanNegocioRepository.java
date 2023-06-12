@@ -1,12 +1,9 @@
 package com.backend.softue.repositories;
-import com.backend.softue.models.IdeaNegocio;
 import com.backend.softue.models.PlanNegocio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -70,6 +67,16 @@ public interface PlanNegocioRepository extends JpaRepository<PlanNegocio, Intege
             @Param("estado") String estado,
             @Param("fecha_inicio") LocalDate fecha_inicio,
             @Param("fecha_fin") LocalDate fecha_fin
-
     );
+    @Query(value = "SELECT plan.* FROM plan_negocio plan " +
+            "JOIN plan_presentado plan_p ON (plan.id = plan_p.plan_negocio_id)" +
+            "JOIN estudiante e ON (plan_p.estudiante_codigo = e.codigo)" +
+            "WHERE e.codigo = :codigo_estudiante AND plan.estado = 'aprobada'", nativeQuery = true)
+    List<PlanNegocio> findByIntegranteAprobada(@Param("codigo_estudiante") Integer codigo);
+
+    @Query(value = "SELECT plan.* FROM plan_negocio plan " +
+            "JOIN estudiante e ON (plan.codigo_estudiante_lider = e.codigo)" +
+            "WHERE e.codigo = :codigo_estudiante AND plan.estado = 'aprobada'", nativeQuery = true)
+    List<PlanNegocio> findByLiderAprobada(@Param("codigo_estudiante") Integer codigo);
+
 }

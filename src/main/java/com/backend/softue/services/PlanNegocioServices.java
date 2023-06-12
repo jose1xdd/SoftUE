@@ -245,10 +245,13 @@ public class PlanNegocioServices {
         return planNegocios;
     }
 
-    public List<IdeaNegocio> comprobarPlanAprobado(String correoEstudiante) {
+    public List<PlanNegocio> comprobarPlanAprobado(String correoEstudiante) {
         if (correoEstudiante == null)
             throw new RuntimeException("No se envió un correo con el que comprobar la idea");
-        return null;
+        Estudiante estudiante = this.estudianteServices.obtenerEstudiante(correoEstudiante);
+        List<PlanNegocio> resultado = this.planNegocioRepository.findByLiderAprobada(estudiante.getCodigo());
+        resultado.addAll(this.planNegocioRepository.findByIntegranteAprobada(estudiante.getCodigo()));
+        return resultado;
     }
 
 }
