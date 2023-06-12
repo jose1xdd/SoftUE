@@ -30,6 +30,8 @@ public class TestServices {
             throw new RuntimeException("No se puede asignar los resultados de una prueba sin un código de estudiante");
         if (respuestasId == null)
             throw new RuntimeException("No se puede asignar los resultados de una prueba sin los IDs de las respuestas");
+        if (!this.respuestaServices.getPreguntaServices().getComponenteCompetenciasServices().validarPorcentaje(0.0))
+            throw new RuntimeException("Los componentes agregados por el coordinador no suman 100%, comunicarse con el para solucionarlo");
         Estudiante estudiante = this.estudianteServices.obtenerEstudiante(codigoEstudiante);
         List<Respuesta> respuestas = new LinkedList<>();
         for (Integer id : respuestasId) {
@@ -83,9 +85,10 @@ public class TestServices {
     public List<Test> filtrar(Integer codigo, String curso, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
         if (fechaInicio == null ^ fechaFin == null)
             throw new RuntimeException("Para filtrar los resultados por fechas, debe ingresar fecha inicio y fecha fin");
-        estado = estado.toLowerCase();
-        if (estado != null && !(estado.equals("aprobada") || estado.equals("rechazada")))
-            throw new RuntimeException("El estado solo puede ser aprobada o rechazada");
+        if(estado != null)
+            estado = estado.toLowerCase();
+        if (estado != null && !(estado.equals("aprobada") || estado.equals("reprobada")))
+            throw new RuntimeException("El estado solo puede ser aprobada o reprobada");
         List<Test> result = this.testRepository.filtrarTest(codigo, curso, fechaInicio, fechaFin, estado);
         for(Test test : result) {
             test.setEstudianteInfo(new String[] { Integer.toString(test.getEstudiante().getCodigo()), test.getEstudiante().getCurso(), test.getEstudiante().getCapacitacionAprobada()});
@@ -99,9 +102,7 @@ public class TestServices {
         Estudiante estudiante = this.estudianteServices.obtenerEstudiante(codigoEstudiante);
         if (estudiante == null)
             throw new RuntimeException("No existe un estudiante con ese codigo");
-        System.out.println(1);
         Integer codigoTest = this.testRepository.obtenerUltimoTestEstudiante(estudiante.getCodigo());
-        System.out.println(2);
         return this.testRepository.findById(codigoTest);
     }
 }

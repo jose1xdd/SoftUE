@@ -31,6 +31,9 @@ public class ComponenteCompetencias {
     @Column(nullable = false)
     private Double valorPorcentaje;
 
+    @Column(nullable = false)
+    private Boolean eliminada;
+
     @OneToMany(mappedBy = "componenteCompetenciasId", fetch = FetchType.LAZY)
     private Set<Pregunta> preguntas;
 

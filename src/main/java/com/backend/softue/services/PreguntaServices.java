@@ -5,6 +5,7 @@ import com.backend.softue.models.Pregunta;
 import com.backend.softue.repositories.PreguntaRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Getter
+@Setter
 @Service
 public class PreguntaServices {
 
     @Autowired
     private PreguntaRepository preguntaRepository;
 
-    @Autowired
     private ComponenteCompetenciasServices componenteCompetenciasServices;
 
     @Autowired
