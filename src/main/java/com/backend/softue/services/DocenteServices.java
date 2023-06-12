@@ -110,8 +110,6 @@ public class DocenteServices {
             if(ideaNegocio == null ) throw  new RuntimeException("se mandó mal el titulo de la idea de negocio");
             Docente docente = this.obtenerDocente(this.encrypth.getJwt().getKey(jwt));
             ideaNegocio.setTutor(docente);
-            Set<DocenteApoyoIdea> docentes = ideaNegocio.getDocentesApoyo();
-            if(docentePertenece(docentes,docente)) throw new RuntimeException("El docente tutor no puede ser docente de apoyo");
             if(this.ideaNegocioServices.confirmarTutor(ideaNegocio) != null);return "Docente Asignado";
         }
         return "El docente rechazo";
