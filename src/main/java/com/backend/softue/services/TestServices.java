@@ -40,7 +40,7 @@ public class TestServices {
                 throw new RuntimeException("No existe una pregunta con ID " + id);
             }
         }
-        Test test = new Test(null, estudiante, fechaCreacion, 0.0);
+        Test test = new Test(null, estudiante, null, fechaCreacion, 0.0);
         this.testRepository.save(test);
         test = this.testRepository.findByEstudianteAndFecha(estudiante.getCodigo(), fechaCreacion);
         for (Respuesta respuesta : respuestas) {
@@ -80,6 +80,9 @@ public class TestServices {
         if (fechaInicio == null ^ fechaFin == null)
             throw new RuntimeException("Para filtrar los resultados por fechas, debe ingresar fecha inicio y fecha fin");
         List<Test> result = this.testRepository.filtrarTest(codigo, curso, fechaInicio, fechaFin);
+        for(Test test : result) {
+            System.out.println(test.getEstudiante().getNombre());
+        }
         return result;
     }
 
