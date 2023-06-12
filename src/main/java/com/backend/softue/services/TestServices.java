@@ -83,9 +83,10 @@ public class TestServices {
     public List<Test> filtrar(Integer codigo, String curso, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
         if (fechaInicio == null ^ fechaFin == null)
             throw new RuntimeException("Para filtrar los resultados por fechas, debe ingresar fecha inicio y fecha fin");
-        estado = estado.toLowerCase();
-        if (estado != null && !(estado.equals("aprobada") || estado.equals("rechazada")))
-            throw new RuntimeException("El estado solo puede ser aprobada o rechazada");
+        if(estado != null)
+            estado = estado.toLowerCase();
+        if (estado != null && !(estado.equals("aprobada") || estado.equals("reprobada")))
+            throw new RuntimeException("El estado solo puede ser aprobada o reprobada");
         List<Test> result = this.testRepository.filtrarTest(codigo, curso, fechaInicio, fechaFin, estado);
         for(Test test : result) {
             test.setEstudianteInfo(new String[] { Integer.toString(test.getEstudiante().getCodigo()), test.getEstudiante().getCurso(), test.getEstudiante().getCapacitacionAprobada()});
