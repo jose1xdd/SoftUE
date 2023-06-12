@@ -20,6 +20,7 @@ public class AreaConocimiento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Integer id;
 
     @NotNull

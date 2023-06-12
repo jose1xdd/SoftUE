@@ -27,6 +27,10 @@ public class Pregunta {
     @Column(nullable = false)
     private String enunciado;
 
+    @NotNull
+    @Column(nullable = false)
+    private Boolean eliminada;
+
     @NotNull(message = "Error: El campo 'componente_competencias_id' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el componente_competencias_id de la pregunta.")
     @ManyToOne()
     @JoinColumn(name = "componente_competencias_id")
