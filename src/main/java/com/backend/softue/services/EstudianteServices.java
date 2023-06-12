@@ -47,6 +47,9 @@ public class EstudianteServices {
         estudiante.setContrasenia(result.getContrasenia());
         this.estudianteRepository.save(estudiante);
     }
+    public void actualizarEstudiante(Estudiante estudiante) {
+        this.estudianteRepository.save(estudiante);
+    }
 
     public Estudiante obtenerEstudiante(String email) {
         if (email != null) {

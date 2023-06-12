@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.Set;
 
 @Entity
@@ -31,4 +33,5 @@ public class ComponenteCompetencias {
 
     @OneToMany(mappedBy = "componenteCompetenciasId", fetch = FetchType.LAZY)
     private Set<Pregunta> preguntas;
+
 }
