@@ -24,6 +24,14 @@ public class FormatoServices {
         throw new RuntimeException("No se envió información con la que buscar el formato");
     }
 
+    public Formato obtenerFormatoIdea() {
+            return this.formatoRepository.FormatoRecienteIdea();
+    }
+
+    public Formato obtenerFormatoPlan() {
+        return this.formatoRepository.FormatoRecientePlan();
+    }
+
     public String obtenerNombre(String id) {
         if (id != null) {
             Optional<Formato> result = this.formatoRepository.findById(Integer.parseInt(id));

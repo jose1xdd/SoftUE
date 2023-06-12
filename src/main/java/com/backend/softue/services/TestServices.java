@@ -47,4 +47,8 @@ public class TestServices {
         test.setCalificacion(this.testRepository.obtenerResultado(test.getId()));
         this.testRepository.save(test);
     }
+
+    public List<Test> listar() {
+        return this.testRepository.findAll();
+    }
 }
