@@ -70,4 +70,11 @@ public class TestServices {
             throw new RuntimeException("No existe un estudiante con ese codigo");
         return obtenerResultadosByTest(this.testRepository.obtenerUltimoTestEstudiante(codigoEstudiante));
     }
+
+    public List<Test> filtrar(Integer codigo, String curso, LocalDate fechaInicio, LocalDate fechaFin) {
+        if(fechaInicio == null ^ fechaFin == null)
+            throw new RuntimeException("Para filtrar los resultados por fechas, debe ingresar fecha inicio y fecha fin");
+        List<Test> result = this.testRepository.filtrarTest(codigo, curso, fechaInicio, fechaFin);
+        return result;
+    }
 }

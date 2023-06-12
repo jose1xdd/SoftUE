@@ -24,4 +24,9 @@ public interface TestRepository extends JpaRepository<Test, Integer> {
 
     @Query(value = "SELECT test.id FROM test WHERE test.codigo_estudiante = :codigo ORDER BY test.fecha_creacion, test.id DESC LIMIT 1", nativeQuery = true)
     Integer obtenerUltimoTestEstudiante(@Param("codigo") Integer codigo);
+
+    @Query(value = "SELECT * FROM test", nativeQuery = true)
+    List<Test> filtrarTest(@Param("codigoEstudiante") Integer codigo, @Param("cursoEstudiante") String curso, @Param("fechaInicio") LocalDate fechaInicio, @Param("fechaFin") LocalDate fechaFin);
+
+
 }
