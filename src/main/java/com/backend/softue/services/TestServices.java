@@ -104,4 +104,9 @@ public class TestServices {
         System.out.println(2);
         return this.testRepository.findById(codigoTest);
     }
+    public Test obtenerResultadoTestId(Integer id) {
+        if (id == null)
+            throw new RuntimeException("No se puede obtener con un codigoEstudiante igual a null");
+        return this.testRepository.findById(id).get();
+    }
 }
