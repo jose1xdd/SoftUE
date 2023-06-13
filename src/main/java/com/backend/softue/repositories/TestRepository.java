@@ -32,7 +32,4 @@ public interface TestRepository extends JpaRepository<Test, Integer> {
                     "(((:fechaInicio IS NULL) AND (:fechaFin IS NULL)) OR (t.fecha_creacion BETWEEN :fechaInicio AND :fechaFin)) AND " +
                     "((:estado IS NULL) OR (e.capacitacion_aprobada = :estado))", nativeQuery = true)
     List<Test> filtrarTest(@Param("codigoEstudiante") Integer codigo, @Param("cursoEstudiante") String curso, @Param("fechaInicio") LocalDate fechaInicio, @Param("fechaFin") LocalDate fechaFin, @Param("estado") String estado);
-
-
-
 }
