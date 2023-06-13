@@ -21,7 +21,7 @@ public class IdeaPlanteadaController {
         return ResponseEntity.ok("pingpong");
     }
     @CheckSession(permitedRol ={"docente"})
-    @DeleteMapping("/{titulo}/{correo}")
+    @GetMapping("/{titulo}/{correo}")
     public ResponseEntity<?> eliminar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String titulo, @PathVariable String correo) {
         try {
             this.ideaPlanteadaServices.eliminarIntegrante(jwt, titulo, correo);
@@ -32,7 +32,7 @@ public class IdeaPlanteadaController {
     }
 
     @CheckSession(permitedRol ={"docente"})
-    @PostMapping("/{titulo}/{correo}")
+    @GetMapping("/{titulo}/{correo}")
     public ResponseEntity<?> agregar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String titulo, @PathVariable String correo) {
         try {
             this.ideaPlanteadaServices.agregarIntegrante(jwt, titulo, correo);
