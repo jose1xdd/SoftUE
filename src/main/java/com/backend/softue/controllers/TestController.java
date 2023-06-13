@@ -91,4 +91,15 @@ public class TestController {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping(value = "/testDisponible")
+    public ResponseEntity<?> testDisponible() {
+        try {
+            return ResponseEntity.ok(this.testServices.testDisponible());
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
 }
