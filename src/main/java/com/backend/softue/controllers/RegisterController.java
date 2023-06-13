@@ -6,6 +6,7 @@ import com.backend.softue.models.User;
 import com.backend.softue.services.DocenteServices;
 import com.backend.softue.services.EstudianteServices;
 import com.backend.softue.services.UserServices;
+import com.backend.softue.utils.checkSession.CheckSession;
 import com.backend.softue.utils.response.ErrorFactory;
 import com.backend.softue.utils.response.ResponseConfirmation;
 import com.backend.softue.utils.response.ResponseError;
@@ -15,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/register")
@@ -62,6 +61,18 @@ public class RegisterController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
 
+        }
+    }
+
+    @CheckSession(permitedRol ={"administrativo"})
+    @PostMapping("/estudiante/archivo")
+    public ResponseEntity<?> registrarEstudiantesDesdeArhivo(@RequestParam MultipartFile file) {
+        try {
+            this.estudianteServices.cargarEstudiantes(file);
+            return ResponseEntity.ok(new ResponseConfirmation("Estudiantes cargados en el sistema exitosamente"));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
