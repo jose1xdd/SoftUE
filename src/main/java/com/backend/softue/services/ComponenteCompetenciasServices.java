@@ -30,6 +30,7 @@ public class ComponenteCompetenciasServices {
             throw new RuntimeException("El componente de competencias ya existe");
         if (!validarPorcentajePorArriba(componenteCompetencias.getValorPorcentaje()))
             throw new RuntimeException("El sumatorio de los porcentajes no puede ser mayor al 100%");
+        componenteCompetencias.setEliminada(false);
         this.componenteCompetenciasRepository.save(componenteCompetencias);
     }
 
