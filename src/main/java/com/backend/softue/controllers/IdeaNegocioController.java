@@ -36,7 +36,7 @@ public class IdeaNegocioController {
     }
 
     @CheckSession(permitedRol = {"estudiante"})
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<?> crear(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam String titulo, @RequestParam String[] integrantes, @RequestParam String area, @RequestParam MultipartFile documento) {
         try {
             IdeaNegocio ideaNegocio = new IdeaNegocio(null, titulo, "formulado", null, null, null, null, LocalDate.now(), null, null, null, null, null, null, null, null,null,null);
@@ -124,7 +124,7 @@ public class IdeaNegocioController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping("/listar")
+    @GetMapping()
     public ResponseEntity<?> listar() {
         try {
             return ResponseEntity.ok(this.ideaNegocioServices.listar());
