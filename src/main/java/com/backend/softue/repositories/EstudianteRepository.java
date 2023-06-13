@@ -16,7 +16,7 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Integer>
     Estudiante findByCorreo(String correo);
     List<Estudiante> findByCurso(String curso);
 
-    @Query(value = "SELECT distinct curso FROM Estudiante ", nativeQuery = true)
+    @Query(value = "SELECT distinct curso FROM estudiante", nativeQuery = true)
     Set<String> findCursos();
 
 }
