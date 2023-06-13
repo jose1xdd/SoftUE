@@ -32,7 +32,7 @@ public class IdeaPlanteadaController {
     }
 
     @CheckSession(permitedRol ={"docente"})
-    @GetMapping("/{titulo}/{correo}")
+    @GetMapping("/borrar/{titulo}/{correo}")
     public ResponseEntity<?> agregar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String titulo, @PathVariable String correo) {
         try {
             this.ideaPlanteadaServices.agregarIntegrante(jwt, titulo, correo);
