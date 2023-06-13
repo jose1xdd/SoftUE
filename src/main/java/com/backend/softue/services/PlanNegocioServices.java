@@ -41,11 +41,17 @@ public class PlanNegocioServices {
     private DocenteApoyoPlanServices docenteApoyoPlanServices;
 
     @Autowired
+    private EstudianteServices estudianteServices;
+
+    @Autowired
     private PlanPresentadoServices planPresentadoServices;
+
     @Autowired
     private DocenteServices docenteServices;
+
     @Autowired
     private EmailService emailService;
+
     @PostConstruct
     public void init() {
         this.documentoPlanServices.setPlanNegocioServices(this);
@@ -64,7 +70,7 @@ public class PlanNegocioServices {
         if (!ideaNegocio.getEstado().equals("aprobada"))
             throw new RuntimeException("No se puede un plan a partir de una idea de negocio no aprobada");
         Optional<PlanNegocio> result = this.planNegocioRepository.findByTitulo(ideaNegocio.getTitulo());
-        if(result != null)
+        if(result.isPresent())
             throw new RuntimeException("No se puede crear el plan de negocio debido a que ya existe otro con el mismo título");
         PlanNegocio planNegocio = new PlanNegocio(ideaNegocio.getId(), ideaNegocio.getTitulo(), null, "formulado", ideaNegocio.getArea(), null, ideaNegocio.getTutor(), null, LocalDate.now(), null, ideaNegocio.getEstudianteLider(), null, null, null, null, null,null,null,null);
         this.planNegocioRepository.save(planNegocio);
@@ -115,7 +121,7 @@ public class PlanNegocioServices {
             String docentesApoyoInfo[][] = new String[2][planNegocio.getDocentesApoyo().size()];
             for (DocenteApoyoPlan docenteApoyoPlan : planNegocio.getDocentesApoyo()) {
                 docentesApoyoInfo[0][indice] = docenteApoyoPlan.getDocente().getCorreo();
-                docentesApoyoInfo[1][indice] = docenteApoyoPlan.getDocente().getNombre() + docenteApoyoPlan.getDocente().getApellido();
+                docentesApoyoInfo[1][indice] = docenteApoyoPlan.getDocente().getNombre() + " " + docenteApoyoPlan.getDocente().getApellido();
                 indice++;
             }
             planNegocio.setDocentesApoyoInfo(docentesApoyoInfo);
@@ -237,6 +243,15 @@ public class PlanNegocioServices {
             planNegocio = this.obtenerPlanNegocio(planNegocio.getTitulo());
         }
         return planNegocios;
+    }
+
+    public List<PlanNegocio> comprobarPlanAprobado(String correoEstudiante) {
+        if (correoEstudiante == null)
+            throw new RuntimeException("No se envió un correo con el que comprobar la idea");
+        Estudiante estudiante = this.estudianteServices.obtenerEstudiante(correoEstudiante);
+        List<PlanNegocio> resultado = this.planNegocioRepository.findByLiderAprobada(estudiante.getCodigo());
+        resultado.addAll(this.planNegocioRepository.findByIntegranteAprobada(estudiante.getCodigo()));
+        return resultado;
     }
 
 }

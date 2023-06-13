@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.Set;
 
 @Entity
@@ -29,6 +31,10 @@ public class ComponenteCompetencias {
     @Column(nullable = false)
     private Double valorPorcentaje;
 
+    @Column(nullable = false)
+    private Boolean eliminada;
+
     @OneToMany(mappedBy = "componenteCompetenciasId", fetch = FetchType.LAZY)
     private Set<Pregunta> preguntas;
+
 }

@@ -3,6 +3,7 @@ package com.backend.softue.services;
 import com.backend.softue.models.Pregunta;
 import com.backend.softue.models.Respuesta;
 import com.backend.softue.repositories.RespuestaRepository;
+import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Setter
+@Getter
 @Service
 public class RespuestaServices {
 
@@ -72,13 +74,13 @@ public class RespuestaServices {
         if (id == null)
             throw new RuntimeException("No se pueden obtener las respuestas de un id null");
         Pregunta pregunta = this.preguntaServices.obtener(id);
-        if (pregunta == null)
+        if (pregunta == null || pregunta.getEliminada())
             throw new RuntimeException("La pregunta de las que se desea obtener las respuestas no existe");
         return this.respuestaRepository.findByPreguntaId(pregunta);
     }
 
     public List<Respuesta> obtenerRespuestas(Pregunta pregunta) {
-        if (pregunta == null)
+        if (pregunta == null || pregunta.getEliminada())
             throw new RuntimeException("No se pueden obtener las respuestas de un null");
         return this.respuestaRepository.findByPreguntaId(pregunta);
     }

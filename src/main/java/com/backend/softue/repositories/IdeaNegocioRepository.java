@@ -35,8 +35,8 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
     @Query(value = "SELECT DISTINCT idea.* FROM idea_negocio idea " +
-            "LEFT JOIN docente_apoyo_idea dai ON (idea.id = dai.idea_negocio_id) " +
-            "LEFT JOIN idea_planteada ip ON (idea.id = ip.idea_negocio_id) " +
+            "JOIN docente_apoyo_idea dai ON (idea.id = dai.idea_negocio_id)" +
+            "JOIN idea_planteada ip ON (idea.id = ip.idea_negocio_id)" +
             "WHERE " +
             "(:docente_codigo IS NULL OR dai.docente_codigo = :docente_codigo) AND " +
             "(:estudiante_codigo IS NULL OR idea.codigo_estudiante_lider = :estudiante_codigo) AND " +
