@@ -82,7 +82,7 @@ public class TestController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
-    @GetMapping(value = "/{codigo}")
+    @GetMapping(value = "/Estudiante/{codigo}")
     public ResponseEntity<?> obtenerResultadoUltimoTest(@PathVariable Integer codigo) {
         try {
             return ResponseEntity.ok((this.testServices.obtenerResultadoTest(codigo)));
@@ -97,6 +97,16 @@ public class TestController {
     public ResponseEntity<?> testDisponible() {
         try {
             return ResponseEntity.ok(this.testServices.testDisponible());
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @GetMapping(value = "/{codigo}")
+    public ResponseEntity<?> obtenerResultadoTest(@PathVariable Integer codigo) {
+        try {
+            return ResponseEntity.ok((this.testServices.obtenerResultadoTest(codigo)));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
