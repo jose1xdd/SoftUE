@@ -208,4 +208,13 @@ public class EstudianteServices {
         while (begin <= end);
         return resultado;
     }
+
+    public String obtenerCorreoPorCodigo(Long codigo) {
+        if (codigo == null)
+            throw new RuntimeException("No se puede buscar un correo con un codigo institucional null");
+        String resultado = this.estudianteRepository.findCorreoByCodigo(codigo);
+        if (resultado == null)
+            throw new RuntimeException("No existe un estudiante con este codigo institucional");
+        return resultado;
+    }
 }

@@ -24,4 +24,6 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Integer>
     @Query(value = "SELECT distinct curso FROM Estudiante ", nativeQuery = true)
     Set<String> findCursos();
 
+    @Query(value = "SELECT u.correo FROM estudiante e JOIN usuario u ON(e.codigo = u.codigo) WHERE codigo_institucional = :codigo", nativeQuery = true)
+    String findCorreoByCodigo(@Param("codigo") Long codigo);
 }
