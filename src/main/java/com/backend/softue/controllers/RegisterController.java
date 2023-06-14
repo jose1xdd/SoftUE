@@ -111,4 +111,15 @@ public class RegisterController {
 
         }
     }
+
+    @PostMapping("/docente/correo")
+    public ResponseEntity<?> registrarDocente(@RequestParam String correo, @RequestParam String contrasenia) {
+        try {
+            this.docenteServices.registrarDocente(correo, contrasenia);
+            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El docente se registro correctamente"), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
 }

@@ -60,6 +60,21 @@ public class DocenteServices {
         docenteRepository.save(docente);
     }
 
+    public void registrarDocente(String correo, String contrasenia) {
+        if (correo == null)
+            throw new RuntimeException("El correo no puede ser null");
+        if (contrasenia == null)
+            throw new RuntimeException("La contraseña no puede ser nula");
+        if (this.docenteRepository.findByCorreo(correo) != null)
+            throw new RuntimeException("El usuario ya existe");
+        Docente docente = this.usuariosValidos.getDocenteMap().get(correo);
+        if (docente == null)
+            throw new RuntimeException("El docente no esta contemplado en los archivos del sistema");
+        docente.setContrasenia(contrasenia);
+        this.usuarioServices.registerUser((User) docente);
+        this.docenteRepository.save(docente);
+    }
+
     public void actualizarDocente(Docente docente, String jwt) {
         if(!this.areaConocimientoServices.existe(docente.getArea()))
             throw  new RuntimeException("No se puede crear este usuario,el area de conocimiento ingresada no es parte de las comtempladas por el sistema");
@@ -139,8 +154,11 @@ public class DocenteServices {
         Row row = sheet.getRow(0);
         LinkedList<String> encabezados = new LinkedList<>();
         for (Cell celda : row) {
+            if (celda.toString().isBlank())
+                break;
             encabezados.add(celda.getStringCellValue());
         }
+        System.out.println(encabezados.toString());
         if (!this.ENCABEZADO_VALIDO.equals(encabezados.toString()))
             throw new RuntimeException("El encabezado en el excel debe ser el siguiente: " + this.ENCABEZADO_VALIDO);
         int iterador = 1;
@@ -148,11 +166,11 @@ public class DocenteServices {
         Map<String, Docente> docentesValidos = new HashMap<>();
         for (Row fila : sheet) {
             try {
-                String cedula = fila.getCell(0).toString();
+                String cedula = (fila.getCell(0).getCellType().equals(CellType.NUMERIC)) ? "" + (long) fila.getCell(0).getNumericCellValue() : fila.getCell(0).toString();
                 String nombre = concetenarCeldas(fila, 1, 2, ' ');
                 String apellido = concetenarCeldas(fila, 3, 4, ' ');
                 String correo = fila.getCell(5).toString();
-                String telefono = fila.getCell(6).toString();
+                String telefono = (fila.getCell(6).getCellType().equals(CellType.NUMERIC)) ? "" + (long) fila.getCell(6).getNumericCellValue() : fila.getCell(6).toString();
                 String genero = fila.getCell(7).toString().substring(0, 1);
                 String titulo = fila.getCell(8).toString();
                 String area = fila.getCell(9).toString();
@@ -180,7 +198,7 @@ public class DocenteServices {
         String resultado = "";
         int curso;
         do {
-            if(row.getCell(begin).getCellType() == CellType.NUMERIC) {
+            if(row.getCell(begin).getCellType().equals(CellType.NUMERIC)) {
                 curso = (int) row.getCell(begin).getNumericCellValue();
                 resultado += Integer.toString(curso);
             }

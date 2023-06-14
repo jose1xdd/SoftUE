@@ -58,7 +58,7 @@ public class EstudianteServices {
         estudiante.setContrasenia(contrasenia);
         estudiante.setCorreo(estudiante.getCorreo() + estudiante.getCodigoInstitucional());
         this.usuarioServices.registerUser((User) estudiante);
-        estudianteRepository.save(estudiante);
+        this.estudianteRepository.save(estudiante);
     }
 
     public void actualizarEstudiante(Estudiante estudiante, String jwt) {
@@ -155,6 +155,8 @@ public class EstudianteServices {
         Row row = sheet.getRow(0);
         LinkedList<String> encabezados = new LinkedList<>();
         for (Cell celda : row) {
+            if (celda.toString().isBlank())
+                break;
             encabezados.add(celda.getStringCellValue());
         }
         if (!this.ENCABEZADO_VALIDO.equals(encabezados.toString()))
@@ -194,7 +196,7 @@ public class EstudianteServices {
         String resultado = "";
         int curso;
         do {
-            if(row.getCell(begin).getCellType() == CellType.NUMERIC) {
+            if(row.getCell(begin).getCellType().equals(CellType.NUMERIC)) {
                 curso = (int) row.getCell(begin).getNumericCellValue();
                 resultado += Integer.toString(curso);
             }
