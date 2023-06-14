@@ -202,8 +202,8 @@ public class EstudianteServices {
         String resultado = "";
         do {
             resultado += row.getCell(begin).toString();
-            begin++;
             if (begin < end) resultado += divisor;
+            begin++;
         }
         while (begin <= end);
         return resultado;
