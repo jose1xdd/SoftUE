@@ -49,6 +49,24 @@ public class EstudianteServices {
         estudianteRepository.save(estudiante);
     }
 
+    public void registrarEstudiante(Long codigo, String contrasenia) {
+        if (codigo == null)
+            throw new RuntimeException("El codigo no puede ser null");
+        if (contrasenia == null)
+            throw new RuntimeException("La contraseña no puede ser nula");
+        Integer cnt = this.estudianteRepository.findByCodigo(codigo);
+        System.out.println(cnt);
+        if (cnt > 0)
+            throw new RuntimeException("El usuario ya existe");
+        Estudiante estudiante = this.usuariosValidos.getEstudianteMap().get(codigo);
+        if (estudiante == null)
+            throw new RuntimeException("El estudiante no esta contemplado en los archivos del sistema");
+        estudiante.setContrasenia(contrasenia);
+        estudiante.setCorreo(estudiante.getCorreo() + estudiante.getCodigoInstitucional());
+        this.usuarioServices.registerUser((User) estudiante);
+        estudianteRepository.save(estudiante);
+    }
+
     public void actualizarEstudiante(Estudiante estudiante, String jwt) {
         if (!gradoPermitido(estudiante.getCurso()))
             throw new RuntimeException("No se puede actualizar este usuario, ya que el curso diligenciado no es valido");
@@ -162,7 +180,7 @@ public class EstudianteServices {
                 String genero = fila.getCell(11).toString().substring(0, 1);
                 if (estudiantesValidos.containsKey(codigo))
                     throw new RemoteException("El código de estudiante ya se registro");
-                estudiantesValidos.put(codigo, new Estudiante(null, nombre, apellido, genero, true, "correoNoRegistrado@usurio.correo", null, "SIN CONTRASENIA", "estudiante", grado, acudiente, "reprobada", codigo));
+                estudiantesValidos.put(codigo, new Estudiante(null, nombre, apellido, genero, true, "correoNoRegistrado@usuario.correo", null, "SIN CONTRASENIA", "estudiante", grado, acudiente, "reprobada", codigo));
             }
             catch (Exception e) {
                 filasErradas.add(iterador);

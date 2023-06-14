@@ -50,8 +50,6 @@ public class User {
     @Column(nullable = false, unique = true)
     private String correo;
 
-    @NotBlank(message = "Error: El campo 'telefono' no puede estar en blanco. Por favor, asegurese de proporcionar un valor valido para el telefono del usuario.")
-    @NotNull(message = "Error: El campo 'telefono' no puede ser nulo. Por favor, asegurese de proporcionar un valor valido para el telefono del usuario.")
     @Column()
     private String telefono;
 

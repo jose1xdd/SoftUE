@@ -59,8 +59,18 @@ public class RegisterController {
             this.estudianteServices.registrarEstudiante(estudiante);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El estudiante se registro correctamente"), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
 
+    @PostMapping("/estudiante/codigo")
+    public ResponseEntity<?> registrarEstudiante(@RequestParam Long codigo, @RequestParam String contrasenia) {
+        try {
+            this.estudianteServices.registrarEstudiante(codigo, contrasenia);
+            return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El estudiante se registro correctamente"), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 
