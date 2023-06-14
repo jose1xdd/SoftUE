@@ -82,6 +82,18 @@ public class UserController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @PatchMapping("/updateCorreo")
+    public ResponseEntity<?> actualizar(@RequestHeader("X-Softue-JWT") String jwt, @RequestParam Integer codigo, @RequestParam String correo) {
+        try {
+            this.userServices.actualizarUsuario(codigo, correo, jwt);
+            return ResponseEntity.ok(new ResponseConfirmation("El usuario ha sido actualizado correctamente"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+
+    @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
     @GetMapping("/{email}")
     public ResponseEntity<?> visualizar(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
         try {

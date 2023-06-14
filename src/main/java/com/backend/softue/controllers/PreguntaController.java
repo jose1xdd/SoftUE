@@ -30,7 +30,6 @@ public class PreguntaController {
         }
     }
 
-
     @CheckSession(permitedRol = {"coordinador","estudiante"})
     @GetMapping()
     public ResponseEntity<?> listar() {

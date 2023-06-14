@@ -87,6 +87,23 @@ public class UserServices {
         }
     }
 
+    public void actualizarUsuario(Integer codigo, String correo, String JWT) {
+        User user = this.userRepository.findById(codigo).get();
+        if (user == null)
+            throw new RuntimeException("El usuario no existe");
+        if (correo == null || correo.equals(""))
+            throw new RuntimeException("El nuevo correo no puede ser vacío");
+        if (this.encrypt.getJwt().getKey(JWT).equals(user.getCorreo())) {
+            user.setCorreo(correo);
+            this.userRepository.save(user);
+        } else {
+            if (this.roles.getPermisosDeEdicion().get(this.encrypt.getJwt().getValue(JWT)).contains(user.getTipoUsuario())) {
+                user.setCorreo(correo);
+                this.userRepository.save(user);
+            } else throw new RuntimeException("Las credenciales de rol no permiten modifcar este usuario");
+        }
+    }
+
     public User obtenerUsuario(String email) {
         if (email != null) {
             User result = this.userRepository.findByCorreo(email);
