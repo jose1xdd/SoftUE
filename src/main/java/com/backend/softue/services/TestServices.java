@@ -56,6 +56,10 @@ public class TestServices {
         }
     }
 
+    public boolean testDisponible() {
+        return this.respuestaServices.getPreguntaServices().getComponenteCompetenciasServices().validarPorcentaje(0.0);
+    }
+
     public List<Test> listar() {
         List<Test> result = this.testRepository.findAll();
         for(Test test : result) {
@@ -85,9 +89,10 @@ public class TestServices {
     public List<Test> filtrar(Integer codigo, String curso, LocalDate fechaInicio, LocalDate fechaFin, String estado) {
         if (fechaInicio == null ^ fechaFin == null)
             throw new RuntimeException("Para filtrar los resultados por fechas, debe ingresar fecha inicio y fecha fin");
-        estado = estado.toLowerCase();
-        if (estado != null && !(estado.equals("aprobada") || estado.equals("rechazada")))
-            throw new RuntimeException("El estado solo puede ser aprobada o rechazada");
+        if(estado != null)
+            estado = estado.toLowerCase();
+        if (estado != null && !(estado.equals("aprobada") || estado.equals("reprobada")))
+            throw new RuntimeException("El estado solo puede ser aprobada o reprobada");
         List<Test> result = this.testRepository.filtrarTest(codigo, curso, fechaInicio, fechaFin, estado);
         for(Test test : result) {
             test.setEstudianteInfo(new String[] { Integer.toString(test.getEstudiante().getCodigo()), test.getEstudiante().getCurso(), test.getEstudiante().getCapacitacionAprobada()});
@@ -103,5 +108,10 @@ public class TestServices {
             throw new RuntimeException("No existe un estudiante con ese codigo");
         Integer codigoTest = this.testRepository.obtenerUltimoTestEstudiante(estudiante.getCodigo());
         return this.testRepository.findById(codigoTest);
+    }
+    public Test obtenerResultadoTestId(Integer id) {
+        if (id == null)
+            throw new RuntimeException("No se puede obtener con un codigoEstudiante igual a null");
+        return this.testRepository.findById(id).get();
     }
 }
