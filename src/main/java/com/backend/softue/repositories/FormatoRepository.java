@@ -27,4 +27,14 @@ public interface FormatoRepository extends JpaRepository<Formato, Integer> {
             "LIMIT 1" ,
             nativeQuery = true)
     Formato FormatoRecientePlan();
+
+    @Query(value = "SELECT * FROM formato " +
+            "WHERE (modulo = 'material_idea_negocio' )" +
+            "ORDER BY id DESC " ,nativeQuery = true)
+    List<Formato> obtenerMaterialIdea();
+
+    @Query(value = "SELECT * FROM formato " +
+            "WHERE (modulo = 'material_plan_negocio' )" +
+            "ORDER BY id DESC " ,nativeQuery = true)
+    List<Formato> obtenerMaterialPlan();
 }

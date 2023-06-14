@@ -124,6 +124,25 @@ public class FormatoController {
             return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
+    @GetMapping(value = "/materialIdeaNegocio")
+    public ResponseEntity<?> recuperarMaterialIdeaNegocio() {
+        try {
+            return new ResponseEntity<List<Formato>>(this.formatoServices.obtenerMaterialIdea(), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
+    @GetMapping(value = "/materialPlanNegocio")
+    public ResponseEntity<?> recuperarMaterialPlanNegocio() {
+        try {
+            return new ResponseEntity<List<Formato>>(this.formatoServices.obtenerMaterialplan(), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
 
 
 }
