@@ -93,6 +93,16 @@ public class TestController {
     }
 
     @CheckSession(permitedRol = {"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping(value = "/testDisponible")
+    public ResponseEntity<?> testDisponible() {
+        try {
+            return ResponseEntity.ok(this.testServices.testDisponible());
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
     @GetMapping(value = "/{codigo}")
     public ResponseEntity<?> obtenerResultadoTest(@PathVariable Integer codigo) {
         try {

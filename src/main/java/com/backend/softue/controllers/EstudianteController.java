@@ -42,6 +42,17 @@ public class EstudianteController {
         }
     }
 
+    @CheckSession(permitedRol ={"estudiante", "coordinador", "administrativo", "docente"})
+    @GetMapping("/visualizarConId/{codigo}")
+    public ResponseEntity<?> visualizarConId(@PathVariable Integer codigo) {
+        try {
+            return ResponseEntity.ok(this.estudianteServices.obtenerEstudiante(codigo));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
     @CheckSession(permitedRol ={"coordinador", "administrativo"})
     @GetMapping("/deshabilitarEstudiante/{email}")
     public ResponseEntity<?> deshabilitarEstudiante(@RequestHeader("X-Softue-JWT") String jwt, @PathVariable String email) {
@@ -79,7 +90,17 @@ public class EstudianteController {
         try {
             return ResponseEntity.ok(this.estudianteServices.listarCursos());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @GetMapping("/obtenerCorreoIngreo/{codigo}")
+    public ResponseEntity<?> obtenerCorreo(@PathVariable Long codigo) {
+        try {
+            return ResponseEntity.ok(this.estudianteServices.obtenerCorreoPorCodigo(codigo));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
         }
     }
 

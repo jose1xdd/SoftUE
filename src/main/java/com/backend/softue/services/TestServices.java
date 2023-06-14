@@ -56,6 +56,10 @@ public class TestServices {
         }
     }
 
+    public boolean testDisponible() {
+        return this.respuestaServices.getPreguntaServices().getComponenteCompetenciasServices().validarPorcentaje(0.0);
+    }
+
     public List<Test> listar() {
         List<Test> result = this.testRepository.findAll();
         for(Test test : result) {
