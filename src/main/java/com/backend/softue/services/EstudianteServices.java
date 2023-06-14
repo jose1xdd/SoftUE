@@ -194,16 +194,23 @@ public class EstudianteServices {
             else estudiante.setUsuarioActivo(false);
             this.estudianteRepository.save(estudiante);
         }
-        System.out.println(estudiantesValidos);
+        // System.out.println(estudiantesValidos);
         usuariosValidos.setEstudianteMap(estudiantesValidos);
     }
 
     private String concetenarCeldas(Row row, int begin, int end, char divisor) {
         String resultado = "";
+        int curso;
         do {
-            resultado += row.getCell(begin).toString();
-            begin++;
+            if(row.getCell(begin).getCellType() == CellType.NUMERIC) {
+                curso = (int) row.getCell(begin).getNumericCellValue();
+                resultado += Integer.toString(curso);
+            }
+            else {
+                resultado += row.getCell(begin).toString();
+            }
             if (begin < end) resultado += divisor;
+            begin++;
         }
         while (begin <= end);
         return resultado;
