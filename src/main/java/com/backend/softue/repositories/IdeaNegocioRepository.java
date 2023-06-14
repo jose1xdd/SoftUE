@@ -76,7 +76,6 @@ public interface IdeaNegocioRepository extends JpaRepository<IdeaNegocio, Intege
 
     Set<IdeaNegocio> findByDocentesApoyo(@Param("docente_codigo") Integer id);
 
-
     @Query(value = "SELECT idea.* FROM idea_negocio idea " +
             "JOIN idea_planteada idea_p ON (idea.id = idea_p.idea_negocio_id)" +
             "JOIN estudiante e ON (idea_p.estudiante_codigo = e.codigo)" +
