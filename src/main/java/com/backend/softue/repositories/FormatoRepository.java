@@ -37,4 +37,9 @@ public interface FormatoRepository extends JpaRepository<Formato, Integer> {
             "WHERE (modulo = 'material_plan_negocio' )" +
             "ORDER BY id DESC " ,nativeQuery = true)
     List<Formato> obtenerMaterialPlan();
+
+    @Query(value = "SELECT * FROM formato " +
+            "WHERE (modulo = 'material_general' )" +
+            "ORDER BY id DESC " ,nativeQuery = true)
+    List<Formato> obtenerMaterial();
 }

@@ -47,8 +47,9 @@ public class FormatoServices {
         if (!formato.getExtension().equals(".pdf") && !formato.getExtension().equals(".docx"))
             throw new RuntimeException("La extensión del archivo no es permitida, por favor subir documentos .docx o .pdf");
         if (!formato.getModulo().equals("idea_de_negocio") && !formato.getModulo().equals("plan_de_negocio")
-                && !formato.getModulo().equals("material_idea_negocio") && !formato.getModulo().equals("material_plan_negocio"))
-            throw new RuntimeException("El formato debe corresponder a idea_de_negocio o plan_de_negocio o material_idea_negocio o material_plan_negocio");
+                && !formato.getModulo().equals("material_idea_negocio") && !formato.getModulo().equals("material_plan_negocio")
+        &&!formato.getModulo().equals("material_general"))
+            throw new RuntimeException("El formato debe corresponder a idea_de_negocio o plan_de_negocio o material_idea_negocio o material_plan_negocio o material_general");
         this.formatoRepository.save(formato);
     }
 
@@ -78,6 +79,14 @@ public class FormatoServices {
 
     public List<Formato> obtenerMaterialplan(){
         List<Formato> result = this.formatoRepository.obtenerMaterialPlan();
+        for (Formato formato : result) {
+            formato.setDocumento(null);
+        }
+        return result;
+    }
+
+    public List<Formato> obtenerMaterial(){
+        List<Formato> result = this.formatoRepository.obtenerMaterial();
         for (Formato formato : result) {
             formato.setDocumento(null);
         }

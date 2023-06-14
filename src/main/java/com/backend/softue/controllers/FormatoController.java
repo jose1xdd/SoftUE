@@ -144,5 +144,15 @@ public class FormatoController {
         }
     }
 
+    @GetMapping(value = "/material")
+    public ResponseEntity<?> recuperarMaterial() {
+        try {
+            return new ResponseEntity<List<Formato>>(this.formatoServices. obtenerMaterial(), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
 
 }
