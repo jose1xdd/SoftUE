@@ -1,5 +1,5 @@
 # Usa la imagen base de OpenJDK 17
-FROM arm64v8/openjdk:17-oracle
+FROM openjdk:17-oracle
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
