@@ -95,7 +95,7 @@ public class EstudianteController {
     }
 
     @GetMapping("/obtenerCorreoIngreo/{codigo}")
-    public ResponseEntity<?> obtenerCorreo(@PathVariable Long codigo) {
+    public ResponseEntity<?> obtenerCorreo(@PathVariable String codigo) {
         try {
             return ResponseEntity.ok(this.estudianteServices.obtenerCorreoPorCodigo(codigo));
         }

@@ -1,5 +1,6 @@
 package com.backend.softue.utils.beansAuxiliares;
 
+import com.backend.softue.models.Docente;
 import com.backend.softue.models.Estudiante;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class UsuariosValidos {
 
-    private Map<Long, Estudiante> estudianteMap = new HashMap<>();
+    private Map<String, Estudiante> estudianteMap = new HashMap<>();
+
+    private Map<String, Docente> docenteMap = new HashMap<>();
 }

@@ -64,7 +64,7 @@ public class RegisterController {
     }
 
     @PostMapping("/estudiante/codigo")
-    public ResponseEntity<?> registrarEstudiante(@RequestParam Long codigo, @RequestParam String contrasenia) {
+    public ResponseEntity<?> registrarEstudiante(@RequestParam String codigo, @RequestParam String contrasenia) {
         try {
             this.estudianteServices.registrarEstudiante(codigo, contrasenia);
             return new ResponseEntity<ResponseConfirmation>(new ResponseConfirmation("El estudiante se registro correctamente"), HttpStatus.OK);
@@ -78,8 +78,19 @@ public class RegisterController {
     @PostMapping("/estudiante/archivo")
     public ResponseEntity<?> registrarEstudiantesDesdeArhivo(@RequestParam MultipartFile file) {
         try {
-            this.estudianteServices.cargarEstudiantes(file);
-            return ResponseEntity.ok(new ResponseConfirmation("Estudiantes cargados en el sistema exitosamente"));
+            return ResponseEntity.ok(this.estudianteServices.cargarEstudiantes(file));
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+
+    @CheckSession(permitedRol ={"administrativo"})
+    @PostMapping("/docente/archivo")
+    public ResponseEntity<?> registrarDocentesDesdeArhivo(@RequestParam MultipartFile file) {
+        try {
+            this.docenteServices.cargarDocentes(file);
+            return ResponseEntity.ok(new ResponseConfirmation("Docentes cargados en el sistema exitosamente"));
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
