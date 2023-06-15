@@ -1,15 +1,14 @@
-# Usa la imagen base de OpenJDK 17
-FROM --platform=linux/arm64 openjdk:17-oracle
+# Utiliza una imagen base de Java 17
+FROM openjdk:17-jdk-alpine
 
-# Establece el directorio de trabajo dentro del contenedor
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia el archivo JAR del backend al contenedor
-COPY target/softue-0.0.1-SNAPSHOT.jar app.jar
+# Copia los archivos necesarios al contenedor
+COPY target/softue-0.0.1-SNAPSHOT.jar /app/demo.jar
 
-# Expone el puerto en el que se ejecuta la aplicación
+# Exponer el puerto 8080
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación cuando el contenedor se inicie
-CMD ["java", "-jar", "app.jar"]
-
+# Comando para iniciar la aplicación
+CMD ["java", "-jar", "demo.jar"]
