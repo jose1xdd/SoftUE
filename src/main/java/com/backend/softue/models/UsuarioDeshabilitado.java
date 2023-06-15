@@ -25,9 +25,6 @@ public class UsuarioDeshabilitado {
     private String apellido;
 
     @Column(nullable = false)
-    private LocalDate fecha_nacimiento;
-
-    @Column(nullable = false)
     private String sexo;
 
     @Column(nullable = false)
@@ -61,7 +58,6 @@ public class UsuarioDeshabilitado {
         this.codigo = user.getCodigo();
         this.nombre = user.getNombre();
         this.apellido = user.getApellido();
-        this.fecha_nacimiento = user.getFecha_nacimiento();
         this.sexo = user.getSexo();
         this.correo = user.getCorreo();
         this.telefono = user.getTelefono();
@@ -72,7 +68,6 @@ public class UsuarioDeshabilitado {
         this.codigo = estudiante.getCodigo();
         this.nombre = estudiante.getNombre();
         this.apellido = estudiante.getApellido();
-        this.fecha_nacimiento = estudiante.getFecha_nacimiento();
         this.sexo = estudiante.getSexo();
         this.correo = estudiante.getCorreo();
         this.telefono = estudiante.getTelefono();
@@ -86,7 +81,6 @@ public class UsuarioDeshabilitado {
         this.codigo = docente.getCodigo();
         this.nombre = docente.getNombre();
         this.apellido = docente.getApellido();
-        this.fecha_nacimiento = docente.getFecha_nacimiento();
         this.sexo = docente.getSexo();
         this.correo = docente.getCorreo();
         this.telefono = docente.getTelefono();

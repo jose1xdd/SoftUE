@@ -57,5 +57,10 @@ public class  Docente extends User {
     @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
     private Set<CalificacionPlan> planesCalificados;
 
-
+    public Docente(Integer codigo, String nombre, String apellido, String sexo, Boolean usuarioActivo, String correo, String telefono, String contrasenia, String tipoUsuario, String cedula, String titulo, String area) {
+        super(codigo, nombre, apellido, sexo, usuarioActivo, correo, telefono, contrasenia, tipoUsuario, null, null);
+        this.cedula = cedula;
+        this.titulo = titulo;
+        this.area = area;
+    }
 }
