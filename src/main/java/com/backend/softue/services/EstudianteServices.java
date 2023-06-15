@@ -4,20 +4,14 @@ import com.backend.softue.models.*;
 import com.backend.softue.repositories.EstudianteRepository;
 import com.backend.softue.repositories.SingInTokenRepository;
 import com.backend.softue.repositories.UsuarioDeshabilitadoRepository;
-import com.backend.softue.utils.beansAuxiliares.GradosPermitidos;
 import com.backend.softue.utils.beansAuxiliares.UsuariosValidos;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.rmi.RemoteException;
-import java.time.LocalDate;
 import java.util.*;
 
 @Getter
@@ -49,7 +43,7 @@ public class EstudianteServices {
         estudianteRepository.save(estudiante);
     }
 
-    public void registrarEstudiante(Long codigo, String contrasenia) {
+    public void registrarEstudiante(String codigo, String contrasenia) {
         if (codigo == null)
             throw new RuntimeException("El codigo no puede ser null");
         if (contrasenia == null)
@@ -64,7 +58,7 @@ public class EstudianteServices {
         estudiante.setContrasenia(contrasenia);
         estudiante.setCorreo(estudiante.getCorreo() + estudiante.getCodigoInstitucional());
         this.usuarioServices.registerUser((User) estudiante);
-        estudianteRepository.save(estudiante);
+        this.estudianteRepository.save(estudiante);
     }
 
     public void actualizarEstudiante(Estudiante estudiante, String jwt) {
@@ -154,14 +148,14 @@ public class EstudianteServices {
         }
     }
 
-    public void cargarEstudiantes(MultipartFile file) throws IOException {
+    public List<Integer> cargarEstudiantes(MultipartFile file) throws IOException {
         InputStream inputStream = file.getInputStream();
         Workbook workbook = WorkbookFactory.create(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
         Row row = sheet.getRow(0);
         LinkedList<String> encabezados = new LinkedList<>();
-        for(Cell celda : row) {
-            if (celda.getStringCellValue().isBlank())
+        for (Cell celda : row) {
+            if (celda.toString().isBlank())
                 break;
             encabezados.add(celda.getStringCellValue());
         }
@@ -169,17 +163,17 @@ public class EstudianteServices {
             throw new RuntimeException("El encabezado en el excel debe ser el siguiente: " + this.ENCABEZADO_VALIDO);
         int iterador = 1;
         LinkedList<Integer> filasErradas = new LinkedList<>();
-        Map<Long, Estudiante> estudiantesValidos = new HashMap<>();
+        Map<String, Estudiante> estudiantesValidos = new HashMap<>();
         for (Row fila : sheet) {
             try {
-                Long codigo = (long) Double.parseDouble(fila.getCell(0).toString());
+                String codigo = fila.getCell(0).toString();
                 String grado = this.concetenarCeldas(fila, 1, 2, '-');
                 String nombre = this.concetenarCeldas(fila, 3, 4, ' ');
                 String apellido = this.concetenarCeldas(fila, 5, 6, ' ');
                 String acudiente = this.concetenarCeldas(fila, 7, 10, ' ');
                 String genero = fila.getCell(11).toString().substring(0, 1);
                 if (estudiantesValidos.containsKey(codigo))
-                    throw new RemoteException("El código de estudiante ya se registro");
+                    throw new RuntimeException("El código de estudiante ya se registro");
                 estudiantesValidos.put(codigo, new Estudiante(null, nombre, apellido, genero, true, "correoNoRegistrado@usuario.correo", null, "SIN CONTRASENIA", "estudiante", grado, acudiente, "reprobada", codigo));
             }
             catch (Exception e) {
@@ -194,22 +188,29 @@ public class EstudianteServices {
             else estudiante.setUsuarioActivo(false);
             this.estudianteRepository.save(estudiante);
         }
-        System.out.println(estudiantesValidos);
-        usuariosValidos.setEstudianteMap(estudiantesValidos);
+        this.usuariosValidos.setEstudianteMap(estudiantesValidos);
+        return filasErradas;
     }
 
     private String concetenarCeldas(Row row, int begin, int end, char divisor) {
         String resultado = "";
+        int curso;
         do {
-            resultado += row.getCell(begin).toString();
-            begin++;
+            if(row.getCell(begin).getCellType().equals(CellType.NUMERIC)) {
+                curso = (int) row.getCell(begin).getNumericCellValue();
+                resultado += Integer.toString(curso);
+            }
+            else {
+                resultado += row.getCell(begin).toString();
+            }
             if (begin < end) resultado += divisor;
+            begin++;
         }
         while (begin <= end);
         return resultado;
     }
 
-    public String obtenerCorreoPorCodigo(Long codigo) {
+    public String obtenerCorreoPorCodigo(String codigo) {
         if (codigo == null)
             throw new RuntimeException("No se puede buscar un correo con un codigo institucional null");
         String resultado = this.estudianteRepository.findCorreoByCodigo(codigo);

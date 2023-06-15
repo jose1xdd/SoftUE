@@ -75,7 +75,7 @@ public class FormatoController {
     @GetMapping("/listar")
     public ResponseEntity<?> listarFormatos() {
         try {
-            return new ResponseEntity<List<Formato>>(this.formatoServices.obtenerListado(), HttpStatus.OK);
+            return new ResponseEntity<List<Formato>>(this.formatoServices.obtenerListadoFormatos(), HttpStatus.OK);
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
@@ -122,6 +122,45 @@ public class FormatoController {
         }
         catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseError(e));
+        }
+    }
+    @GetMapping(value = "/materialIdeaNegocio")
+    public ResponseEntity<?> recuperarMaterialIdeaNegocio() {
+        try {
+            return new ResponseEntity<List<Formato>>(this.formatoServices.obtenerMaterialIdea(), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
+    @GetMapping(value = "/materialPlanNegocio")
+    public ResponseEntity<?> recuperarMaterialPlanNegocio() {
+        try {
+            return new ResponseEntity<List<Formato>>(this.formatoServices.obtenerMaterialplan(), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
+    @GetMapping(value = "/materialGeneral")
+    public ResponseEntity<?> recuperarMaterialGeneral() {
+        try {
+            return new ResponseEntity<List<Formato>>(this.formatoServices. obtenerMaterialGeneral(), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
+        }
+    }
+
+    @GetMapping(value = "/material")
+    public ResponseEntity<?> recuperarMaterial() {
+        try {
+            return new ResponseEntity<List<Formato>>(this.formatoServices. obtenerMaterial(), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ResponseError(e.getClass().toString(),e.getMessage(),e.getStackTrace()[0].toString()));
         }
     }
 

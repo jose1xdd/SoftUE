@@ -17,7 +17,7 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Integer>
     Estudiante findByCorreo(String correo);
 
     @Query(value = "SELECT count(*) FROM estudiante WHERE estudiante.codigo_institucional = :codigo", nativeQuery = true)
-    Integer findByCodigo(@Param("codigo") Long codigo);
+    Integer findByCodigo(@Param("codigo") String codigo);
 
     List<Estudiante> findByCurso(String curso);
 
@@ -25,5 +25,5 @@ public interface EstudianteRepository extends JpaRepository<Estudiante, Integer>
     Set<String> findCursos();
 
     @Query(value = "SELECT u.correo FROM estudiante e JOIN usuario u ON(e.codigo = u.codigo) WHERE codigo_institucional = :codigo", nativeQuery = true)
-    String findCorreoByCodigo(@Param("codigo") Long codigo);
+    String findCorreoByCodigo(@Param("codigo") String codigo);
 }

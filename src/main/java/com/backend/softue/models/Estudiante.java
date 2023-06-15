@@ -2,12 +2,9 @@ package com.backend.softue.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
@@ -37,7 +34,7 @@ public class Estudiante extends User{
 
     @NotNull()
     @Column(nullable = false, unique = true, name = "codigo_institucional")
-    private Long codigoInstitucional;
+    private String codigoInstitucional;
 
     @OneToMany(mappedBy = "estudianteLider", fetch = FetchType.LAZY)
     private Set<PlanNegocio> planesNegocioLideradas;
@@ -54,7 +51,7 @@ public class Estudiante extends User{
     @OneToMany(mappedBy = "estudiante", fetch = FetchType.LAZY)
     private Set<Test> tests;
 
-    public Estudiante(Integer codigo, String nombre, String apellido, String sexo, Boolean usuarioActivo, String correo, String telefono, String contrasenia, String tipoUsuario, String curso, String nombreAcudiente, String capacitacionAprobada, Long codigoInstitucional) {
+    public Estudiante(Integer codigo, String nombre, String apellido, String sexo, Boolean usuarioActivo, String correo, String telefono, String contrasenia, String tipoUsuario, String curso, String nombreAcudiente, String capacitacionAprobada, String codigoInstitucional) {
         super(codigo, nombre, apellido, sexo, usuarioActivo, correo, telefono, contrasenia, tipoUsuario, null, null);
         this.curso = curso;
         this.nombreAcudiente = nombreAcudiente;
