@@ -12,20 +12,14 @@ import lombok.Setter;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-<<<<<<< HEAD
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-=======
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-
->>>>>>> 062003aadfa40504f6b15e554b37e2fdddd15eaa
 @Setter
 @Getter
 @Service
