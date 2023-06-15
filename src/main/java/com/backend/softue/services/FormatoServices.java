@@ -69,6 +69,15 @@ public class FormatoServices {
         }
         return result;
     }
+
+    public List<Formato> obtenerListadoFormatos() {
+        List<Formato> result = this.formatoRepository.obtenerFormatoPlantillla();
+        for (Formato formato : result) {
+            formato.setDocumento(null);
+        }
+        return result;
+    }
+
     public List<Formato> obtenerMaterialIdea(){
         List<Formato> result = this.formatoRepository.obtenerMaterialIdea();
         for (Formato formato : result) {
@@ -87,6 +96,14 @@ public class FormatoServices {
 
     public List<Formato> obtenerMaterial(){
         List<Formato> result = this.formatoRepository.obtenerMaterial();
+        for (Formato formato : result) {
+            formato.setDocumento(null);
+        }
+        return result;
+    }
+
+    public List<Formato> obtenerMaterialGeneral(){
+        List<Formato> result = this.formatoRepository.obtenerMaterialGeneral();
         for (Formato formato : result) {
             formato.setDocumento(null);
         }
